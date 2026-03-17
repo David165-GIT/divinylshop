@@ -3,7 +3,7 @@ import vinylSpinning from "@/assets/vinyl-spinning.jpg";
 import vinylStack from "@/assets/vinyl-stack.jpg";
 import hifiVintage from "@/assets/hifi-vintage.jpg";
 import tubeAmp from "@/assets/tube-amp.jpg";
-import logo from "@/assets/logo-divinyl.png";
+
 
 interface GalleryItem {
   src: string;
