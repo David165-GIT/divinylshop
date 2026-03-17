@@ -16,7 +16,7 @@ const Catalogue = () => {
       const { data } = await supabase
         .from("records")
         .select("*")
-        .eq("is_sold", false)
+        
         .neq("category", "editions_originales")
         .order("created_at", { ascending: false });
       setRecords(data || []);
