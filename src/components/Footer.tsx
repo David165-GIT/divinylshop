@@ -1,4 +1,4 @@
-import logo from "@/assets/logo-divinyl.png";
+import { Facebook } from "lucide-react";
 import { Facebook } from "lucide-react";
 
 const Footer = () => {
