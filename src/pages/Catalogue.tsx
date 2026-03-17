@@ -9,7 +9,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "vinyl" | "hifi">("all");
+  const [filter, setFilter] = useState<"all" | "vinyl" | "hifi" | "editions_originales">("all");
 
   useEffect(() => {
     const fetchRecords = async () => {
