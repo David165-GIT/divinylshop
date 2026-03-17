@@ -58,7 +58,7 @@ const Catalogue = () => {
 
         {/* Filters */}
         <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
-          {(["all", "vinyl", "hifi"] as const).map((f) => (
+          {(["vinyl", "hifi"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -68,7 +68,7 @@ const Catalogue = () => {
                   : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "all" ? "Tout" : f === "vinyl" ? "Vinyles" : "Hi-Fi"}
+              {f === "vinyl" ? "Vinyles" : "Hi-Fi"}
             </button>
           ))}
         </div>
