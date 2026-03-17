@@ -137,6 +137,7 @@ const AdminPanel = () => {
                 >
                   <option value="vinyl">Vinyle</option>
                   <option value="hifi">Hi-Fi</option>
+                  <option value="editions_originales">Édition Originale</option>
                 </select>
                 <input type="text" placeholder="Titre *" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
