@@ -1,4 +1,4 @@
-import { Disc3 } from "lucide-react";
+import logo from "@/assets/logo-divinyl.png";
 
 const Footer = () => {
   return (

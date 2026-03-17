@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Menu, X, Disc3 } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logo from "@/assets/logo-divinyl.png";
 
 const navLinks = [
   { label: "Accueil", href: "#accueil" },
