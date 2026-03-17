@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Facebook } from "lucide-react";
+import logo from "@/assets/logo-divinyl.png";
 
 
 const navLinks = [
