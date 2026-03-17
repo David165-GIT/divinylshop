@@ -13,11 +13,12 @@ interface GalleryItem {
   subtitle: string;
   link?: string;
   video?: boolean;
+  alwaysShow?: boolean;
 }
 
 const vinylItems: GalleryItem[] = [
   { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue" },
-  { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales" },
+  { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales", alwaysShow: true },
   { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true },
 ];
 
@@ -30,8 +31,8 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
         className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
         loading="lazy"
       />
-      <div className="absolute inset-0 bg-background/0 group-hover:bg-background/80 transition-all duration-500 flex items-end p-6">
-        <div className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+      <div className={`absolute inset-0 transition-all duration-500 flex items-end p-6 ${item.alwaysShow ? "bg-background/70" : "bg-background/0 group-hover:bg-background/80"}`}>
+        <div className={`transition-all duration-500 ${item.alwaysShow ? "" : "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"}`}>
           <h3 className="font-display text-xl font-bold text-foreground">{item.title}</h3>
           <p className={`text-sm font-body mt-1 ${item.link || item.video ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
         </div>
