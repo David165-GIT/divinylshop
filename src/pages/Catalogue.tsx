@@ -9,7 +9,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "vinyl" | "hifi">("all");
+  const [filter, setFilter] = useState<"all" | "vinyl" | "hifi" | "editions_originales">("all");
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -56,8 +56,8 @@ const Catalogue = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          {(["all", "vinyl", "hifi"] as const).map((f) => (
+        <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
+          {(["all", "vinyl", "hifi", "editions_originales"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -67,7 +67,7 @@ const Catalogue = () => {
                   : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "all" ? "Tout" : f === "vinyl" ? "Vinyles" : "Hi-Fi"}
+              {f === "all" ? "Tout" : f === "vinyl" ? "Vinyles" : f === "hifi" ? "Hi-Fi" : "Éditions Originales"}
             </button>
           ))}
         </div>
@@ -106,7 +106,7 @@ const Catalogue = () => {
                 )}
                 <div className="p-4">
                   <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
-                    {record.category === "vinyl" ? "Vinyle" : "Hi-Fi"}
+                    {record.category === "vinyl" ? "Vinyle" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
                     {record.genre && ` · ${record.genre}`}
                     {record.condition && ` · ${record.condition}`}
                   </p>

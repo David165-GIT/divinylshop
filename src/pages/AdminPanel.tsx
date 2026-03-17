@@ -137,6 +137,7 @@ const AdminPanel = () => {
                 >
                   <option value="vinyl">Vinyle</option>
                   <option value="hifi">Hi-Fi</option>
+                  <option value="editions_originales">Édition Originale</option>
                 </select>
                 <input type="text" placeholder="Titre *" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
@@ -186,7 +187,7 @@ const AdminPanel = () => {
                 )}
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs text-accent font-body uppercase tracking-wide">{record.category === "vinyl" ? "Vinyle" : "Hi-Fi"} {record.genre && `· ${record.genre}`}</p>
+                    <p className="text-xs text-accent font-body uppercase tracking-wide">{record.category === "vinyl" ? "Vinyle" : record.category === "hifi" ? "Hi-Fi" : "Éd. Originale"} {record.genre && `· ${record.genre}`}</p>
                     <h3 className="font-display font-bold text-foreground truncate">{record.title}</h3>
                     <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                     {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}

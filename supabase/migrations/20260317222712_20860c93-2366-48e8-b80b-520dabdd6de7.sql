@@ -1,0 +1,2 @@
+ALTER TABLE public.records DROP CONSTRAINT records_category_check;
+ALTER TABLE public.records ADD CONSTRAINT records_category_check CHECK (category = ANY (ARRAY['vinyl'::text, 'hifi'::text, 'editions_originales'::text]));
