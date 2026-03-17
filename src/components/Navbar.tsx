@@ -5,8 +5,9 @@ import logo from "@/assets/logo-divinyl.png";
 
 const navLinks = [
   { label: "Accueil", href: "#accueil" },
-  { label: "Vinyles", href: "#vinyles" },
-  { label: "Hi-Fi", href: "#hifi" },
+  { label: "Vinyles", href: "/catalogue?tab=vinyl" },
+  { label: "Hi-Fi", href: "/catalogue?tab=hifi" },
+  { label: "Éd. Originales", href: "/editions-originales" },
   { label: "À propos", href: "#apropos" },
   { label: "Contact", href: "#contact" },
 ];
