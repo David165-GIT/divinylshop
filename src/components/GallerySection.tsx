@@ -13,11 +13,12 @@ interface GalleryItem {
   subtitle: string;
   link?: string;
   video?: boolean;
+  alwaysShow?: boolean;
 }
 
 const vinylItems: GalleryItem[] = [
   { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue" },
-  { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales" },
+  { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales", alwaysShow: true },
   { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true },
 ];
 
