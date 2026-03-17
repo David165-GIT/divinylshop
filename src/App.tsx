@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Catalogue from "./pages/Catalogue.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
+import EditionsOriginales from "./pages/EditionsOriginales.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/catalogue" element={<Catalogue />} />
+          <Route path="/editions-originales" element={<EditionsOriginales />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
