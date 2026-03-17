@@ -17,9 +17,9 @@ interface GalleryItem {
 }
 
 const vinylItems: GalleryItem[] = [
-  { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue" },
+  { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue", alwaysShow: true },
   { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales", alwaysShow: true },
-  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true },
+  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true, alwaysShow: true },
 ];
 
 const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?: () => void }) => {
