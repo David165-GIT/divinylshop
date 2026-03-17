@@ -40,11 +40,11 @@ const HeroSection = () => {
       </div>
 
       {/* Bottom - Full-width image */}
-      <div className="relative h-[25vh] md:h-[28vh] overflow-hidden">
+      <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
         <img
           src={heroImg}
           alt="Intérieur de la boutique Divinyl à Nemours"
-          className="w-full h-full object-cover object-[center_40%]"
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
       </div>
