@@ -49,6 +49,12 @@ const Catalogue = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Banner */}
+        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10 text-center">
+          <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
+          <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
+        </div>
+
         {/* Filters */}
         <div className="flex items-center justify-center gap-3 mb-10">
           {(["all", "vinyl", "hifi"] as const).map((f) => (
@@ -108,9 +114,6 @@ const Catalogue = () => {
                   <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                   {record.description && (
                     <p className="text-xs text-muted-foreground font-body mt-2 line-clamp-2">{record.description}</p>
-                  )}
-                  {record.price && (
-                    <p className="text-lg font-body font-bold text-foreground mt-3">{record.price} €</p>
                   )}
                 </div>
               </div>
