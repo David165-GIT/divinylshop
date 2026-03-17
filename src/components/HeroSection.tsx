@@ -1,4 +1,4 @@
-import heroImg from "@/assets/hero-shop.jpg";
+import heroImg from "@/assets/hero-turntable.png";
 import logo from "@/assets/logo-divinyl.png";
 import { Facebook, MapPin } from "lucide-react";
 
