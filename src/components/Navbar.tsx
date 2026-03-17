@@ -14,14 +14,6 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogoClick = useCallback((e: React.MouseEvent) => {
-    if (e.detail === 3) {
-      e.preventDefault();
-      navigate("/admin/login");
-    }
-  }, [navigate]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-md border-b border-border">
