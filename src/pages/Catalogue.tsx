@@ -9,7 +9,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "vinyl" | "hifi">("all");
+  const [filter, setFilter] = useState<"vinyl" | "hifi">("vinyl");
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -25,7 +25,7 @@ const Catalogue = () => {
     fetchRecords();
   }, []);
 
-  const filtered = filter === "all" ? records : records.filter((r) => r.category === filter);
+  const filtered = records.filter((r) => r.category === filter);
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,7 +58,7 @@ const Catalogue = () => {
 
         {/* Filters */}
         <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
-          {(["all", "vinyl", "hifi"] as const).map((f) => (
+          {(["vinyl", "hifi"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -68,7 +68,7 @@ const Catalogue = () => {
                   : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "all" ? "Tout" : f === "vinyl" ? "Vinyles" : "Hi-Fi"}
+              {f === "vinyl" ? "Vinyles" : "Hi-Fi"}
             </button>
           ))}
         </div>
