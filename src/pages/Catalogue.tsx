@@ -16,7 +16,7 @@ const Catalogue = () => {
       const { data } = await supabase
         .from("records")
         .select("*")
-        .eq("is_sold", false)
+        
         .neq("category", "editions_originales")
         .order("created_at", { ascending: false });
       setRecords(data || []);
@@ -90,7 +90,14 @@ const Catalogue = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((record) => (
-              <div key={record.id} className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow">
+              <div key={record.id} className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative ${record.is_sold ? "opacity-70" : ""}`}>
+                <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-sm text-xs font-body font-semibold uppercase tracking-wide ${
+                  record.is_sold
+                    ? "bg-destructive text-destructive-foreground"
+                    : "bg-accent text-accent-foreground"
+                }`}>
+                  {record.is_sold ? "Vendu" : "Dispo"}
+                </span>
                 {record.image_url ? (
                   <div className="overflow-hidden">
                     <img
