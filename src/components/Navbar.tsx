@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Menu, X, Disc3 } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logo from "@/assets/logo-divinyl.png";
 
 const navLinks = [
   { label: "Accueil", href: "#accueil" },
@@ -16,7 +17,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto flex items-center justify-between py-4 px-4">
         <a href="#accueil" className="flex items-center gap-2 group">
-          <Disc3 className="w-7 h-7 text-primary group-hover:animate-spin-slow transition-all" />
+          <img src={logo} alt="Divinyl logo" className="w-8 h-8" />
           <span className="text-2xl font-display font-bold text-gradient-gold">Divinyl</span>
         </a>
 
