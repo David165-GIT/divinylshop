@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
-import shopFacade from "@/assets/shop-facade.png";
-import shopInterior1 from "@/assets/shop-interior-1.png";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
-import shopHifi from "@/assets/shop-hifi.png";
+import shopInterior1 from "@/assets/shop-interior-1.png";
 
 interface GalleryItem {
   src: string;
