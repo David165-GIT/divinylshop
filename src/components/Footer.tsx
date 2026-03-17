@@ -1,6 +1,16 @@
 import { Facebook } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleTripleClick = useCallback((e: React.MouseEvent) => {
+    if (e.detail === 3) {
+      e.preventDefault();
+      navigate("/admin/login");
+    }
+  }, [navigate]);
   return (
     <footer className="py-12 border-t border-border">
       <div className="container mx-auto px-4">
