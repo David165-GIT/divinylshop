@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, ArrowLeft, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, ArrowLeft, Upload, X, Video } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -13,6 +13,8 @@ const AdminPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoSaving, setVideoSaving] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -23,7 +25,19 @@ const AdminPanel = () => {
   useEffect(() => {
     checkAuth();
     fetchRecords();
+    fetchVideoUrl();
   }, []);
+
+  const fetchVideoUrl = async () => {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "gallery_video_url").single();
+    if (data) setVideoUrl(data.value);
+  };
+
+  const handleSaveVideo = async () => {
+    setVideoSaving(true);
+    await supabase.from("site_settings").update({ value: videoUrl }).eq("key", "gallery_video_url");
+    setVideoSaving(false);
+  };
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -119,6 +133,30 @@ const AdminPanel = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Video URL Setting */}
+        <div className="bg-card border border-border rounded-md p-4 mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Video className="w-4 h-4 text-accent" />
+            <h2 className="font-display font-bold text-foreground text-sm">Vidéo de la galerie</h2>
+          </div>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="URL de la vidéo Facebook embed"
+              className="flex-1 bg-muted border border-border rounded-sm px-4 py-2 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+            />
+            <button
+              onClick={handleSaveVideo}
+              disabled={videoSaving}
+              className="px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all disabled:opacity-50"
+            >
+              {videoSaving ? "…" : "Enregistrer"}
+            </button>
+          </div>
+        </div>
+
         {/* Form Modal */}
         {showForm && (
           <div className="fixed inset-0 bg-foreground/50 z-50 flex items-center justify-center p-4">
