@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { X } from "lucide-react";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
 import shopInterior1 from "@/assets/shop-interior-1.png";
@@ -9,16 +11,16 @@ interface GalleryItem {
   title: string;
   subtitle: string;
   link?: string;
+  video?: boolean;
 }
 
 const vinylItems: GalleryItem[] = [
   { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue" },
   { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales" },
-  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Venez fouiller dans nos bacs" },
+  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true },
 ];
 
-
-const GalleryCard = ({ item }: { item: GalleryItem }) => {
+const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?: () => void }) => {
   const content = (
     <>
       <img
@@ -30,7 +32,7 @@ const GalleryCard = ({ item }: { item: GalleryItem }) => {
       <div className="absolute inset-0 bg-background/0 group-hover:bg-background/80 transition-all duration-500 flex items-end p-6">
         <div className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
           <h3 className="font-display text-xl font-bold text-foreground">{item.title}</h3>
-          <p className={`text-sm font-body mt-1 ${item.link ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
+          <p className={`text-sm font-body mt-1 ${item.link || item.video ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
         </div>
       </div>
     </>
@@ -44,6 +46,14 @@ const GalleryCard = ({ item }: { item: GalleryItem }) => {
     );
   }
 
+  if (item.video) {
+    return (
+      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500 w-full text-left">
+        {content}
+      </button>
+    );
+  }
+
   return (
     <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-500">
       {content}
@@ -52,6 +62,8 @@ const GalleryCard = ({ item }: { item: GalleryItem }) => {
 };
 
 const GallerySection = () => {
+  const [videoOpen, setVideoOpen] = useState(false);
+
   return (
     <>
       {/* Vinyles */}
@@ -65,12 +77,40 @@ const GallerySection = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {vinylItems.map((item) => (
-              <GalleryCard key={item.title} item={item} />
+              <GalleryCard key={item.title} item={item} onVideoClick={() => setVideoOpen(true)} />
             ))}
           </div>
         </div>
       </section>
 
+      {/* Video Modal */}
+      {videoOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setVideoOpen(false)}
+        >
+          <div
+            className="relative bg-background rounded-lg overflow-hidden shadow-2xl max-w-sm w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setVideoOpen(false)}
+              className="absolute top-2 right-2 z-10 bg-background/80 rounded-full p-1 text-foreground hover:bg-background transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <iframe
+              src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F802899802234166%2F&show_text=false&width=267&t=0"
+              width="100%"
+              height="476"
+              style={{ border: "none", overflow: "hidden" }}
+              scrolling="no"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
