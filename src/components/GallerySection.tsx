@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import shopFacade from "@/assets/shop-facade.png";
 import shopInterior1 from "@/assets/shop-interior-1.png";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
@@ -9,35 +10,52 @@ interface GalleryItem {
   alt: string;
   title: string;
   subtitle: string;
+  link?: string;
 }
 
 const vinylItems: GalleryItem[] = [
-  { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Rock, Jazz, Soul, Funk…" },
+  { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Voir tout le catalogue →", link: "/catalogue" },
   { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors" },
   { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Venez fouiller dans nos bacs" },
 ];
 
 const hifiItems: GalleryItem[] = [
-  { src: shopHifi, alt: "Matériel Hi-Fi vintage chez Divinyl", title: "Hi-Fi Vintage", subtitle: "Platines, amplis, enceintes…" },
+  { src: shopHifi, alt: "Matériel Hi-Fi vintage chez Divinyl", title: "Hi-Fi Vintage", subtitle: "Voir le catalogue →", link: "/catalogue" },
   { src: shopFacade, alt: "Façade de la boutique Divinyl à Nemours", title: "La boutique", subtitle: "35 Rue Gautier 1er, Nemours" },
 ];
 
-const GalleryCard = ({ item }: { item: GalleryItem }) => (
-  <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-500">
-    <img
-      src={item.src}
-      alt={item.alt}
-      className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
-      loading="lazy"
-    />
-    <div className="absolute inset-0 bg-background/0 group-hover:bg-background/80 transition-all duration-500 flex items-end p-6">
-      <div className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-        <h3 className="font-display text-xl font-bold text-foreground">{item.title}</h3>
-        <p className="text-sm text-muted-foreground font-body mt-1">{item.subtitle}</p>
+const GalleryCard = ({ item }: { item: GalleryItem }) => {
+  const content = (
+    <>
+      <img
+        src={item.src}
+        alt={item.alt}
+        className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-background/0 group-hover:bg-background/80 transition-all duration-500 flex items-end p-6">
+        <div className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+          <h3 className="font-display text-xl font-bold text-foreground">{item.title}</h3>
+          <p className={`text-sm font-body mt-1 ${item.link ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
+        </div>
       </div>
+    </>
+  );
+
+  if (item.link) {
+    return (
+      <Link to={item.link} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500">
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-500">
+      {content}
     </div>
-  </div>
-);
+  );
+};
 
 const GallerySection = () => {
   return (
