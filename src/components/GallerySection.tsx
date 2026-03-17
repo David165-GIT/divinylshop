@@ -73,22 +73,6 @@ const GallerySection = () => {
         </div>
       </section>
 
-      {/* Hi-Fi */}
-      <section id="hifi" className="relative py-24 bg-secondary bg-grain overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Hi-Fi Vintage</h2>
-            <p className="text-muted-foreground font-body max-w-md mx-auto">
-              Du matériel d'exception pour une écoute authentique et chaleureuse.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {hifiItems.map((item) => (
-              <GalleryCard key={item.title} item={item} />
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   );
 };
