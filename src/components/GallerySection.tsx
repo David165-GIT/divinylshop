@@ -113,7 +113,7 @@ const GallerySection = () => {
               <X className="w-5 h-5" />
             </button>
             <iframe
-              src={videoUrl + (videoUrl.includes("?") ? "&autoplay=1" : "?autoplay=1")}
+              src={videoUrl}
               width="100%"
               height="476"
               style={{ border: "none", overflow: "hidden" }}
