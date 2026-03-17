@@ -1,4 +1,3 @@
-import logo from "@/assets/logo-divinyl.png";
 import { Facebook } from "lucide-react";
 
 const Footer = () => {
@@ -7,7 +6,6 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="Divinyl logo" className="w-6 h-6" />
             <span className="font-display text-lg font-bold text-gradient-dark">Divinyl</span>
           </div>
 
