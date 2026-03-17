@@ -16,7 +16,7 @@ const EditionsOriginales = () => {
         .from("records")
         .select("*")
         .eq("category", "editions_originales")
-        .eq("is_sold", false)
+        
         .order("created_at", { ascending: false });
       setRecords(data || []);
       setLoading(false);
