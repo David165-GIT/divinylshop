@@ -6,49 +6,44 @@
 
 @layer base {
   :root {
-    --background: 30 10% 8%;
-    --foreground: 40 30% 90%;
+    --background: 40 30% 97%;
+    --foreground: 30 20% 15%;
 
-    --card: 30 10% 12%;
-    --card-foreground: 40 30% 90%;
+    --card: 40 25% 94%;
+    --card-foreground: 30 20% 15%;
 
-    --popover: 30 10% 12%;
-    --popover-foreground: 40 30% 90%;
+    --popover: 40 30% 97%;
+    --popover-foreground: 30 20% 15%;
 
-    --primary: 36 80% 50%;
-    --primary-foreground: 30 10% 8%;
+    --primary: 30 25% 18%;
+    --primary-foreground: 40 30% 97%;
 
-    --secondary: 30 10% 18%;
-    --secondary-foreground: 40 20% 75%;
+    --secondary: 35 20% 90%;
+    --secondary-foreground: 30 20% 25%;
 
-    --muted: 30 8% 16%;
-    --muted-foreground: 30 10% 55%;
+    --muted: 35 15% 92%;
+    --muted-foreground: 30 10% 45%;
 
-    --accent: 36 80% 50%;
-    --accent-foreground: 30 10% 8%;
+    --accent: 36 70% 48%;
+    --accent-foreground: 40 30% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 30 10% 20%;
-    --input: 30 10% 20%;
-    --ring: 36 80% 50%;
+    --border: 35 15% 85%;
+    --input: 35 15% 85%;
+    --ring: 30 25% 18%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 30 10% 10%;
-    --sidebar-foreground: 40 30% 90%;
-    --sidebar-primary: 36 80% 50%;
-    --sidebar-primary-foreground: 30 10% 8%;
-    --sidebar-accent: 30 10% 16%;
-    --sidebar-accent-foreground: 40 30% 90%;
-    --sidebar-border: 30 10% 20%;
-    --sidebar-ring: 36 80% 50%;
-
-    /* Custom tokens */
-    --warm-glow: 36 90% 55%;
-    --cream: 40 30% 90%;
-    --deep-brown: 30 15% 6%;
+    --sidebar-background: 40 25% 95%;
+    --sidebar-foreground: 30 20% 15%;
+    --sidebar-primary: 30 25% 18%;
+    --sidebar-primary-foreground: 40 30% 97%;
+    --sidebar-accent: 35 20% 90%;
+    --sidebar-accent-foreground: 30 20% 15%;
+    --sidebar-border: 35 15% 85%;
+    --sidebar-ring: 36 70% 48%;
   }
 }
 
@@ -67,13 +62,18 @@
 }
 
 @layer utilities {
-  .text-gradient-gold {
+  .text-gradient-dark {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(36 90% 55%), hsl(40 80% 65%), hsl(36 90% 55%));
+    background-image: linear-gradient(135deg, hsl(30 25% 15%), hsl(30 15% 30%), hsl(30 25% 15%));
   }
 
   .bg-warm-overlay {
-    background: linear-gradient(180deg, hsl(30 10% 8% / 0.7) 0%, hsl(30 10% 8% / 0.3) 40%, hsl(30 10% 8% / 0.8) 100%);
+    background: linear-gradient(
+      180deg,
+      hsl(40 30% 97% / 0.6) 0%,
+      hsl(40 30% 97% / 0.3) 40%,
+      hsl(40 30% 97% / 0.75) 100%
+    );
   }
 
   .bg-grain {
@@ -84,8 +84,15 @@
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.03;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     pointer-events: none;
+  }
+
+  .watermark-logo {
+    position: absolute;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
   }
 }

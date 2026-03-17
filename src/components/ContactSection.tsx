@@ -5,17 +5,16 @@ const ContactSection = () => {
     <section id="contact" className="py-24 bg-secondary bg-grain">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-gold mb-4">Nous trouver</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Nous trouver</h2>
           <p className="text-muted-foreground font-body max-w-md mx-auto">
             Passez nous voir en boutique à Nemours ou retrouvez-nous sur Facebook !
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Info */}
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Adresse</h3>
                 <p className="text-sm text-muted-foreground font-body">
@@ -26,7 +25,7 @@ const ContactSection = () => {
                   href="https://maps.google.fr/maps?f=q&source=s_q&hl=fr&geocode=&q=48.265996,2.696041"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary font-body mt-1 hover:underline"
+                  className="inline-flex items-center gap-1 text-xs text-accent font-body mt-1 hover:underline"
                 >
                   Voir sur Google Maps <ExternalLink className="w-3 h-3" />
                 </a>
@@ -34,7 +33,7 @@ const ContactSection = () => {
             </div>
 
             <div className="flex items-start gap-4">
-              <Clock className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <Clock className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Horaires</h3>
                 <div className="text-sm text-muted-foreground font-body space-y-0.5">
@@ -46,24 +45,22 @@ const ContactSection = () => {
             </div>
 
             <div className="flex items-start gap-4">
-              <Phone className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <Phone className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Téléphone</h3>
-                <p className="text-sm text-muted-foreground font-body">
-                  Appelez-nous en boutique
-                </p>
+                <p className="text-sm text-muted-foreground font-body">Appelez-nous en boutique</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <Facebook className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <Facebook className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Facebook</h3>
                 <a
                   href="https://www.facebook.com/divinyl.shop/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-primary font-body hover:underline"
+                  className="text-sm text-accent font-body hover:underline"
                 >
                   @divinyl.shop
                 </a>
@@ -74,14 +71,13 @@ const ContactSection = () => {
             </div>
           </div>
 
-          {/* Map embed */}
-          <div className="rounded-sm overflow-hidden border border-border h-80 lg:h-auto min-h-[320px]">
+          <div className="rounded-md overflow-hidden border border-border h-80 lg:h-auto min-h-[320px] shadow-sm">
             <iframe
               title="Divinyl — Nemours"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2653.5!2d2.696041!3d48.265996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDjCsDE1JzU3LjYiTiAywrA0MSc0NS43IkU!5e0!3m2!1sfr!2sfr!4v1"
               width="100%"
               height="100%"
-              style={{ border: 0, filter: "invert(0.9) hue-rotate(180deg) brightness(0.8) contrast(1.2)" }}
+              style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

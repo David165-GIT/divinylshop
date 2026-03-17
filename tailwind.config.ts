@@ -62,9 +62,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         warm: {
-          glow: "hsl(var(--warm-glow))",
+          glow: "hsl(var(--accent))",
         },
-        cream: "hsl(var(--cream))",
+        cream: "hsl(var(--background))",
       },
       borderRadius: {
         lg: "var(--radius)",
