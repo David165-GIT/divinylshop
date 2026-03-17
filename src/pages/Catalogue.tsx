@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
@@ -7,9 +7,11 @@ import type { Database } from "@/integrations/supabase/types";
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
 const Catalogue = () => {
+  const [searchParams] = useSearchParams();
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"vinyl" | "hifi">("vinyl");
+  const initialTab = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
+  const [filter, setFilter] = useState<"vinyl" | "hifi">(initialTab as "vinyl" | "hifi");
 
   useEffect(() => {
     const fetchRecords = async () => {
