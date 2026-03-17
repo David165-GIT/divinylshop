@@ -11,7 +11,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="max-w-xl mx-auto">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <MapPin className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
@@ -69,19 +69,6 @@ const ContactSection = () => {
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="rounded-md overflow-hidden border border-border h-80 lg:h-auto min-h-[320px] shadow-sm">
-            <iframe
-              title="Divinyl — Nemours"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2653.5!2d2.696041!3d48.265996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDjCsDE1JzU3LjYiTiAywrA0MSc0NS43IkU!5e0!3m2!1sfr!2sfr!4v1"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
           </div>
         </div>
       </div>
