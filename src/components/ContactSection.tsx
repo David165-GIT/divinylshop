@@ -11,7 +11,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="max-w-xl mx-auto">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <MapPin className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
