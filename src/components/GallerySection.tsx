@@ -31,7 +31,7 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
         className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
         loading="lazy"
       />
-      <div className={`absolute inset-0 transition-all duration-500 flex items-end p-6 ${item.alwaysShow ? "bg-background/10" : "bg-background/0 group-hover:bg-background/80"}`}>
+      <div className={`absolute inset-0 transition-all duration-500 flex items-end p-6 ${item.alwaysShow ? "bg-background/30" : "bg-background/0 group-hover:bg-background/80"}`}>
         <div className={`transition-all duration-500 ${item.alwaysShow ? "" : "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"}`}>
           <h3 className="font-display text-xl font-bold text-foreground">{item.title}</h3>
           <p className={`text-sm font-body mt-1 ${item.link || item.video ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
