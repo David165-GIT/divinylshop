@@ -1,10 +1,10 @@
-import heroImg from "@/assets/hero-turntable.png";
+import heroImg from "@/assets/shop-interior-2.png";
 import { Facebook, MapPin, ChevronDown } from "lucide-react";
 
 const HeroSection = () => {
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col">
-      {/* Top half - Content on clean background */}
+      {/* Top - Content */}
       <div className="relative flex-1 flex items-center justify-center bg-background pt-20 pb-8">
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
           <h1 className="text-7xl md:text-9xl font-display font-black text-foreground mb-3 animate-fade-in-up tracking-tight">
@@ -39,19 +39,18 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Bottom - Full-width image banner */}
+      {/* Bottom - Full-width image */}
       <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
         <img
           src={heroImg}
-          alt="Platine vinyle Shure"
+          alt="Intérieur de la boutique Divinyl à Nemours"
           className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-        <ChevronDown className="w-6 h-6 text-background/70" />
+        <ChevronDown className="w-6 h-6 text-foreground/40" />
       </div>
     </section>
   );
