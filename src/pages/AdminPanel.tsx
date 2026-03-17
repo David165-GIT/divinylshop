@@ -133,6 +133,30 @@ const AdminPanel = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Video URL Setting */}
+        <div className="bg-card border border-border rounded-md p-4 mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Video className="w-4 h-4 text-accent" />
+            <h2 className="font-display font-bold text-foreground text-sm">Vidéo de la galerie</h2>
+          </div>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="URL de la vidéo Facebook embed"
+              className="flex-1 bg-muted border border-border rounded-sm px-4 py-2 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+            />
+            <button
+              onClick={handleSaveVideo}
+              disabled={videoSaving}
+              className="px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all disabled:opacity-50"
+            >
+              {videoSaving ? "…" : "Enregistrer"}
+            </button>
+          </div>
+        </div>
+
         {/* Form Modal */}
         {showForm && (
           <div className="fixed inset-0 bg-foreground/50 z-50 flex items-center justify-center p-4">
