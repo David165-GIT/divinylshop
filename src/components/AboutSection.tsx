@@ -1,20 +1,20 @@
-import { Disc3, Headphones, Heart } from "lucide-react";
+import { Disc3, Headphones, Heart, Star } from "lucide-react";
 
 const features = [
   {
     icon: Disc3,
     title: "Passion du vinyle",
-    description: "Chaque disque est sélectionné avec soin pour sa qualité sonore et sa rareté.",
+    description: "Sélection pointue de vinyles rares, pressages originaux et collectors dans tous les styles : rock, jazz, soul, funk, classique…",
   },
   {
     icon: Headphones,
-    title: "Expertise Hi-Fi",
-    description: "Conseils personnalisés pour construire votre système d'écoute idéal.",
+    title: "Hi-Fi Vintage",
+    description: "Platines, amplis à tubes, enceintes… Du matériel vintage révisé et prêt à jouer pour une écoute authentique.",
   },
   {
     icon: Heart,
-    title: "Amour du son",
-    description: "Nous partageons avec vous la magie du son analogique depuis des années.",
+    title: "Conseil & passion",
+    description: "Un accueil chaleureux et des conseils personnalisés pour trouver le disque ou l'appareil qu'il vous faut.",
   },
 ];
 
@@ -25,9 +25,15 @@ const AboutSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-gold mb-4">À propos</h2>
           <p className="text-muted-foreground font-body max-w-lg mx-auto">
-            Divinyl, c'est une boutique née de la passion pour la musique et le beau matériel.
-            Venez fouiller dans nos bacs et découvrir des pépites sonores.
+            Divinyl, c'est un disquaire indépendant à Nemours (77), né de la passion pour
+            la musique et le beau matériel. Venez fouiller dans nos bacs et découvrir des pépites sonores.
           </p>
+          <div className="flex items-center justify-center gap-1 mt-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 text-primary fill-primary" />
+            ))}
+            <span className="text-sm text-muted-foreground font-body ml-2">5/5 — 52 avis</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -38,7 +44,7 @@ const AboutSection = () => {
             >
               <feature.icon className="w-10 h-10 text-primary mx-auto mb-4" />
               <h3 className="font-display text-xl font-bold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground font-body">{feature.description}</p>
+              <p className="text-sm text-muted-foreground font-body leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>

@@ -1,26 +1,35 @@
-import { MapPin, Clock, Phone, Mail } from "lucide-react";
+import { MapPin, Clock, Phone, Facebook, ExternalLink } from "lucide-react";
 
 const ContactSection = () => {
   return (
     <section id="contact" className="py-24 bg-secondary bg-grain">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-gold mb-4">Contact</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-gold mb-4">Nous trouver</h2>
           <p className="text-muted-foreground font-body max-w-md mx-auto">
-            Passez nous voir en boutique ou contactez-nous pour toute question.
+            Passez nous voir en boutique à Nemours ou retrouvez-nous sur Facebook !
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Info */}
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Adresse</h3>
                 <p className="text-sm text-muted-foreground font-body">
-                  123 Rue du Vinyle<br />
-                  75011 Paris
+                  35 Rue Gautier 1er<br />
+                  77140 Nemours
                 </p>
+                <a
+                  href="https://maps.google.fr/maps?f=q&source=s_q&hl=fr&geocode=&q=48.265996,2.696041"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary font-body mt-1 hover:underline"
+                >
+                  Voir sur Google Maps <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
             </div>
 
@@ -28,11 +37,11 @@ const ContactSection = () => {
               <Clock className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Horaires</h3>
-                <p className="text-sm text-muted-foreground font-body">
-                  Mardi – Samedi : 11h – 19h<br />
-                  Dimanche : 14h – 18h<br />
-                  Lundi : Fermé
-                </p>
+                <div className="text-sm text-muted-foreground font-body space-y-0.5">
+                  <p>Mardi – Vendredi : 10h–13h / 15h–19h</p>
+                  <p>Samedi : 10h–13h / 15h–19h</p>
+                  <p>Dimanche & Lundi : Fermé</p>
+                </div>
               </div>
             </div>
 
@@ -40,44 +49,43 @@ const ContactSection = () => {
               <Phone className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Téléphone</h3>
-                <p className="text-sm text-muted-foreground font-body">01 23 45 67 89</p>
+                <p className="text-sm text-muted-foreground font-body">
+                  Appelez-nous en boutique
+                </p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <Mail className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <Facebook className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-display font-bold text-foreground">Email</h3>
-                <p className="text-sm text-muted-foreground font-body">contact@divinyl.fr</p>
+                <h3 className="font-display font-bold text-foreground">Facebook</h3>
+                <a
+                  href="https://www.facebook.com/divinyl.shop/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary font-body hover:underline"
+                >
+                  @divinyl.shop
+                </a>
+                <p className="text-xs text-muted-foreground font-body mt-0.5">
+                  Arrivages, nouveautés et actus en temps réel
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-card border border-border rounded-sm p-8">
-            <h3 className="font-display text-xl font-bold text-foreground mb-4">Envoyez-nous un message</h3>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Votre nom"
-                className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-              />
-              <input
-                type="email"
-                placeholder="Votre email"
-                className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-              />
-              <textarea
-                rows={4}
-                placeholder="Votre message"
-                className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors resize-none"
-              />
-              <button
-                type="submit"
-                className="w-full px-6 py-3 bg-primary text-primary-foreground font-body font-semibold rounded-sm tracking-wide uppercase text-sm hover:brightness-110 transition-all duration-300"
-              >
-                Envoyer
-              </button>
-            </form>
+          {/* Map embed */}
+          <div className="rounded-sm overflow-hidden border border-border h-80 lg:h-auto min-h-[320px]">
+            <iframe
+              title="Divinyl — Nemours"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2653.5!2d2.696041!3d48.265996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDjCsDE1JzU3LjYiTiAywrA0MSc0NS43IkU!5e0!3m2!1sfr!2sfr!4v1"
+              width="100%"
+              height="100%"
+              style={{ border: 0, filter: "invert(0.9) hue-rotate(180deg) brightness(0.8) contrast(1.2)" }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </div>

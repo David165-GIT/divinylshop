@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Facebook } from "lucide-react";
 import logo from "@/assets/logo-divinyl.png";
 
 const navLinks = [
@@ -15,25 +15,36 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto flex items-center justify-between py-4 px-4">
+      <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <a href="#accueil" className="flex items-center gap-2 group">
-          <img src={logo} alt="Divinyl logo" className="w-8 h-8" />
+          <img src={logo} alt="Divinyl logo" className="w-8 h-8 invert" />
           <span className="text-2xl font-display font-bold text-gradient-gold">Divinyl</span>
         </a>
 
         {/* Desktop */}
-        <ul className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm font-body text-secondary-foreground hover:text-primary transition-colors duration-300 tracking-wide uppercase"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="hidden md:flex items-center gap-8">
+          <ul className="flex items-center gap-8">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-sm font-body text-secondary-foreground hover:text-primary transition-colors duration-300 tracking-wide uppercase"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://www.facebook.com/divinyl.shop/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-secondary-foreground hover:text-primary transition-colors"
+            aria-label="Facebook"
+          >
+            <Facebook className="w-5 h-5" />
+          </a>
+        </div>
 
         {/* Mobile toggle */}
         <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
@@ -56,6 +67,16 @@ const Navbar = () => {
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                href="https://www.facebook.com/divinyl.shop/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-lg font-body text-primary"
+              >
+                <Facebook className="w-5 h-5" /> Facebook
+              </a>
+            </li>
           </ul>
         </div>
       )}
