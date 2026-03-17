@@ -10,6 +10,7 @@ const Catalogue = () => {
   const [searchParams] = useSearchParams();
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const initialTab = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
   const [filter, setFilter] = useState<"vinyl" | "hifi">(initialTab as "vinyl" | "hifi");
 
