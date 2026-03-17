@@ -17,6 +17,7 @@ const Catalogue = () => {
         .from("records")
         .select("*")
         .eq("is_sold", false)
+        .neq("category", "editions_originales")
         .order("created_at", { ascending: false });
       setRecords(data || []);
       setLoading(false);
