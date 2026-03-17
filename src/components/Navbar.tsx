@@ -7,7 +7,6 @@ const navLinks = [
   { label: "Accueil", href: "#accueil" },
   { label: "Vinyles", href: "#vinyles" },
   { label: "Hi-Fi", href: "#hifi" },
-  { label: "Éditions Originales", href: "/editions-originales" },
   { label: "À propos", href: "#apropos" },
   { label: "Contact", href: "#contact" },
 ];
