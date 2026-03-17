@@ -1,4 +1,5 @@
 import { MapPin, Clock, Phone, Facebook, ExternalLink } from "lucide-react";
+import shopFacadePhoto from "@/assets/shop-facade-photo.png";
 
 const ContactSection = () => {
   return (
@@ -11,7 +12,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <MapPin className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
@@ -69,6 +70,15 @@ const ContactSection = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="rounded-md overflow-hidden shadow-lg">
+            <img
+              src={shopFacadePhoto}
+              alt="Façade de la boutique Divinyl à Nemours"
+              className="w-full h-auto object-cover"
+              loading="lazy"
+            />
           </div>
         </div>
       </div>
