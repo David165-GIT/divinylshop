@@ -25,7 +25,7 @@ const Catalogue = () => {
     fetchRecords();
   }, []);
 
-  const filtered = filter === "all" ? records : records.filter((r) => r.category === filter);
+  const filtered = records.filter((r) => r.category === filter);
 
   return (
     <div className="min-h-screen bg-background">
