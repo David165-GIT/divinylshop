@@ -1,9 +1,8 @@
-import vinylCrate from "@/assets/vinyl-crate.jpg";
-import vinylSpinning from "@/assets/vinyl-spinning.jpg";
-import vinylStack from "@/assets/vinyl-stack.jpg";
-import hifiVintage from "@/assets/hifi-vintage.jpg";
-import tubeAmp from "@/assets/tube-amp.jpg";
-
+import shopFacade from "@/assets/shop-facade.png";
+import shopInterior1 from "@/assets/shop-interior-1.png";
+import shopVinylWall from "@/assets/shop-vinyl-wall.png";
+import shopDeepPurple from "@/assets/shop-deep-purple.png";
+import shopHifi from "@/assets/shop-hifi.png";
 
 interface GalleryItem {
   src: string;
@@ -13,14 +12,14 @@ interface GalleryItem {
 }
 
 const vinylItems: GalleryItem[] = [
-  { src: vinylCrate, alt: "Bac à vinyles", title: "Arrivages récents", subtitle: "Rock, Jazz, Soul, Funk…" },
-  { src: vinylSpinning, alt: "Vinyle en rotation", title: "Éditions originales", subtitle: "Pressages rares et collectors" },
-  { src: vinylStack, alt: "Pile de vinyles", title: "Sélection du moment", subtitle: "Nos coups de cœur" },
+  { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection", subtitle: "Rock, Jazz, Soul, Funk…" },
+  { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors" },
+  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Venez fouiller dans nos bacs" },
 ];
 
 const hifiItems: GalleryItem[] = [
-  { src: hifiVintage, alt: "Platine vintage", title: "Platines vinyles", subtitle: "Thorens, Technics, Dual…" },
-  { src: tubeAmp, alt: "Ampli à tubes", title: "Amplificateurs à tubes", subtitle: "Le son chaud et authentique" },
+  { src: shopHifi, alt: "Matériel Hi-Fi vintage chez Divinyl", title: "Hi-Fi Vintage", subtitle: "Platines, amplis, enceintes…" },
+  { src: shopFacade, alt: "Façade de la boutique Divinyl à Nemours", title: "La boutique", subtitle: "35 Rue Gautier 1er, Nemours" },
 ];
 
 const GalleryCard = ({ item }: { item: GalleryItem }) => (
@@ -45,7 +44,6 @@ const GallerySection = () => {
     <>
       {/* Vinyles */}
       <section id="vinyles" className="relative py-24 bg-grain overflow-hidden">
-        
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Vinyles</h2>
@@ -63,7 +61,6 @@ const GallerySection = () => {
 
       {/* Hi-Fi */}
       <section id="hifi" className="relative py-24 bg-secondary bg-grain overflow-hidden">
-        
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Hi-Fi Vintage</h2>
