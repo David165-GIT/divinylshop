@@ -45,7 +45,7 @@ const GallerySection = () => {
     <>
       {/* Vinyles */}
       <section id="vinyles" className="relative py-24 bg-grain overflow-hidden">
-        <img src={logo} alt="" aria-hidden="true" className="watermark-logo w-[500px] h-[500px] -right-40 top-10 object-contain" />
+        
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Vinyles</h2>
