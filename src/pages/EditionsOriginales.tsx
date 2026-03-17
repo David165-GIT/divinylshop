@@ -71,7 +71,11 @@ const EditionsOriginales = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {records.map((record) => (
-              <div key={record.id} className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative ${record.is_sold ? "opacity-70" : ""}`}>
+              <div
+                key={record.id}
+                className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${record.is_sold ? "opacity-70" : ""}`}
+                onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
+              >
                 <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-sm text-xs font-body font-semibold uppercase tracking-wide ${
                   record.is_sold
                     ? "bg-destructive text-destructive-foreground"
@@ -102,7 +106,7 @@ const EditionsOriginales = () => {
                   <h3 className="font-display font-bold text-foreground leading-tight">{record.title}</h3>
                   <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                   {record.description && (
-                    <p className="text-xs text-muted-foreground font-body mt-2 line-clamp-2">{record.description}</p>
+                    <p className={`text-xs text-muted-foreground font-body mt-2 transition-all duration-300 ${expandedId === record.id ? "" : "line-clamp-2"}`}>{record.description}</p>
                   )}
                 </div>
               </div>
