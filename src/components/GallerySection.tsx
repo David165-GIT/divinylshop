@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
 import shopInterior1 from "@/assets/shop-interior-1.png";
@@ -63,6 +64,19 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
 const GallerySection = () => {
   const [videoOpen, setVideoOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+
+  useEffect(() => {
+    const fetchVideoUrl = async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "gallery_video_url")
+        .single();
+      if (data) setVideoUrl(data.value);
+    };
+    fetchVideoUrl();
+  }, []);
 
   return (
     <>
@@ -84,7 +98,7 @@ const GallerySection = () => {
       </section>
 
       {/* Video Modal */}
-      {videoOpen && (
+      {videoOpen && videoUrl && (
         <div
           className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
           onClick={() => setVideoOpen(false)}
@@ -100,7 +114,7 @@ const GallerySection = () => {
               <X className="w-5 h-5" />
             </button>
             <iframe
-              src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F802899802234166%2F&show_text=false&width=267&t=0"
+              src={videoUrl}
               width="100%"
               height="476"
               style={{ border: "none", overflow: "hidden" }}
