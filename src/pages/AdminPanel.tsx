@@ -25,7 +25,19 @@ const AdminPanel = () => {
   useEffect(() => {
     checkAuth();
     fetchRecords();
+    fetchVideoUrl();
   }, []);
+
+  const fetchVideoUrl = async () => {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "gallery_video_url").single();
+    if (data) setVideoUrl(data.value);
+  };
+
+  const handleSaveVideo = async () => {
+    setVideoSaving(true);
+    await supabase.from("site_settings").update({ value: videoUrl }).eq("key", "gallery_video_url");
+    setVideoSaving(false);
+  };
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
