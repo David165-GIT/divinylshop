@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span className="font-display text-lg font-bold text-gradient-dark">Divinyl</span>
+            <a href="/admin/login" className="font-display text-lg font-bold text-gradient-dark hover:opacity-80 transition-opacity">Divinyl</a>
           </div>
 
           <p className="text-sm text-muted-foreground font-body text-center">
