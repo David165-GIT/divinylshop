@@ -19,10 +19,6 @@ const vinylItems: GalleryItem[] = [
   { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Venez fouiller dans nos bacs" },
 ];
 
-const hifiItems: GalleryItem[] = [
-  { src: shopHifi, alt: "Matériel Hi-Fi vintage chez Divinyl", title: "Hi-Fi Vintage", subtitle: "Voir le catalogue →", link: "/catalogue" },
-  { src: shopFacade, alt: "Façade de la boutique Divinyl à Nemours", title: "La boutique", subtitle: "35 Rue Gautier 1er, Nemours" },
-];
 
 const GalleryCard = ({ item }: { item: GalleryItem }) => {
   const content = (
