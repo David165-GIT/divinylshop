@@ -7,8 +7,8 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="Divinyl logo" className="w-6 h-6 invert" />
-            <span className="font-display text-lg font-bold text-gradient-gold">Divinyl</span>
+            <img src={logo} alt="Divinyl logo" className="w-6 h-6" />
+            <span className="font-display text-lg font-bold text-gradient-dark">Divinyl</span>
           </div>
 
           <p className="text-sm text-muted-foreground font-body text-center">
@@ -19,7 +19,7 @@ const Footer = () => {
             href="https://www.facebook.com/divinyl.shop/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Facebook Divinyl"
           >
             <Facebook className="w-5 h-5" />
