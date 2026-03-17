@@ -6,7 +6,7 @@ const SellSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center">
           <Package className="w-10 h-10 text-accent mx-auto mb-6" />
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-gradient-dark mb-4">
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-gradient-dark mb-4 animate-pulse">
             Du matériel à vendre ?
           </h2>
           <p className="text-muted-foreground font-body leading-relaxed mb-8">
