@@ -115,9 +115,6 @@ const Catalogue = () => {
                   {record.description && (
                     <p className="text-xs text-muted-foreground font-body mt-2 line-clamp-2">{record.description}</p>
                   )}
-                  {record.price && (
-                    <p className="text-lg font-body font-bold text-foreground mt-3">{record.price} €</p>
-                  )}
                 </div>
               </div>
             ))}
