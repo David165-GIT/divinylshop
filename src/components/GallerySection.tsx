@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
-import shopFacade from "@/assets/shop-facade.png";
-import shopInterior1 from "@/assets/shop-interior-1.png";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
-import shopHifi from "@/assets/shop-hifi.png";
+import shopInterior1 from "@/assets/shop-interior-1.png";
 
 interface GalleryItem {
   src: string;
@@ -19,10 +17,6 @@ const vinylItems: GalleryItem[] = [
   { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Venez fouiller dans nos bacs" },
 ];
 
-const hifiItems: GalleryItem[] = [
-  { src: shopHifi, alt: "Matériel Hi-Fi vintage chez Divinyl", title: "Hi-Fi Vintage", subtitle: "Voir le catalogue →", link: "/catalogue" },
-  { src: shopFacade, alt: "Façade de la boutique Divinyl à Nemours", title: "La boutique", subtitle: "35 Rue Gautier 1er, Nemours" },
-];
 
 const GalleryCard = ({ item }: { item: GalleryItem }) => {
   const content = (
@@ -77,22 +71,6 @@ const GallerySection = () => {
         </div>
       </section>
 
-      {/* Hi-Fi */}
-      <section id="hifi" className="relative py-24 bg-secondary bg-grain overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Hi-Fi Vintage</h2>
-            <p className="text-muted-foreground font-body max-w-md mx-auto">
-              Du matériel d'exception pour une écoute authentique et chaleureuse.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {hifiItems.map((item) => (
-              <GalleryCard key={item.title} item={item} />
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   );
 };
