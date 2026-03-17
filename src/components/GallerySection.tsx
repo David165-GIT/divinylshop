@@ -63,7 +63,7 @@ const GallerySection = () => {
 
       {/* Hi-Fi */}
       <section id="hifi" className="relative py-24 bg-secondary bg-grain overflow-hidden">
-        <img src={logo} alt="" aria-hidden="true" className="watermark-logo w-[400px] h-[400px] -left-32 bottom-10 object-contain" />
+        
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Hi-Fi Vintage</h2>
