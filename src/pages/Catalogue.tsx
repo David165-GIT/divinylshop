@@ -19,7 +19,8 @@ const Catalogue = () => {
         .from("records")
         .select("*")
         .neq("category", "editions_originales")
-        .order("created_at", { ascending: false });
+        .order("artist", { ascending: true })
+        .order("title", { ascending: true });
       setRecords(data || []);
       setLoading(false);
     };
