@@ -272,7 +272,7 @@ const AdminPanel = () => {
                   </span>
                   {totalCopies !== articleCount && tab.key !== "hifi" && (
                     <span className={`text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
-                      {totalCopies} exemplaires
+                      {totalCopies} articles
                     </span>
                   )}
                 </button>
