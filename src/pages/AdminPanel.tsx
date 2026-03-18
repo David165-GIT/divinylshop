@@ -258,9 +258,12 @@ const AdminPanel = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all inline-flex items-center gap-1.5 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
               >
                 {tab.label}
+                <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
+                  {records.filter((r) => r.category === tab.key).length}
+                </span>
               </button>
             ))}
           </div>
