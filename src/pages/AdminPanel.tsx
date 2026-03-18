@@ -15,6 +15,7 @@ const AdminPanel = () => {
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("vinyl");
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
