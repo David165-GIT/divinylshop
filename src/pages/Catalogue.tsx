@@ -58,22 +58,6 @@ const Catalogue = () => {
           <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
-          {(["vinyl", "hifi"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-sm text-sm font-body tracking-wide transition-all ${
-                filter === f
-                  ? "bg-foreground text-background font-semibold"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f === "vinyl" ? "Vinyles" : "Hi-Fi"}
-            </button>
-          ))}
-        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
