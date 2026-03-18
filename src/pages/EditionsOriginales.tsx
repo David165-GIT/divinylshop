@@ -41,9 +41,9 @@ const EditionsOriginales = () => {
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
-            </Link>
+            </button>
             <h1 className="text-xl font-display font-bold text-gradient-dark">Éditions Originales</h1>
           </div>
           <a
