@@ -262,15 +262,17 @@ const AdminPanel = () => {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all inline-flex items-center gap-2 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all flex flex-col items-center gap-0.5 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
                 >
-                  {tab.label}
-                  <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
-                    {articleCount}
+                  <span className="inline-flex items-center gap-1.5">
+                    {tab.label}
+                    <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
+                      {articleCount}
+                    </span>
                   </span>
                   {totalCopies !== articleCount && tab.key !== "hifi" && (
-                    <span className={`text-[10px] font-body ${activeTab === tab.key ? "text-background/60" : "text-muted-foreground/60"}`}>
-                      ({totalCopies} ex.)
+                    <span className={`text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
+                      {totalCopies} exemplaires
                     </span>
                   )}
                 </button>
