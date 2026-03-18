@@ -271,7 +271,7 @@ const AdminPanel = () => {
                     </span>
                   </span>
                   <span className={`text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
-                      {articleCount} articles
+                      {articleCount} références
                     </span>
                 </button>
               );
