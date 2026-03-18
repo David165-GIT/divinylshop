@@ -8,6 +8,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 
 const Catalogue = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);

@@ -8,6 +8,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 
 const EditionsOriginales = () => {
   const [records, setRecords] = useState<Record[]>([]);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
