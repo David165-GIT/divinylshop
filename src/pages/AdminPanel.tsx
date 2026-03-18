@@ -268,7 +268,7 @@ const AdminPanel = () => {
                   <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
                     {articleCount}
                   </span>
-                  {totalCopies !== articleCount && (
+                  {totalCopies !== articleCount && tab.key !== "hifi" && (
                     <span className={`text-[10px] font-body ${activeTab === tab.key ? "text-background/60" : "text-muted-foreground/60"}`}>
                       ({totalCopies} ex.)
                     </span>
