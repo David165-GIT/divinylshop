@@ -73,15 +73,15 @@ const EditionsOriginales = () => {
             {records.map((record) => (
               <div
                 key={record.id}
-                className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${record.is_sold ? "opacity-70" : ""}`}
+                className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
                 onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
               >
                 <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-sm text-xs font-body font-semibold uppercase tracking-wide ${
-                  record.is_sold
+                  (record.quantity ?? 1) === 0
                     ? "bg-destructive text-destructive-foreground"
                     : "bg-accent text-accent-foreground"
                 }`}>
-                  {record.is_sold ? "Vendu" : "Dispo"}
+                  {(record.quantity ?? 1) === 0 ? "Vendu" : "Dispo"}
                 </span>
                 {record.image_url ? (
                   <div className="overflow-hidden">

@@ -249,7 +249,7 @@ const AdminPanel = () => {
                     <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                     {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}
                     {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
-                    {record.is_sold && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
+                    {(record.quantity ?? 1) === 0 && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
                   </div>
                   <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
                     <button onClick={() => handleEdit(record)} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
