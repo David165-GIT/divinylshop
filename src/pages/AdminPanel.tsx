@@ -18,6 +18,7 @@ const AdminPanel = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
+  const [showOutOfStock, setShowOutOfStock] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -277,20 +278,28 @@ const AdminPanel = () => {
               );
             })}
           </div>
-          <button
-            onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setShowForm(true); }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
-          >
-            <Plus className="w-4 h-4" /> Ajouter
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowOutOfStock(!showOutOfStock)}
+              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${showOutOfStock ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+            >
+              Plus en stock
+            </button>
+            <button
+              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setShowForm(true); }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
+            >
+              <Plus className="w-4 h-4" /> Ajouter
+            </button>
+          </div>
         </div>
 
         {/* Records list */}
-        {records.filter((r) => r.category === activeTab).length === 0 ? (
-          <p className="text-center text-muted-foreground font-body py-16">Aucun article dans cette catégorie.</p>
+        {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : true)).length === 0 ? (
+          <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : "Aucun article dans cette catégorie."}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {records.filter((r) => r.category === activeTab).map((record) => (
+            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : true)).map((record) => (
               <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""}`}>
                 {record.image_url && (
                   <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
