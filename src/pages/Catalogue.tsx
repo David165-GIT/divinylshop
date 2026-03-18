@@ -63,9 +63,12 @@ const Catalogue = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10 text-center">
-          <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
-          <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
+        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10">
+          <div className="text-center">
+            <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
+            <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
+          </div>
+          <p className="text-xs text-muted-foreground font-body italic text-right mt-2">Liste non exhaustive, bien plus encore en magasin</p>
         </div>
 
 
