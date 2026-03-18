@@ -15,6 +15,7 @@ const AdminPanel = () => {
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("vinyl");
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -213,12 +214,29 @@ const AdminPanel = () => {
           </div>
         )}
 
+        {/* Category tabs */}
+        <div className="flex gap-2 mb-6">
+          {[
+            { key: "vinyl", label: "Vinyles" },
+            { key: "editions_originales", label: "Éditions Originales" },
+            { key: "hifi", label: "Hi-Fi" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         {/* Records list */}
-        {records.length === 0 ? (
-          <p className="text-center text-muted-foreground font-body py-16">Aucun article pour le moment. Cliquez sur "Ajouter" pour commencer.</p>
+        {records.filter((r) => r.category === activeTab).length === 0 ? (
+          <p className="text-center text-muted-foreground font-body py-16">Aucun article dans cette catégorie.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {records.map((record) => (
+            {records.filter((r) => r.category === activeTab).map((record) => (
               <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${record.is_sold ? "opacity-60" : ""}`}>
                 {record.image_url && (
                   <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
