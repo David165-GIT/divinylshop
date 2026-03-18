@@ -238,7 +238,7 @@ const AdminPanel = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {records.filter((r) => r.category === activeTab).map((record) => (
-              <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${record.is_sold ? "opacity-60" : ""}`}>
+              <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""}`}>
                 {record.image_url && (
                   <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
                 )}
