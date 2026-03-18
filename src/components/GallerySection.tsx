@@ -61,6 +61,19 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
   );
 };
 
+const toEmbedUrl = (url: string): string => {
+  // Already an embed URL
+  if (url.includes("/embed/")) return url;
+  // youtu.be/ID or youtube.com/watch?v=ID
+  let id = "";
+  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  const longMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (shortMatch) id = shortMatch[1];
+  else if (longMatch) id = longMatch[1];
+  if (id) return `https://www.youtube.com/embed/${id}`;
+  return url;
+};
+
 const GallerySection = () => {
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
@@ -72,7 +85,7 @@ const GallerySection = () => {
         .select("value")
         .eq("key", "gallery_video_url")
         .single();
-      if (data) setVideoUrl(data.value);
+      if (data) setVideoUrl(toEmbedUrl(data.value));
     };
     fetchVideoUrl();
   }, []);
