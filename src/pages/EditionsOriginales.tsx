@@ -17,12 +17,20 @@ const EditionsOriginales = () => {
         .from("records")
         .select("*")
         .eq("category", "editions_originales")
-        
         .order("created_at", { ascending: false });
       setRecords(data || []);
       setLoading(false);
     };
     fetchRecords();
+
+    const channel = supabase
+      .channel("editions-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "records" }, () => {
+        fetchRecords();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   return (
