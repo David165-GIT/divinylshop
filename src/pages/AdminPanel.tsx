@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, ArrowLeft, Upload, X, Video } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
