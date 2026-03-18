@@ -96,8 +96,9 @@ const AdminPanel = () => {
     fetchRecords();
   };
 
-  const handleToggleSold = async (record: Record) => {
-    await supabase.from("records").update({ is_sold: !record.is_sold }).eq("id", record.id);
+  const handleQuantityChange = async (record: Record, delta: number) => {
+    const newQty = Math.max(0, (record.quantity ?? 1) + delta);
+    await supabase.from("records").update({ quantity: newQty, is_sold: newQty === 0 }).eq("id", record.id);
     fetchRecords();
   };
 
