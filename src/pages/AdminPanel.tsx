@@ -281,10 +281,16 @@ const AdminPanel = () => {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowOutOfStock(!showOutOfStock)}
+              onClick={() => { setShowOutOfStock(!showOutOfStock); if (!showOutOfStock) setShowMultiple(false); }}
               className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${showOutOfStock ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
               Plus en stock
+            </button>
+            <button
+              onClick={() => { setShowMultiple(!showMultiple); if (!showMultiple) setShowOutOfStock(false); }}
+              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${showMultiple ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+            >
+              Plusieurs exemplaires
             </button>
             <button
               onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setShowForm(true); }}
