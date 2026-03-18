@@ -37,6 +37,20 @@ const AboutSection = () => {
           </div>
         </div>
 
+        {/* Photo Paolo */}
+        <div className="flex justify-center mb-16">
+          <figure className="max-w-sm rounded-md overflow-hidden shadow-md border border-border">
+            <img
+              src={paoloImg}
+              alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
+              className="w-full aspect-[4/3] object-cover object-top"
+            />
+            <figcaption className="bg-card px-4 py-3 text-center font-body text-sm text-muted-foreground italic">
+              Paolo vous accueille dans sa boutique
+            </figcaption>
+          </figure>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {features.map((feature) => (
             <div
