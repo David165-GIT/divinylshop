@@ -12,7 +12,7 @@ const Footer = () => {
     if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
     if (tapCountRef.current >= 3) {
       tapCountRef.current = 0;
-      navigate("/admin/login");
+      window.open("/admin/login", "_blank");
       return;
     }
     tapTimerRef.current = setTimeout(() => {
