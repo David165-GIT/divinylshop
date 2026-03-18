@@ -302,11 +302,11 @@ const AdminPanel = () => {
         </div>
 
         {/* Records list */}
-        {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : true)).length === 0 ? (
-          <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : "Aucun article dans cette catégorie."}</p>
+        {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).length === 0 ? (
+          <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : "Aucun article dans cette catégorie."}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : true)).map((record) => (
+            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => (
               <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""}`}>
                 {record.image_url && (
                   <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
