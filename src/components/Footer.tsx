@@ -24,7 +24,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span onClick={handleTripleClick} className="font-display text-lg font-bold text-gradient-dark cursor-default select-none">Divinyl</span>
+            <span onClick={handleTap} className="font-display text-lg font-bold text-gradient-dark cursor-default select-none">Divinyl</span>
           </div>
 
           <p className="text-sm text-muted-foreground font-body text-center">
