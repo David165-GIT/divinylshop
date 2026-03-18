@@ -267,12 +267,12 @@ const AdminPanel = () => {
                   <span className="inline-flex items-center gap-1.5">
                     {tab.label}
                     <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
-                      {articleCount}
+                      {totalCopies}
                     </span>
                   </span>
                   {totalCopies !== articleCount && tab.key !== "hifi" && (
                     <span className={`text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
-                      {totalCopies} articles
+                      {articleCount} articles
                     </span>
                   )}
                 </button>
