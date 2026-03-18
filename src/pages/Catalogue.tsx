@@ -11,8 +11,7 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const initialTab = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
-  const [filter, setFilter] = useState<"vinyl" | "hifi">(initialTab as "vinyl" | "hifi");
+  const filter = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -39,7 +38,7 @@ const Catalogue = () => {
             <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-xl font-display font-bold text-gradient-dark">Catalogue Divinyl</h1>
+            <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : "Catalogue Vinyles"}</h1>
           </div>
           <a
             href="https://www.facebook.com/divinyl.shop/"
@@ -59,22 +58,6 @@ const Catalogue = () => {
           <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
-          {(["vinyl", "hifi"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-sm text-sm font-body tracking-wide transition-all ${
-                filter === f
-                  ? "bg-foreground text-background font-semibold"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f === "vinyl" ? "Vinyles" : "Hi-Fi"}
-            </button>
-          ))}
-        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
