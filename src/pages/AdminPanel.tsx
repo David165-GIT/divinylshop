@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
@@ -72,6 +73,19 @@ const AdminPanel = () => {
     if (editingRecord) {
       await supabase.from("records").update(form).eq("id", editingRecord.id);
     } else {
+      // Check for duplicate
+      const { data: existing } = await supabase
+        .from("records")
+        .select("id")
+        .eq("title", form.title)
+        .eq("artist", form.artist);
+      if (existing && existing.length > 0) {
+        toast({
+          title: "Doublon détecté",
+          description: `Un article "${form.title}" de "${form.artist}" existe déjà. L'article a quand même été créé.`,
+          variant: "destructive",
+        });
+      }
       await supabase.from("records").insert(form);
     }
     setShowForm(false);
