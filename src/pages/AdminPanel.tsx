@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, ArrowLeft, Upload, X, Video } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -114,23 +114,10 @@ const AdminPanel = () => {
       {/* Header */}
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </a>
-            <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null }); setShowForm(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
-            >
-              <Plus className="w-4 h-4" /> Ajouter
-            </button>
-            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
+          <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
@@ -216,20 +203,28 @@ const AdminPanel = () => {
         )}
 
         {/* Category tabs */}
-        <div className="flex gap-2 mb-6">
-          {[
-            { key: "vinyl", label: "Vinyles" },
-            { key: "editions_originales", label: "Éditions Originales" },
-            { key: "hifi", label: "Hi-Fi" },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex gap-2">
+            {[
+              { key: "vinyl", label: "Vinyles" },
+              { key: "editions_originales", label: "Éditions Originales" },
+              { key: "hifi", label: "Hi-Fi" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null }); setShowForm(true); }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
+          >
+            <Plus className="w-4 h-4" /> Ajouter
+          </button>
         </div>
 
         {/* Records list */}
