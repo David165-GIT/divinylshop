@@ -114,23 +114,10 @@ const AdminPanel = () => {
       {/* Header */}
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </a>
-            <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null }); setShowForm(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
-            >
-              <Plus className="w-4 h-4" /> Ajouter
-            </button>
-            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
+          <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
