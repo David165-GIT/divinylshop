@@ -73,23 +73,28 @@ const AdminPanel = () => {
     e.preventDefault();
     if (editingRecord) {
       await supabase.from("records").update(form).eq("id", editingRecord.id);
+      setShowForm(false);
+      setEditingRecord(null);
+      setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+      fetchRecords();
     } else {
-      // Check for duplicate
       const { data: existing } = await supabase
         .from("records")
         .select("id")
         .eq("title", form.title)
         .eq("artist", form.artist);
       if (existing && existing.length > 0) {
-        toast({
-          title: "Doublon détecté",
-          description: `Un article "${form.title}" de "${form.artist}" existe déjà. L'article a quand même été créé.`,
-          variant: "destructive",
-        });
+        setShowDuplicateConfirm(true);
+      } else {
+        await insertAndReset();
       }
-      await supabase.from("records").insert(form);
     }
+  };
+
+  const insertAndReset = async () => {
+    await supabase.from("records").insert(form);
     setShowForm(false);
+    setShowDuplicateConfirm(false);
     setEditingRecord(null);
     setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
     fetchRecords();
