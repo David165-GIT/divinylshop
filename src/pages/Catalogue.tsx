@@ -18,13 +18,21 @@ const Catalogue = () => {
       const { data } = await supabase
         .from("records")
         .select("*")
-        
         .neq("category", "editions_originales")
         .order("created_at", { ascending: false });
       setRecords(data || []);
       setLoading(false);
     };
     fetchRecords();
+
+    const channel = supabase
+      .channel("catalogue-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "records" }, () => {
+        fetchRecords();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const filtered = records.filter((r) => r.category === filter);
