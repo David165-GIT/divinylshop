@@ -14,6 +14,7 @@ const AdminPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
@@ -72,23 +73,28 @@ const AdminPanel = () => {
     e.preventDefault();
     if (editingRecord) {
       await supabase.from("records").update(form).eq("id", editingRecord.id);
+      setShowForm(false);
+      setEditingRecord(null);
+      setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+      fetchRecords();
     } else {
-      // Check for duplicate
       const { data: existing } = await supabase
         .from("records")
         .select("id")
         .eq("title", form.title)
         .eq("artist", form.artist);
       if (existing && existing.length > 0) {
-        toast({
-          title: "Doublon détecté",
-          description: `Un article "${form.title}" de "${form.artist}" existe déjà. L'article a quand même été créé.`,
-          variant: "destructive",
-        });
+        setShowDuplicateConfirm(true);
+      } else {
+        await insertAndReset();
       }
-      await supabase.from("records").insert(form);
     }
+  };
+
+  const insertAndReset = async () => {
+    await supabase.from("records").insert(form);
     setShowForm(false);
+    setShowDuplicateConfirm(false);
     setEditingRecord(null);
     setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
     fetchRecords();
@@ -216,7 +222,32 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Category tabs */}
+        {/* Duplicate confirmation modal */}
+        {showDuplicateConfirm && (
+          <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
+            <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
+              <h3 className="font-display font-bold text-foreground text-lg mb-2">Doublon détecté</h3>
+              <p className="text-sm text-muted-foreground font-body mb-6">
+                Un article « {form.title} » de « {form.artist} » existe déjà. Voulez-vous continuer sa création ?
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowDuplicateConfirm(false)}
+                  className="px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Non
+                </button>
+                <button
+                  onClick={insertAndReset}
+                  className="px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
+                >
+                  Oui
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-2">
             {[
