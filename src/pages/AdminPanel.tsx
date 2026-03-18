@@ -222,7 +222,32 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Category tabs */}
+        {/* Duplicate confirmation modal */}
+        {showDuplicateConfirm && (
+          <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
+            <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
+              <h3 className="font-display font-bold text-foreground text-lg mb-2">Doublon détecté</h3>
+              <p className="text-sm text-muted-foreground font-body mb-6">
+                Un article « {form.title} » de « {form.artist} » existe déjà. Voulez-vous continuer sa création ?
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowDuplicateConfirm(false)}
+                  className="px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Non
+                </button>
+                <button
+                  onClick={insertAndReset}
+                  className="px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
+                >
+                  Oui
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-2">
             {[
