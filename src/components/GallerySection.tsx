@@ -112,15 +112,16 @@ const GallerySection = () => {
             >
               <X className="w-5 h-5" />
             </button>
-            <iframe
-              src={videoUrl}
-              width="100%"
-              height="476"
-              style={{ border: "none", overflow: "hidden" }}
-              scrolling="no"
-              allowFullScreen
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            />
+            <div className="aspect-video">
+              <iframe
+                src={videoUrl}
+                width="100%"
+                height="100%"
+                style={{ border: "none" }}
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              />
+            </div>
           </div>
         </div>
       )}
