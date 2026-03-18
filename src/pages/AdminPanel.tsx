@@ -19,6 +19,7 @@ const AdminPanel = () => {
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
+  const [showMultiple, setShowMultiple] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
