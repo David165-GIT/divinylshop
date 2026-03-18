@@ -14,6 +14,7 @@ const AdminPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
