@@ -96,8 +96,9 @@ const AdminPanel = () => {
     fetchRecords();
   };
 
-  const handleToggleSold = async (record: Record) => {
-    await supabase.from("records").update({ is_sold: !record.is_sold }).eq("id", record.id);
+  const handleQuantityChange = async (record: Record, delta: number) => {
+    const newQty = Math.max(0, (record.quantity ?? 1) + delta);
+    await supabase.from("records").update({ quantity: newQty, is_sold: newQty === 0 }).eq("id", record.id);
     fetchRecords();
   };
 
@@ -237,7 +238,7 @@ const AdminPanel = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {records.filter((r) => r.category === activeTab).map((record) => (
-              <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${record.is_sold ? "opacity-60" : ""}`}>
+              <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""}`}>
                 {record.image_url && (
                   <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
                 )}
@@ -248,13 +249,15 @@ const AdminPanel = () => {
                     <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                     {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}
                     {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
-                    {record.is_sold && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
+                    {(record.quantity ?? 1) === 0 && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
                   </div>
-                  <div className="flex flex-col gap-1.5 flex-shrink-0">
+                  <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
                     <button onClick={() => handleEdit(record)} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
-                    <button onClick={() => handleToggleSold(record)} className="text-muted-foreground hover:text-accent transition-colors text-xs font-body">
-                      {record.is_sold ? "Dispo" : "Vendu"}
-                    </button>
+                    <div className="flex items-center gap-1 border border-border rounded-sm">
+                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, -1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">−</button>
+                      <span className="text-xs font-body font-semibold text-foreground min-w-[1.2rem] text-center">{record.quantity ?? 1}</span>
+                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, 1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">+</button>
+                    </div>
                     <button onClick={() => handleDelete(record.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
