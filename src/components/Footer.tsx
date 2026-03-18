@@ -1,22 +1,30 @@
 import { Facebook } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleTripleClick = useCallback((e: React.MouseEvent) => {
-    if (e.detail === 3) {
-      e.preventDefault();
+  const handleTap = useCallback(() => {
+    tapCountRef.current += 1;
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    if (tapCountRef.current >= 3) {
+      tapCountRef.current = 0;
       navigate("/admin/login");
+      return;
     }
+    tapTimerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 600);
   }, [navigate]);
   return (
     <footer className="py-12 border-t border-border">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span onClick={handleTripleClick} className="font-display text-lg font-bold text-gradient-dark cursor-default select-none">Divinyl</span>
+            <span onClick={handleTap} className="font-display text-lg font-bold text-gradient-dark cursor-default select-none">Divinyl</span>
           </div>
 
           <p className="text-sm text-muted-foreground font-body text-center">
