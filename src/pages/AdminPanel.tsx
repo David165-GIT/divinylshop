@@ -81,8 +81,8 @@ const AdminPanel = () => {
       const { data: existing } = await supabase
         .from("records")
         .select("id")
-        .eq("title", form.title)
-        .eq("artist", form.artist);
+        .ilike("title", form.title)
+        .ilike("artist", form.artist);
       if (existing && existing.length > 0) {
         setShowDuplicateConfirm(true);
       } else {
