@@ -251,11 +251,13 @@ const AdminPanel = () => {
                     {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
                     {record.is_sold && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
                   </div>
-                  <div className="flex flex-col gap-1.5 flex-shrink-0">
+                  <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
                     <button onClick={() => handleEdit(record)} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
-                    <button onClick={() => handleToggleSold(record)} className="text-muted-foreground hover:text-accent transition-colors text-xs font-body">
-                      {record.is_sold ? "Dispo" : "Vendu"}
-                    </button>
+                    <div className="flex items-center gap-1 border border-border rounded-sm">
+                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, -1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">−</button>
+                      <span className="text-xs font-body font-semibold text-foreground min-w-[1.2rem] text-center">{record.quantity ?? 1}</span>
+                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, 1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">+</button>
+                    </div>
                     <button onClick={() => handleDelete(record.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
