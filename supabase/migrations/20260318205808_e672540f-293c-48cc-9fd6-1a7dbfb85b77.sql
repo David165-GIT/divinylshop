@@ -1,0 +1,1 @@
+ALTER TABLE public.records ADD COLUMN quantity integer NOT NULL DEFAULT 1;
