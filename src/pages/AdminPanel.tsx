@@ -342,7 +342,7 @@ const AdminPanel = () => {
           />
         )}
 
-
+        <div className="flex flex-col gap-4 mb-6">
           <div className="flex flex-wrap gap-2">
             {[
               { key: "vinyl", label: "Vinyles" },
