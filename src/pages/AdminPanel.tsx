@@ -3,6 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
+import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
