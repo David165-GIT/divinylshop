@@ -21,6 +21,9 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
+  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null } | null>(null);
+  const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
