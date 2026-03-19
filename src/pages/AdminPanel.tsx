@@ -20,6 +20,7 @@ const AdminPanel = () => {
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
+  const [conditionIsCustom, setConditionIsCustom] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
