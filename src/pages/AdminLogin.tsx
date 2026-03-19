@@ -94,6 +94,32 @@ const AdminLogin = () => {
             {loading ? "Connexion…" : "Se connecter"}
           </button>
         </form>
+
+        <button
+          type="button"
+          onClick={async () => {
+            if (!email) {
+              setError("Veuillez saisir votre email d'abord");
+              return;
+            }
+            setLoading(true);
+            setError("");
+            const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+              redirectTo: `${window.location.origin}/reset-password`,
+            });
+            setLoading(false);
+            if (resetError) {
+              setError("Erreur lors de l'envoi. Veuillez réessayer.");
+            } else {
+              setError("");
+              alert("Un email de réinitialisation a été envoyé à " + email);
+            }
+          }}
+          disabled={loading}
+          className="w-full mt-3 text-sm text-muted-foreground hover:text-foreground font-body transition-colors underline underline-offset-4"
+        >
+          Mot de passe oublié ?
+        </button>
       </div>
     </div>
   );
