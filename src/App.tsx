@@ -8,6 +8,7 @@ import Catalogue from "./pages/Catalogue.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
 import EditionsOriginales from "./pages/EditionsOriginales.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
 
