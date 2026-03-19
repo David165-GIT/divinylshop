@@ -40,7 +40,7 @@ serve(async (req) => {
     })();
 
     const descPromise = (async (): Promise<string | null> => {
-      try {
+      if (!needsDescription) return null;
         const categoryLabel = category === "hifi" ? "matériel Hi-Fi" : category === "editions_originales" ? "édition originale (vinyle)" : "disque vinyle";
         const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
