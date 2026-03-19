@@ -329,7 +329,20 @@ const AdminPanel = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-4 mb-6">
+        {/* Suggestion popup */}
+        {(suggestionLoading || suggestion) && pendingForm && (
+          <SuggestionPopup
+            title={pendingForm.title}
+            artist={pendingForm.artist}
+            imageUrl={suggestion?.imageUrl || null}
+            description={suggestion?.description || null}
+            loading={suggestionLoading}
+            onAccept={handleSuggestionAccept}
+            onReject={handleSuggestionReject}
+          />
+        )}
+
+
           <div className="flex flex-wrap gap-2">
             {[
               { key: "vinyl", label: "Vinyles" },
