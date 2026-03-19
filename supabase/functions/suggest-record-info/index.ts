@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { title, artist, category } = await req.json();
+    const { title, artist, category, needsImage = true, needsDescription = true } = await req.json();
     if (!title || !artist) {
       return new Response(JSON.stringify({ error: "title and artist are required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
