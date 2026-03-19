@@ -143,6 +143,11 @@ const AdminPanel = () => {
     if (!pendingForm) return;
     const finalForm = { ...pendingForm };
 
+    // Apply genre if available
+    if (suggestion?.genre && !finalForm.genre) {
+      finalForm.genre = suggestion.genre;
+    }
+
     // If accepting an external image, upload it to storage first
     if (imageUrl) {
       try {
