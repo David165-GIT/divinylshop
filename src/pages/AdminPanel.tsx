@@ -297,7 +297,7 @@ const AdminPanel = () => {
                 </div>
                 <div className="space-y-2">
                   <select
-                    value={form.condition === "Neuf" ? "Neuf" : form.condition === "Occasion" || (form.condition && form.condition !== "Neuf") ? "Occasion" : ""}
+                    value={form.condition?.startsWith("Occasion") ? "Occasion" : form.condition === "Neuf" ? "Neuf" : form.condition ? "Occasion" : ""}
                     onChange={(e) => {
                       const val = e.target.value;
                       setConditionIsCustom(false);
@@ -309,10 +309,10 @@ const AdminPanel = () => {
                     <option value="Neuf">Neuf</option>
                     <option value="Occasion">Occasion</option>
                   </select>
-                  {(form.condition === "Occasion" || (form.condition && form.condition !== "Neuf" && form.condition !== "Occasion")) && (
+                  {(form.condition?.startsWith("Occasion") || (form.condition && form.condition !== "Neuf")) && (
                     <input type="text" placeholder="Précisez l'état (optionnel)"
-                      value={form.condition === "Occasion" ? "" : (form.condition || "")}
-                      onChange={(e) => setForm({ ...form, condition: e.target.value || "Occasion" })}
+                      value={form.condition === "Occasion" ? "" : (form.condition?.replace(/^Occasion\s*[·—-]\s*/, "") || "")}
+                      onChange={(e) => setForm({ ...form, condition: e.target.value ? `Occasion · ${e.target.value}` : "Occasion" })}
                       className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                   )}
                 </div>
