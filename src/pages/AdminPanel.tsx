@@ -3,6 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
+import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -20,6 +21,9 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
+  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null } | null>(null);
+  const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -80,6 +84,7 @@ const AdminPanel = () => {
       setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
       fetchRecords();
     } else {
+      // Check for duplicates first
       const { data: existing } = await supabase
         .from("records")
         .select("id")
@@ -88,18 +93,92 @@ const AdminPanel = () => {
       if (existing && existing.length > 0) {
         setShowDuplicateConfirm(true);
       } else {
-        await insertAndReset();
+        await proceedWithInsert(form);
       }
     }
   };
 
-  const insertAndReset = async () => {
-    await supabase.from("records").insert(form);
+  const proceedWithInsert = async (formData: RecordInsert) => {
+    // If no image and no description, try to suggest
+    const needsImage = !formData.image_url;
+    const needsDescription = !formData.description;
+    if (needsImage || needsDescription) {
+      setPendingForm(formData);
+      setSuggestionLoading(true);
+      setSuggestion(null);
+      setShowForm(false);
+      try {
+        const { data, error } = await supabase.functions.invoke("suggest-record-info", {
+          body: { title: formData.title, artist: formData.artist, category: formData.category },
+        });
+        if (!error && data && (data.imageUrl || data.description)) {
+          setSuggestion({
+            imageUrl: needsImage ? data.imageUrl : null,
+            description: needsDescription ? data.description : null,
+          });
+          setSuggestionLoading(false);
+          return; // Wait for user decision
+        }
+      } catch (e) {
+        console.error("Suggestion error:", e);
+      }
+      // Nothing found or error, insert as-is
+      setSuggestionLoading(false);
+      setSuggestion(null);
+      setPendingForm(null);
+      await insertRecord(formData);
+    } else {
+      await insertRecord(formData);
+    }
+  };
+
+  const handleSuggestionAccept = async (imageUrl: string | null, description: string | null) => {
+    if (!pendingForm) return;
+    const finalForm = { ...pendingForm };
+
+    // If accepting an external image, upload it to storage first
+    if (imageUrl) {
+      try {
+        const resp = await fetch(imageUrl);
+        const blob = await resp.blob();
+        const ext = "jpg";
+        const path = `${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("record-images").upload(path, blob);
+        if (!error) {
+          const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
+          finalForm.image_url = urlData.publicUrl;
+        }
+      } catch (e) {
+        console.error("Image upload error:", e);
+      }
+    }
+    if (description) finalForm.description = description;
+
+    setSuggestion(null);
+    setPendingForm(null);
+    await insertRecord(finalForm);
+  };
+
+  const handleSuggestionReject = async () => {
+    if (!pendingForm) return;
+    setSuggestion(null);
+    const formToInsert = { ...pendingForm };
+    setPendingForm(null);
+    await insertRecord(formToInsert);
+  };
+
+  const insertRecord = async (formData: RecordInsert) => {
+    await supabase.from("records").insert(formData);
     setShowForm(false);
     setShowDuplicateConfirm(false);
     setEditingRecord(null);
     setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
     fetchRecords();
+  };
+
+  const insertAndReset = async () => {
+    setShowDuplicateConfirm(false);
+    await proceedWithInsert(form);
   };
 
   const handleEdit = (record: Record) => {
@@ -248,6 +327,19 @@ const AdminPanel = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Suggestion popup */}
+        {(suggestionLoading || suggestion) && pendingForm && (
+          <SuggestionPopup
+            title={pendingForm.title}
+            artist={pendingForm.artist}
+            imageUrl={suggestion?.imageUrl || null}
+            description={suggestion?.description || null}
+            loading={suggestionLoading}
+            onAccept={handleSuggestionAccept}
+            onReject={handleSuggestionReject}
+          />
         )}
 
         <div className="flex flex-col gap-4 mb-6">
