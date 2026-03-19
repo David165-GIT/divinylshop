@@ -200,6 +200,8 @@ const AdminPanel = () => {
 
   const handleEdit = (record: Record) => {
     setEditingRecord(record);
+    const isCustomCondition = record.condition !== null && record.condition !== "Neuf" && record.condition !== "Occasion";
+    setConditionIsCustom(isCustomCondition);
     setForm({
       title: record.title, artist: record.artist, genre: record.genre,
       price: record.price, condition: record.condition, description: record.description,
