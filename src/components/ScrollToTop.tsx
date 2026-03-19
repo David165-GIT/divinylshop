@@ -7,6 +7,11 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
   const navType = useNavigationType();
 
+  // Always scroll to top on initial page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Save scroll position when leaving homepage
   useEffect(() => {
     const handleBeforeNav = () => {
