@@ -75,7 +75,9 @@ serve(async (req) => {
 
         if (aiResp.ok) {
           const aiData = await aiResp.json();
-          const raw = aiData.choices?.[0]?.message?.content?.trim() || "";
+          let raw = aiData.choices?.[0]?.message?.content?.trim() || "";
+          // Strip markdown code fences if present
+          raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
           try {
             const parsed = JSON.parse(raw);
             return {
