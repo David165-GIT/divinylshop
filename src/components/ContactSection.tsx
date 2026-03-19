@@ -49,7 +49,12 @@ const ContactSection = () => {
               <Phone className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-display font-bold text-foreground">Téléphone</h3>
-                <p className="text-sm text-muted-foreground font-body">Appelez-nous en boutique</p>
+                <a
+                  href="tel:+33175158617"
+                  className="text-sm text-accent font-body hover:underline"
+                >
+                  01 75 15 86 17
+                </a>
               </div>
             </div>
 
