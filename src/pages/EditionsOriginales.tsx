@@ -126,17 +126,9 @@ const EditionsOriginales = () => {
 
         {/* CTA */}
         <div className="text-center mt-16 py-10 border-t border-border">
-          <p className="text-muted-foreground font-body mb-4">
-            Intéressé par une pièce rare ? Contactez-moi sur Facebook !
+          <p className="text-muted-foreground font-body">
+            Intéressé par une pièce rare ? Contactez-moi par téléphone ou Facebook !
           </p>
-          <a
-            href="https://www.facebook.com/divinyl.shop/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-foreground text-background font-body font-semibold rounded-sm uppercase text-sm hover:opacity-85 transition-all"
-          >
-            <Facebook className="w-4 h-4" /> Me contacter
-          </a>
         </div>
       </div>
     </div>
