@@ -22,7 +22,7 @@ const AdminPanel = () => {
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
   const [suggestionLoading, setSuggestionLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null } | null>(null);
+  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const navigate = useNavigate();
 
@@ -99,30 +99,37 @@ const AdminPanel = () => {
   };
 
   const proceedWithInsert = async (formData: RecordInsert) => {
-    // If no image and no description, try to suggest
     const needsImage = !formData.image_url;
     const needsDescription = !formData.description;
-    if (needsImage || needsDescription) {
+    const needsGenre = !formData.genre;
+    if (needsImage || needsDescription || needsGenre) {
       setPendingForm(formData);
       setSuggestionLoading(true);
       setSuggestion(null);
       setShowForm(false);
       try {
         const { data, error } = await supabase.functions.invoke("suggest-record-info", {
-          body: { title: formData.title, artist: formData.artist, category: formData.category, needsImage, needsDescription },
+          body: { title: formData.title, artist: formData.artist, category: formData.category, needsImage, needsDescription, needsGenre },
         });
-        if (!error && data && (data.imageUrl || data.description)) {
-          setSuggestion({
-            imageUrl: needsImage ? data.imageUrl : null,
-            description: needsDescription ? data.description : null,
-          });
-          setSuggestionLoading(false);
-          return; // Wait for user decision
+        if (!error && data) {
+          const hasVisualSuggestion = (needsImage && data.imageUrl) || (needsDescription && data.description);
+          if (hasVisualSuggestion) {
+            setSuggestion({
+              imageUrl: needsImage ? data.imageUrl : null,
+              description: needsDescription ? data.description : null,
+              genre: needsGenre ? data.genre : null,
+            });
+            setSuggestionLoading(false);
+            return;
+          }
+          // Only genre found, apply silently
+          if (needsGenre && data.genre) {
+            formData = { ...formData, genre: data.genre };
+          }
         }
       } catch (e) {
         console.error("Suggestion error:", e);
       }
-      // Nothing found or error, insert as-is
       setSuggestionLoading(false);
       setSuggestion(null);
       setPendingForm(null);
@@ -135,6 +142,11 @@ const AdminPanel = () => {
   const handleSuggestionAccept = async (imageUrl: string | null, description: string | null) => {
     if (!pendingForm) return;
     const finalForm = { ...pendingForm };
+
+    // Apply genre if available
+    if (suggestion?.genre && !finalForm.genre) {
+      finalForm.genre = suggestion.genre;
+    }
 
     // If accepting an external image, upload it to storage first
     if (imageUrl) {
@@ -163,6 +175,10 @@ const AdminPanel = () => {
     if (!pendingForm) return;
     setSuggestion(null);
     const formToInsert = { ...pendingForm };
+    // Still apply genre even if user rejects image/description
+    if (suggestion?.genre && !formToInsert.genre) {
+      formToInsert.genre = suggestion.genre;
+    }
     setPendingForm(null);
     await insertRecord(formToInsert);
   };
