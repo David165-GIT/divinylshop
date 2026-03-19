@@ -20,6 +20,7 @@ const AdminPanel = () => {
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
+  const [conditionIsCustom, setConditionIsCustom] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
@@ -199,6 +200,8 @@ const AdminPanel = () => {
 
   const handleEdit = (record: Record) => {
     setEditingRecord(record);
+    const isCustomCondition = record.condition !== null && record.condition !== "Neuf" && record.condition !== "Occasion";
+    setConditionIsCustom(isCustomCondition);
     setForm({
       title: record.title, artist: record.artist, genre: record.genre,
       price: record.price, condition: record.condition, description: record.description,
@@ -293,8 +296,30 @@ const AdminPanel = () => {
                   <input type="number" step="0.01" placeholder="Prix (€)" value={form.price || ""} onChange={(e) => setForm({ ...form, price: e.target.value ? parseFloat(e.target.value) : null })}
                     className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                 </div>
-                <input type="text" placeholder="État" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
-                  className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
+                <div className="space-y-2">
+                  <select
+                    value={conditionIsCustom ? "Autre" : (form.condition || "")}
+                    onChange={(e) => {
+                      if (e.target.value === "Autre") {
+                        setConditionIsCustom(true);
+                        setForm({ ...form, condition: "" });
+                      } else {
+                        setConditionIsCustom(false);
+                        setForm({ ...form, condition: e.target.value || null });
+                      }
+                    }}
+                    className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
+                  >
+                    <option value="">État</option>
+                    <option value="Neuf">Neuf</option>
+                    <option value="Occasion">Occasion</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                  {conditionIsCustom && (
+                    <input type="text" placeholder="Précisez l'état…" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
+                      className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
+                  )}
+                </div>
                 <textarea rows={3} placeholder="Description" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent resize-none" />
 
