@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { title, artist, category } = await req.json();
+    const { title, artist, category, needsImage = true, needsDescription = true } = await req.json();
     if (!title || !artist) {
       return new Response(JSON.stringify({ error: "title and artist are required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -21,15 +21,13 @@ serve(async (req) => {
 
     // Run image search and description generation in parallel
     const imagePromise = (async (): Promise<string | null> => {
-      if (category === "hifi") return null;
+      if (!needsImage || category === "hifi") return null;
       try {
-        // Use iTunes Search API - fast and reliable for album art
         const query = encodeURIComponent(`${artist} ${title}`);
         const resp = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=5`);
         if (!resp.ok) return null;
         const data = await resp.json();
         if (data.results && data.results.length > 0) {
-          // Get the highest resolution artwork (replace 100x100 with 600x600)
           const artwork = data.results[0].artworkUrl100;
           if (artwork) {
             return artwork.replace("100x100bb", "600x600bb");
@@ -42,7 +40,7 @@ serve(async (req) => {
     })();
 
     const descPromise = (async (): Promise<string | null> => {
-      try {
+      if (!needsDescription) return null;
         const categoryLabel = category === "hifi" ? "matériel Hi-Fi" : category === "editions_originales" ? "édition originale (vinyle)" : "disque vinyle";
         const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
