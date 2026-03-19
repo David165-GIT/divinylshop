@@ -296,8 +296,16 @@ const AdminPanel = () => {
                 </div>
                 <div className="space-y-2">
                   <select
-                    value={form.condition === "Neuf" || form.condition === "Occasion" || !form.condition ? (form.condition || "") : "Autre"}
-                    onChange={(e) => setForm({ ...form, condition: e.target.value === "Autre" ? "" : e.target.value || null })}
+                    value={conditionIsCustom ? "Autre" : (form.condition || "")}
+                    onChange={(e) => {
+                      if (e.target.value === "Autre") {
+                        setConditionIsCustom(true);
+                        setForm({ ...form, condition: "" });
+                      } else {
+                        setConditionIsCustom(false);
+                        setForm({ ...form, condition: e.target.value || null });
+                      }
+                    }}
                     className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
                   >
                     <option value="">État</option>
@@ -305,7 +313,7 @@ const AdminPanel = () => {
                     <option value="Occasion">Occasion</option>
                     <option value="Autre">Autre</option>
                   </select>
-                  {form.condition !== null && form.condition !== "Neuf" && form.condition !== "Occasion" && form.condition !== "" && (
+                  {conditionIsCustom && (
                     <input type="text" placeholder="Précisez l'état…" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
                       className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                   )}
