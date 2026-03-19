@@ -175,6 +175,10 @@ const AdminPanel = () => {
     if (!pendingForm) return;
     setSuggestion(null);
     const formToInsert = { ...pendingForm };
+    // Still apply genre even if user rejects image/description
+    if (suggestion?.genre && !formToInsert.genre) {
+      formToInsert.genre = suggestion.genre;
+    }
     setPendingForm(null);
     await insertRecord(formToInsert);
   };
