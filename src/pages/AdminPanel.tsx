@@ -200,8 +200,7 @@ const AdminPanel = () => {
 
   const handleEdit = (record: Record) => {
     setEditingRecord(record);
-    const isCustomCondition = record.condition !== null && record.condition !== "Neuf" && record.condition !== "Occasion";
-    setConditionIsCustom(isCustomCondition);
+    setConditionIsCustom(false);
     setForm({
       title: record.title, artist: record.artist, genre: record.genre,
       price: record.price, condition: record.condition, description: record.description,
@@ -298,25 +297,22 @@ const AdminPanel = () => {
                 </div>
                 <div className="space-y-2">
                   <select
-                    value={conditionIsCustom ? "Autre" : (form.condition || "")}
+                    value={form.condition === "Neuf" ? "Neuf" : form.condition === "Occasion" || (form.condition && form.condition !== "Neuf") ? "Occasion" : ""}
                     onChange={(e) => {
-                      if (e.target.value === "Autre") {
-                        setConditionIsCustom(true);
-                        setForm({ ...form, condition: "" });
-                      } else {
-                        setConditionIsCustom(false);
-                        setForm({ ...form, condition: e.target.value || null });
-                      }
+                      const val = e.target.value;
+                      setConditionIsCustom(false);
+                      setForm({ ...form, condition: val || null });
                     }}
                     className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
                   >
                     <option value="">État</option>
                     <option value="Neuf">Neuf</option>
                     <option value="Occasion">Occasion</option>
-                    <option value="Autre">Autre</option>
                   </select>
-                  {conditionIsCustom && (
-                    <input type="text" placeholder="Précisez l'état…" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
+                  {(form.condition === "Occasion" || (form.condition && form.condition !== "Neuf" && form.condition !== "Occasion")) && (
+                    <input type="text" placeholder="Précisez l'état (optionnel)"
+                      value={form.condition === "Occasion" ? "" : (form.condition || "")}
+                      onChange={(e) => setForm({ ...form, condition: e.target.value || "Occasion" })}
                       className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                   )}
                 </div>
