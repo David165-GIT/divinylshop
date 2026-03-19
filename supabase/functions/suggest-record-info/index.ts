@@ -21,15 +21,13 @@ serve(async (req) => {
 
     // Run image search and description generation in parallel
     const imagePromise = (async (): Promise<string | null> => {
-      if (category === "hifi") return null;
+      if (!needsImage || category === "hifi") return null;
       try {
-        // Use iTunes Search API - fast and reliable for album art
         const query = encodeURIComponent(`${artist} ${title}`);
         const resp = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=5`);
         if (!resp.ok) return null;
         const data = await resp.json();
         if (data.results && data.results.length > 0) {
-          // Get the highest resolution artwork (replace 100x100 with 600x600)
           const artwork = data.results[0].artworkUrl100;
           if (artwork) {
             return artwork.replace("100x100bb", "600x600bb");
