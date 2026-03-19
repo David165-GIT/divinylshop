@@ -109,7 +109,7 @@ const AdminPanel = () => {
       setShowForm(false);
       try {
         const { data, error } = await supabase.functions.invoke("suggest-record-info", {
-          body: { title: formData.title, artist: formData.artist, category: formData.category },
+          body: { title: formData.title, artist: formData.artist, category: formData.category, needsImage, needsDescription },
         });
         if (!error && data && (data.imageUrl || data.description)) {
           setSuggestion({
