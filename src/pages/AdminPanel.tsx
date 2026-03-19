@@ -293,7 +293,7 @@ const AdminPanel = () => {
                   <input type="number" step="0.01" placeholder="Prix (€)" value={form.price || ""} onChange={(e) => setForm({ ...form, price: e.target.value ? parseFloat(e.target.value) : null })}
                     className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                 </div>
-                <input type="text" placeholder="État (ex: VG+, NM…)" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
+                <input type="text" placeholder="État" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                 <textarea rows={3} placeholder="Description" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent resize-none" />
