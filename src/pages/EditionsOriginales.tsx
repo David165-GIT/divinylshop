@@ -127,7 +127,7 @@ const EditionsOriginales = () => {
         {/* CTA */}
         <div className="text-center mt-16 py-10 border-t border-border">
           <p className="text-muted-foreground font-body">
-            Intéressé par une pièce rare ? Contactez-moi par téléphone ou Facebook !
+            Intéressé par une pièce rare ? Contactez-moi par Téléphone ou Facebook !
           </p>
         </div>
       </div>

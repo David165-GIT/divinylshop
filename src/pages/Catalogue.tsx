@@ -135,7 +135,7 @@ const Catalogue = () => {
         {/* CTA */}
         <div className="text-center mt-16 py-10 border-t border-border">
           <p className="text-muted-foreground font-body">
-            Intéressé par un article ? Contactez-moi par téléphone ou Facebook !
+            Intéressé par un article ? Contactez-moi par Téléphone ou Facebook !
           </p>
         </div>
       </div>

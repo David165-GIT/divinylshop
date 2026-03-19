@@ -19,7 +19,7 @@ const SellSection = () => {
             </h2>
             <p className="text-muted-foreground font-body leading-relaxed mb-8">
               Vous avez du matériel Hi-Fi ou des vinyles <span className="text-foreground font-medium">(uniquement par lot)</span> à
-              vendre ? Contactez-moi par téléphone ou Facebook pour me proposer vos pièces.
+              vendre ? Contactez-moi par Téléphone ou Facebook pour me proposer vos pièces.
             </p>
           </div>
         </div>
