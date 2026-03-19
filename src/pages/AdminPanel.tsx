@@ -142,14 +142,12 @@ const AdminPanel = () => {
 
   const handleSuggestionAccept = async (imageUrl: string | null, description: string | null) => {
     if (!pendingForm) return;
-    const finalForm = { ...pendingForm };
+    const updatedForm = { ...pendingForm };
 
-    // Apply genre if available
-    if (suggestion?.genre && !finalForm.genre) {
-      finalForm.genre = suggestion.genre;
+    if (suggestion?.genre && !updatedForm.genre) {
+      updatedForm.genre = suggestion.genre;
     }
 
-    // If accepting an external image, upload it to storage first
     if (imageUrl) {
       try {
         const resp = await fetch(imageUrl);
@@ -159,29 +157,32 @@ const AdminPanel = () => {
         const { error } = await supabase.storage.from("record-images").upload(path, blob);
         if (!error) {
           const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
-          finalForm.image_url = urlData.publicUrl;
+          updatedForm.image_url = urlData.publicUrl;
         }
       } catch (e) {
         console.error("Image upload error:", e);
       }
     }
-    if (description) finalForm.description = description;
+    if (description) updatedForm.description = description;
 
     setSuggestion(null);
+    setSuggestionLoading(false);
     setPendingForm(null);
-    await insertRecord(finalForm);
+    setForm(updatedForm);
+    setShowForm(true);
   };
 
-  const handleSuggestionReject = async () => {
+  const handleSuggestionReject = () => {
     if (!pendingForm) return;
-    setSuggestion(null);
-    const formToInsert = { ...pendingForm };
-    // Still apply genre even if user rejects image/description
-    if (suggestion?.genre && !formToInsert.genre) {
-      formToInsert.genre = suggestion.genre;
+    const updatedForm = { ...pendingForm };
+    if (suggestion?.genre && !updatedForm.genre) {
+      updatedForm.genre = suggestion.genre;
     }
+    setSuggestion(null);
+    setSuggestionLoading(false);
     setPendingForm(null);
-    await insertRecord(formToInsert);
+    setForm(updatedForm);
+    setShowForm(true);
   };
 
   const insertRecord = async (formData: RecordInsert) => {
