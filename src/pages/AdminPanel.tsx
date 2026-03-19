@@ -293,8 +293,22 @@ const AdminPanel = () => {
                   <input type="number" step="0.01" placeholder="Prix (€)" value={form.price || ""} onChange={(e) => setForm({ ...form, price: e.target.value ? parseFloat(e.target.value) : null })}
                     className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
                 </div>
-                <input type="text" placeholder="État" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
-                  className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
+                <div className="space-y-2">
+                  <select
+                    value={form.condition === "Neuf" || form.condition === "Occasion" || !form.condition ? (form.condition || "") : "Autre"}
+                    onChange={(e) => setForm({ ...form, condition: e.target.value === "Autre" ? "" : e.target.value || null })}
+                    className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
+                  >
+                    <option value="">État</option>
+                    <option value="Neuf">Neuf</option>
+                    <option value="Occasion">Occasion</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                  {form.condition !== null && form.condition !== "Neuf" && form.condition !== "Occasion" && form.condition !== "" && (
+                    <input type="text" placeholder="Précisez l'état…" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })}
+                      className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent" />
+                  )}
+                </div>
                 <textarea rows={3} placeholder="Description" value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent resize-none" />
 
