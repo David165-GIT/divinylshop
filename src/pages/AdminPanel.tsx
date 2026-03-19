@@ -250,11 +250,11 @@ const AdminPanel = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-wrap gap-2">
             {[
               { key: "vinyl", label: "Vinyles" },
-              { key: "editions_originales", label: "Éditions Originales" },
+              { key: "editions_originales", label: "Éd. Orig." },
               { key: "hifi", label: "Hi-Fi" },
             ].map((tab) => {
               const filtered = records.filter((r) => r.category === tab.key);
@@ -264,37 +264,37 @@ const AdminPanel = () => {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all flex flex-col items-center gap-0.5 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all flex flex-col items-center gap-0.5 flex-1 min-w-0 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
                 >
-                  <span className="inline-flex items-center gap-1.5">
-                    {tab.label}
-                    <span className={`text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
+                  <span className="inline-flex items-center gap-1 sm:gap-1.5">
+                    <span className="truncate">{tab.label}</span>
+                    <span className={`text-[10px] sm:text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
                       {totalCopies}
                     </span>
                   </span>
-                  <span className={`text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
-                      {articleCount} références
+                  <span className={`text-[9px] sm:text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
+                      {articleCount} réf.
                     </span>
                 </button>
               );
             })}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => { setShowOutOfStock(!showOutOfStock); if (!showOutOfStock) setShowMultiple(false); }}
-              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${showOutOfStock ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+              className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all ${showOutOfStock ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
               Plus en stock
             </button>
             <button
               onClick={() => { setShowMultiple(!showMultiple); if (!showMultiple) setShowOutOfStock(false); }}
-              className={`px-4 py-2 text-sm font-body font-medium rounded-sm transition-all ${showMultiple ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+              className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all ${showMultiple ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
-              Plusieurs exemplaires
+              Plusieurs ex.
             </button>
             <button
               onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setShowForm(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background font-body font-medium rounded-sm text-sm hover:opacity-85 transition-all"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all ml-auto"
             >
               <Plus className="w-4 h-4" /> Ajouter
             </button>
