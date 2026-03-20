@@ -25,6 +25,7 @@ const AdminPanel = () => {
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
+  const [skipSuggestions, setSkipSuggestions] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -103,7 +104,7 @@ const AdminPanel = () => {
     const needsImage = !formData.image_url;
     const needsDescription = !formData.description;
     const needsGenre = !formData.genre;
-    if (needsImage || needsDescription || needsGenre) {
+    if ((needsImage || needsDescription || needsGenre) && !skipSuggestions) {
       setPendingForm(formData);
       setSuggestionLoading(true);
       setSuggestion(null);
@@ -169,6 +170,7 @@ const AdminPanel = () => {
     setSuggestionLoading(false);
     setPendingForm(null);
     setForm(updatedForm);
+    setSkipSuggestions(true);
     setShowForm(true);
   };
 
@@ -182,6 +184,7 @@ const AdminPanel = () => {
     setSuggestionLoading(false);
     setPendingForm(null);
     setForm(updatedForm);
+    setSkipSuggestions(true);
     setShowForm(true);
   };
 
@@ -191,6 +194,7 @@ const AdminPanel = () => {
     setShowDuplicateConfirm(false);
     setEditingRecord(null);
     setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+    setSkipSuggestions(false);
     fetchRecords();
   };
 
@@ -423,7 +427,7 @@ const AdminPanel = () => {
               Plusieurs ex.
             </button>
             <button
-              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setShowForm(true); }}
+              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
               className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all ml-auto"
             >
               <Plus className="w-4 h-4" /> Ajouter
