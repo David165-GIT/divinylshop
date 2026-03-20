@@ -1,5 +1,6 @@
 import { Disc3, Headphones, Heart, Star } from "lucide-react";
 import paoloImg from "@/assets/paolo-boutique.png";
+import boutiqueImg from "@/assets/boutique-interieur.png";
 
 const features = [
   {
