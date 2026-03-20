@@ -170,6 +170,7 @@ const AdminPanel = () => {
     setSuggestionLoading(false);
     setPendingForm(null);
     setForm(updatedForm);
+    setSkipSuggestions(true);
     setShowForm(true);
   };
 
