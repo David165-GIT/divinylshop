@@ -104,7 +104,7 @@ const AdminPanel = () => {
     const needsImage = !formData.image_url;
     const needsDescription = !formData.description;
     const needsGenre = !formData.genre;
-    if (needsImage || needsDescription || needsGenre) {
+    if ((needsImage || needsDescription || needsGenre) && !skipSuggestions) {
       setPendingForm(formData);
       setSuggestionLoading(true);
       setSuggestion(null);
