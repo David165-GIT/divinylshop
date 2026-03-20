@@ -194,6 +194,7 @@ const AdminPanel = () => {
     setShowDuplicateConfirm(false);
     setEditingRecord(null);
     setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+    setSkipSuggestions(false);
     fetchRecords();
   };
 
