@@ -21,7 +21,6 @@ const vinylItems: GalleryItem[] = [
   { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection Vinyle", subtitle: "Voir tout le catalogue →", link: "/catalogue", alwaysShow: true },
   { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales", alwaysShow: true },
   { src: shopHifi, alt: "Matériel Hi-Fi chez Divinyl", title: "Le matériel Hi-Fi", subtitle: "Voir le matériel disponible →", link: "/catalogue?tab=hifi", alwaysShow: true },
-  { src: shopInterior1, alt: "Intérieur de la boutique Divinyl", title: "La boutique", subtitle: "Voir la vidéo →", video: true, alwaysShow: true },
 ];
 
 const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?: () => void }) => {
