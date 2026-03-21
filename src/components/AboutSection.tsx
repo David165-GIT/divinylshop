@@ -68,7 +68,7 @@ const AboutSection = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
-            <figure className="max-w-sm rounded-md overflow-hidden shadow-md border border-border">
+            <figure className="max-w-sm rounded-md overflow-hidden shadow-md border border-border flex flex-col">
               <img
                 src={paoloImg}
                 alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
@@ -79,14 +79,14 @@ const AboutSection = () => {
               </figcaption>
             </figure>
             <figure
-              className="max-w-sm rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500"
+              className="max-w-sm rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500 flex flex-col"
               onClick={() => setVideoOpen(true)}
             >
-              <div className="overflow-hidden">
+              <div className="overflow-hidden flex-1">
                 <img
                   src={boutiqueImg}
                   alt="L'intérieur de la boutique Divinyl à Nemours"
-                  className="w-full aspect-[4/3] object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
               <figcaption className="bg-card px-4 py-3 text-center">
