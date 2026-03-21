@@ -68,7 +68,7 @@ const AboutSection = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16">
-            <figure className="max-w-sm rounded-md overflow-hidden shadow-md border border-border flex flex-col">
+            <figure className="rounded-md overflow-hidden shadow-md border border-border flex flex-col">
               <img
                 src={paoloImg}
                 alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
