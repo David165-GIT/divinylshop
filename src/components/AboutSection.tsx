@@ -67,8 +67,8 @@ const AboutSection = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
-            <figure className="max-w-sm rounded-md overflow-hidden shadow-md border border-border flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16">
+            <figure className="rounded-md overflow-hidden shadow-md border border-border flex flex-col">
               <img
                 src={paoloImg}
                 alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
@@ -79,7 +79,7 @@ const AboutSection = () => {
               </figcaption>
             </figure>
             <figure
-              className="max-w-sm rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500 flex flex-col"
+              className="rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500 flex flex-col"
               onClick={() => setVideoOpen(true)}
             >
               <div className="overflow-hidden flex-1">
