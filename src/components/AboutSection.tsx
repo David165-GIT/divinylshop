@@ -72,7 +72,7 @@ const AboutSection = () => {
               <img
                 src={paoloImg}
                 alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
-                className="w-full aspect-[4/3] object-cover object-top"
+                className="w-full aspect-[4/3] object-cover object-center"
               />
               <figcaption className="bg-card px-4 py-3 text-center font-body text-sm text-muted-foreground italic">
                 Paolo vous accueille dans sa boutique
