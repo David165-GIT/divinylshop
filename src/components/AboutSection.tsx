@@ -69,11 +69,13 @@ const AboutSection = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16">
             <figure className="rounded-md overflow-hidden shadow-md border border-border flex flex-col">
-              <img
-                src={paoloImg}
-                alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
-                className="w-full aspect-[4/3] object-cover object-center"
-              />
+              <div className="overflow-hidden flex-1">
+                <img
+                  src={paoloImg}
+                  alt="Paolo vous accueille dans sa boutique Divinyl à Nemours"
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
               <figcaption className="bg-card px-4 py-3 text-center font-body text-sm text-muted-foreground italic">
                 Paolo vous accueille dans sa boutique
               </figcaption>
