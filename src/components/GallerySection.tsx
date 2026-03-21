@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
-import shopHifi from "@/assets/shop-hifi.png";
+import shopHifi from "@/assets/shop-hifi-matos.jpg";
 import shopInterior1 from "@/assets/shop-interior-1.png";
 
 interface GalleryItem {
