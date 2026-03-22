@@ -390,6 +390,7 @@ const AdminPanel = () => {
             {[
               { key: "vinyl", label: "Vinyles" },
               { key: "editions_originales", label: "Éd. Orig." },
+              { key: "cd", label: "CD Audio" },
               { key: "hifi", label: "Hi-Fi" },
             ].map((tab) => {
               const filtered = records.filter((r) => r.category === tab.key);
