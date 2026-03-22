@@ -20,7 +20,7 @@ const Catalogue = () => {
       const { data } = await supabase
         .from("records")
         .select("*")
-        .neq("category", "editions_originales")
+        .not("category", "eq", "editions_originales")
         .order("artist", { ascending: true })
         .order("title", { ascending: true });
       setRecords(data || []);
