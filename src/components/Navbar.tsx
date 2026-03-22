@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <a href="#accueil" className="flex items-center gap-2 group">
           <img src={logo} alt="Divinyl logo" className="w-8 h-8" />
-          <span className="text-2xl font-display font-bold text-gradient-dark">Divinyl</span>
+          <img src={logoText} alt="Divinyl" className="h-5" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">
