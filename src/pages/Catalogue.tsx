@@ -122,7 +122,7 @@ const Catalogue = () => {
                 )}
                 <div className="p-4">
                   <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
-                    {record.category === "vinyl" ? "Vinyle" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
+                    {record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
                     {record.genre && ` · ${record.genre}`}
                     {record.condition && ` · ${record.condition}`}
                   </p>
