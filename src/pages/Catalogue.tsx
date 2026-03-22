@@ -12,7 +12,8 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const filter = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
+  const tabParam = searchParams.get("tab");
+  const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
 
   useEffect(() => {
     const fetchRecords = async () => {
