@@ -1,5 +1,5 @@
 import heroImg from "@/assets/shop-interior-2.png";
-import logoText from "@/assets/divinyl-logo-text.jpg";
+import logoText from "@/assets/divinyl-logo-text.png";
 import { Facebook, MapPin, ChevronDown } from "lucide-react";
 
 const HeroSection = () => {
