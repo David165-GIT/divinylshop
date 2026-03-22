@@ -49,7 +49,7 @@ const Catalogue = () => {
             <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : "Catalogue Vinyles"}</h1>
+            <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : filter === "cd" ? "CD Audio" : "Catalogue Vinyles"}</h1>
           </div>
           <a
             href="https://www.facebook.com/divinyl.shop/"
