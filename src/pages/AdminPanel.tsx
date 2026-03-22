@@ -287,6 +287,7 @@ const AdminPanel = () => {
                   className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
                 >
                   <option value="vinyl">Vinyle</option>
+                  <option value="cd">CD Audio</option>
                   <option value="hifi">Hi-Fi</option>
                   <option value="editions_originales">Édition Originale</option>
                 </select>
