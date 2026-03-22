@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import shopVinylWall from "@/assets/shop-vinyl-wall.png";
 import shopDeepPurple from "@/assets/shop-deep-purple.png";
+import shopCdAudio from "@/assets/shop-cd-audio.jpg";
 import shopHifi from "@/assets/shop-hifi-matos.jpg";
 import shopInterior1 from "@/assets/shop-interior-1.png";
 
@@ -20,6 +21,7 @@ interface GalleryItem {
 const vinylItems: GalleryItem[] = [
   { src: shopVinylWall, alt: "Mur de vinyles chez Divinyl", title: "Notre sélection Vinyle", subtitle: "Voir tout le catalogue →", link: "/catalogue", alwaysShow: true },
   { src: shopDeepPurple, alt: "Deep Purple — Made in Japan", title: "Éditions originales", subtitle: "Pressages rares et collectors →", link: "/editions-originales", alwaysShow: true },
+  { src: shopCdAudio, alt: "CD Audio chez Divinyl", title: "CD Audio", subtitle: "Voir la sélection CD →", link: "/catalogue?tab=cd", alwaysShow: true },
   { src: shopHifi, alt: "Matériel Hi-Fi chez Divinyl", title: "Le matériel Hi-Fi", subtitle: "Voir le matériel disponible →", link: "/catalogue?tab=hifi", alwaysShow: true },
 ];
 
@@ -102,7 +104,7 @@ const GallerySection = () => {
               Une sélection pointue pour les amateurs de beau son et de belles pochettes.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {vinylItems.map((item) => (
               <GalleryCard key={item.title} item={item} onVideoClick={() => setVideoOpen(true)} />
             ))}

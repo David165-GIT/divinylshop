@@ -12,14 +12,15 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const filter = searchParams.get("tab") === "hifi" ? "hifi" : "vinyl";
+  const tabParam = searchParams.get("tab");
+  const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
 
   useEffect(() => {
     const fetchRecords = async () => {
       const { data } = await supabase
         .from("records")
         .select("*")
-        .neq("category", "editions_originales")
+        .not("category", "eq", "editions_originales")
         .order("artist", { ascending: true })
         .order("title", { ascending: true });
       setRecords(data || []);
@@ -48,7 +49,7 @@ const Catalogue = () => {
             <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : "Catalogue Vinyles"}</h1>
+            <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : filter === "cd" ? "CD Audio" : "Catalogue Vinyles"}</h1>
           </div>
           <a
             href="https://www.facebook.com/divinyl.shop/"
@@ -68,7 +69,7 @@ const Catalogue = () => {
             <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
             <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
           </div>
-          {filter !== "hifi" && (
+          {filter !== "hifi" && filter !== "cd" && (
             <div className="mt-4 pt-3 border-t border-border">
               <p className="text-sm text-accent font-body font-semibold italic text-center tracking-wide">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
             </div>
@@ -121,7 +122,7 @@ const Catalogue = () => {
                 )}
                 <div className="p-4">
                   <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
-                    {record.category === "vinyl" ? "Vinyle" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
+                    {record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
                     {record.genre && ` · ${record.genre}`}
                     {record.condition && ` · ${record.condition}`}
                   </p>
