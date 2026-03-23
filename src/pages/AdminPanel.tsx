@@ -79,23 +79,28 @@ const AdminPanel = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const normalizedForm = { ...form, category: form.category || activeTab };
+
     if (editingRecord) {
-      await supabase.from("records").update(form).eq("id", editingRecord.id);
+      const { error } = await supabase.from("records").update(normalizedForm).eq("id", editingRecord.id);
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+        return;
+      }
       setShowForm(false);
       setEditingRecord(null);
       setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
       fetchRecords();
     } else {
-      // Check for duplicates first
       const { data: existing } = await supabase
         .from("records")
         .select("id")
-        .ilike("title", form.title)
-        .ilike("artist", form.artist);
+        .ilike("title", normalizedForm.title)
+        .ilike("artist", normalizedForm.artist);
       if (existing && existing.length > 0) {
         setShowDuplicateConfirm(true);
       } else {
-        await proceedWithInsert(form);
+        await proceedWithInsert(normalizedForm);
       }
     }
   };
