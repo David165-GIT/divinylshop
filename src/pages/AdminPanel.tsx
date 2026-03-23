@@ -83,7 +83,7 @@ const AdminPanel = () => {
       await supabase.from("records").update(form).eq("id", editingRecord.id);
       setShowForm(false);
       setEditingRecord(null);
-      setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+      setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
       fetchRecords();
     } else {
       // Check for duplicates first
