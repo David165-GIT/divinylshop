@@ -194,8 +194,8 @@ const AdminPanel = () => {
   };
 
   const insertRecord = async (formData: RecordInsert) => {
-    console.log("Inserting record with category:", formData.category, formData);
-    const { error } = await supabase.from("records").insert(formData);
+    const payload = { ...formData, category: formData.category || activeTab };
+    const { error } = await supabase.from("records").insert(payload);
     if (error) {
       console.error("Insert error:", error);
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
@@ -211,7 +211,7 @@ const AdminPanel = () => {
 
   const insertAndReset = async () => {
     setShowDuplicateConfirm(false);
-    await proceedWithInsert(form);
+    await proceedWithInsert({ ...form, category: form.category || activeTab });
   };
 
   const handleEdit = (record: Record) => {
