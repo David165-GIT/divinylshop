@@ -189,11 +189,17 @@ const AdminPanel = () => {
   };
 
   const insertRecord = async (formData: RecordInsert) => {
-    await supabase.from("records").insert(formData);
+    console.log("Inserting record with category:", formData.category, formData);
+    const { error } = await supabase.from("records").insert(formData);
+    if (error) {
+      console.error("Insert error:", error);
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
     setShowForm(false);
     setShowDuplicateConfirm(false);
     setEditingRecord(null);
-    setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: "vinyl", image_url: null });
+    setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
     setSkipSuggestions(false);
     fetchRecords();
   };
