@@ -18,6 +18,7 @@ const AdminPanel = () => {
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
+  const [christmasMode, setChristmasMode] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [conditionIsCustom, setConditionIsCustom] = useState(false);
