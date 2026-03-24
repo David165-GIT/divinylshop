@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import santaDj from "@/assets/santa-dj.jpg";
-
-const Snowflake = ({ style }: { style: React.CSSProperties }) => (
-  <div className="fixed pointer-events-none text-white/80 animate-snowfall z-[60]" style={style}>
-    ❄
-  </div>
-);
 
 const ChristmasOverlay = () => {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchMode = async () => {
       const { data } = await supabase
         .from("site_settings")
         .select("value")
@@ -20,7 +13,7 @@ const ChristmasOverlay = () => {
         .single();
       setEnabled(data?.value === "true");
     };
-    fetch();
+    fetchMode();
 
     const channel = supabase
       .channel("christmas-mode")
@@ -38,45 +31,65 @@ const ChristmasOverlay = () => {
 
   if (!enabled) return null;
 
-  const snowflakes = Array.from({ length: 25 }, (_, i) => ({
-    left: `${Math.random() * 100}%`,
-    animationDuration: `${4 + Math.random() * 6}s`,
-    animationDelay: `${Math.random() * 5}s`,
-    fontSize: `${10 + Math.random() * 18}px`,
-    opacity: 0.4 + Math.random() * 0.6,
+  // Subtle snowflakes
+  const snowflakes = Array.from({ length: 30 }, (_, i) => ({
+    left: `${(i / 30) * 100 + Math.random() * 3}%`,
+    animationDuration: `${8 + Math.random() * 12}s`,
+    animationDelay: `${Math.random() * 8}s`,
+    fontSize: `${8 + Math.random() * 10}px`,
+    opacity: 0.15 + Math.random() * 0.35,
   }));
 
   return (
     <>
-      {/* Snowflakes */}
+      {/* Subtle snowflakes */}
       {snowflakes.map((style, i) => (
-        <Snowflake key={i} style={style} />
+        <div
+          key={i}
+          className="fixed pointer-events-none animate-snowfall z-[60]"
+          style={{ ...style, color: "hsl(var(--foreground) / 0.2)" }}
+        >
+          ✦
+        </div>
       ))}
 
-      {/* Santa DJ - bottom right */}
-      <div className="fixed bottom-4 right-4 z-[61] animate-fade-in-up pointer-events-none">
-        <img
-          src={santaDj}
-          alt="Père Noël DJ"
-          className="w-28 md:w-36 drop-shadow-lg"
-        />
-      </div>
-
-      {/* Garland top */}
-      <div className="fixed top-0 left-0 right-0 z-[59] pointer-events-none flex justify-center">
-        <div className="flex gap-3 py-1">
-          {Array.from({ length: 20 }, (_, i) => (
+      {/* Elegant garland - thin warm lights */}
+      <div className="fixed top-0 left-0 right-0 z-[59] pointer-events-none">
+        <div className="flex justify-between px-2">
+          {Array.from({ length: 30 }, (_, i) => (
             <div
               key={i}
-              className="w-3 h-3 rounded-full animate-pulse"
-              style={{
-                backgroundColor: ["#e74c3c", "#27ae60", "#f1c40f", "#e74c3c", "#27ae60"][i % 5],
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: "1.5s",
-              }}
-            />
+              className="flex flex-col items-center"
+            >
+              <div className="w-px h-2 bg-foreground/10" />
+              <div
+                className="w-2 h-2 rounded-full animate-christmas-glow"
+                style={{
+                  backgroundColor: ["#c0392b", "#27ae60", "#d4a017", "#c0392b", "#27ae60"][i % 5],
+                  animationDelay: `${i * 0.3}s`,
+                  boxShadow: `0 0 4px ${["#c0392b", "#27ae60", "#d4a017", "#c0392b", "#27ae60"][i % 5]}40`,
+                }}
+              />
+            </div>
           ))}
         </div>
+      </div>
+
+      {/* Snow pile at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-[58] pointer-events-none">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" className="w-full h-8 md:h-12">
+          <path
+            d="M0,60 L0,35 Q60,15 120,30 Q180,45 240,28 Q300,10 360,25 Q420,40 480,22 Q540,5 600,20 Q660,35 720,18 Q780,2 840,22 Q900,42 960,25 Q1020,8 1080,28 Q1140,48 1200,30 Q1260,12 1320,32 Q1380,52 1440,35 L1440,60 Z"
+            fill="hsl(var(--background))"
+            stroke="none"
+          />
+          <path
+            d="M0,60 L0,42 Q80,28 160,38 Q240,48 320,35 Q400,22 480,32 Q560,42 640,30 Q720,18 800,33 Q880,48 960,35 Q1040,22 1120,37 Q1200,52 1280,38 Q1360,24 1440,40 L1440,60 Z"
+            fill="white"
+            opacity="0.5"
+            stroke="none"
+          />
+        </svg>
       </div>
     </>
   );
