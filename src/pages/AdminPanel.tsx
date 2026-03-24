@@ -38,6 +38,7 @@ const AdminPanel = () => {
     checkAuth();
     fetchRecords();
     fetchVideoUrl();
+    fetchChristmasMode();
   }, []);
 
   const fetchVideoUrl = async () => {
