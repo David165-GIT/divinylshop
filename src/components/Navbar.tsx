@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Accueil", href: "#accueil" },
   { label: "Vinyles", href: "/catalogue?tab=vinyl" },
   { label: "Éd. Originales", href: "/editions-originales" },
+  { label: "CD Audio", href: "/catalogue?tab=cd" },
   { label: "Hi-Fi", href: "/catalogue?tab=hifi" },
   { label: "À propos", href: "#apropos" },
   { label: "Contact", href: "#contact" },
