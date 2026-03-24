@@ -52,6 +52,22 @@ const AdminPanel = () => {
     setVideoSaving(false);
   };
 
+  const fetchChristmasMode = async () => {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "christmas_mode").single();
+    setChristmasMode(data?.value === "true");
+  };
+
+  const toggleChristmasMode = async () => {
+    const newVal = !christmasMode;
+    setChristmasMode(newVal);
+    const { data } = await supabase.from("site_settings").select("id").eq("key", "christmas_mode").single();
+    if (data) {
+      await supabase.from("site_settings").update({ value: String(newVal) }).eq("key", "christmas_mode");
+    } else {
+      await supabase.from("site_settings").insert({ key: "christmas_mode", value: String(newVal) });
+    }
+  };
+
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/admin/login"); return; }

@@ -5,10 +5,12 @@ import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import SellSection from "@/components/SellSection";
 import Footer from "@/components/Footer";
+import ChristmasOverlay from "@/components/ChristmasOverlay";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <ChristmasOverlay />
       <Navbar />
       <HeroSection />
       <GallerySection />
