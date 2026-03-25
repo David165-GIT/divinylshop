@@ -38,43 +38,83 @@ const HeroSection = () => {
     <section id="accueil" className="relative min-h-screen flex flex-col">
       {/* Top - Content */}
       <div className="relative flex-1 flex items-center justify-center bg-background pt-20 pb-8">
-        <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
-          <h1 className="mb-3 animate-fade-in-up flex items-center justify-center gap-4">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
+          <div className={`flex items-center justify-center ${christmasMode ? 'gap-4 md:gap-8' : ''}`}>
+            {/* Santa DJ - left */}
             {christmasMode && (
-              <img
-                src={santaDj}
-                alt="Père Noël DJ"
-                className="h-24 md:h-40 object-contain animate-fade-in-up drop-shadow-md"
-                style={{ animationDelay: "0.1s" }}
-              />
+              <div className="hidden sm:block flex-shrink-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+                <img
+                  src={santaDj}
+                  alt="Père Noël DJ"
+                  className="h-40 md:h-56 lg:h-72 object-contain drop-shadow-md"
+                />
+              </div>
             )}
-            <img src={logoText} alt="Divinyl" className="h-20 md:h-32" />
-          </h1>
-          <div className="w-16 h-0.5 bg-accent mx-auto mb-4 animate-fade-in-up" style={{ animationDelay: "0.15s" }} />
-          <p className="text-lg md:text-xl font-body text-muted-foreground tracking-[0.2em] uppercase animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
-            Disquaire & Hi-Fi Vintage
-          </p>
-          <p className="text-sm font-body text-muted-foreground/70 flex items-center justify-center gap-1.5 mt-3 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-            <MapPin className="w-3.5 h-3.5 text-accent" />
-            Nemours (77) — Seine-et-Marne
-          </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
-            <a
-              href="#vinyles"
-              className="inline-block px-8 py-3 bg-foreground text-background font-body font-semibold rounded-sm tracking-wide uppercase text-sm hover:opacity-85 transition-all duration-300"
-            >
-              Découvrir
-            </a>
-            <a
-              href="https://www.facebook.com/divinyl.shop/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3 border border-border text-muted-foreground font-body font-medium rounded-sm tracking-wide text-sm hover:border-foreground hover:text-foreground transition-all duration-300"
-            >
-              <Facebook className="w-4 h-4" />
-              Facebook
-            </a>
+            {/* Center content */}
+            <div className="text-center flex-shrink-0">
+              {/* Santa DJ mobile - above logo */}
+              {christmasMode && (
+                <div className="sm:hidden flex justify-center mb-4 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+                  <img
+                    src={santaDj}
+                    alt="Père Noël DJ"
+                    className="h-32 object-contain drop-shadow-md"
+                  />
+                </div>
+              )}
+              <h1 className="mb-3 animate-fade-in-up flex items-center justify-center">
+                <img src={logoText} alt="Divinyl" className="h-20 md:h-32" />
+              </h1>
+              <div className="w-16 h-0.5 bg-accent mx-auto mb-4 animate-fade-in-up" style={{ animationDelay: "0.15s" }} />
+              <p className="text-lg md:text-xl font-body text-muted-foreground tracking-[0.2em] uppercase animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
+                Disquaire & Hi-Fi Vintage
+              </p>
+              <p className="text-sm font-body text-muted-foreground/70 flex items-center justify-center gap-1.5 mt-3 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
+                <MapPin className="w-3.5 h-3.5 text-accent" />
+                Nemours (77) — Seine-et-Marne
+              </p>
+
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
+                <a
+                  href="#vinyles"
+                  className="inline-block px-8 py-3 bg-foreground text-background font-body font-semibold rounded-sm tracking-wide uppercase text-sm hover:opacity-85 transition-all duration-300"
+                >
+                  Découvrir
+                </a>
+                <a
+                  href="https://www.facebook.com/divinyl.shop/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-8 py-3 border border-border text-muted-foreground font-body font-medium rounded-sm tracking-wide text-sm hover:border-foreground hover:text-foreground transition-all duration-300"
+                >
+                  <Facebook className="w-4 h-4" />
+                  Facebook
+                </a>
+              </div>
+
+              {/* Christmas tree mobile - below buttons */}
+              {christmasMode && (
+                <div className="sm:hidden flex justify-center mt-6 animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+                  <img
+                    src={sapinVinyle}
+                    alt="Sapin de Noël vinyle"
+                    className="h-40 object-contain rounded-lg shadow-md"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Christmas tree - right */}
+            {christmasMode && (
+              <div className="hidden sm:block flex-shrink-0 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                <img
+                  src={sapinVinyle}
+                  alt="Sapin de Noël vinyle"
+                  className="h-40 md:h-56 lg:h-72 object-contain rounded-lg shadow-md"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
