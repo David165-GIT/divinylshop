@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import christmasGarland from "@/assets/christmas-garland.png";
 
 const ChristmasOverlay = () => {
   const [enabled, setEnabled] = useState(false);
@@ -53,26 +54,14 @@ const ChristmasOverlay = () => {
         </div>
       ))}
 
-      {/* Elegant garland - thin warm lights */}
+      {/* Christmas garland border at top */}
       <div className="fixed top-0 left-0 right-0 z-[59] pointer-events-none">
-        <div className="flex justify-between px-2">
-          {Array.from({ length: 30 }, (_, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center"
-            >
-              <div className="w-px h-2 bg-foreground/10" />
-              <div
-                className="w-2 h-2 rounded-full animate-christmas-glow"
-                style={{
-                  backgroundColor: ["#c0392b", "#27ae60", "#d4a017", "#c0392b", "#27ae60"][i % 5],
-                  animationDelay: `${i * 0.3}s`,
-                  boxShadow: `0 0 4px ${["#c0392b", "#27ae60", "#d4a017", "#c0392b", "#27ae60"][i % 5]}40`,
-                }}
-              />
-            </div>
-          ))}
-        </div>
+        <img
+          src={christmasGarland}
+          alt=""
+          className="w-full h-auto object-cover object-bottom"
+          style={{ maxHeight: "80px" }}
+        />
       </div>
 
       {/* Snow pile at bottom */}
