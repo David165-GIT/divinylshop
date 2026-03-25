@@ -112,6 +112,22 @@ const ChristmasOverlay = () => {
           />
         </svg>
       </div>
+
+      {/* Santa sleigh flying across */}
+      {santa?.visible && (
+        <div
+          className={`fixed z-[61] pointer-events-none ${santa.direction === "ltr" ? "animate-santa-ltr" : "animate-santa-rtl"}`}
+          style={{ top: `${santa.top}%`, left: 0 }}
+        >
+          <img
+            src={santaSleigh}
+            alt=""
+            className="h-20 md:h-28"
+            width={1024}
+            height={512}
+          />
+        </div>
+      )}
     </>
   );
 };
