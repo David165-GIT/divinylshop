@@ -132,3 +132,29 @@
 .animate-christmas-glow {
   animation: christmas-glow 2s ease-in-out infinite;
 }
+
+@keyframes santa-fly-ltr {
+  0% {
+    transform: translateX(-120%) scaleX(-1);
+  }
+  100% {
+    transform: translateX(calc(100vw + 120%)) scaleX(-1);
+  }
+}
+
+@keyframes santa-fly-rtl {
+  0% {
+    transform: translateX(calc(100vw + 120%));
+  }
+  100% {
+    transform: translateX(-120%);
+  }
+}
+
+.animate-santa-ltr {
+  animation: santa-fly-ltr 4s linear forwards;
+}
+
+.animate-santa-rtl {
+  animation: santa-fly-rtl 4s linear forwards;
+}
