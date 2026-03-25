@@ -32,12 +32,12 @@ const ChristmasOverlay = () => {
   if (!enabled) return null;
 
   // Subtle snowflakes
-  const snowflakes = Array.from({ length: 30 }, (_, i) => ({
-    left: `${(i / 30) * 100 + Math.random() * 3}%`,
-    animationDuration: `${8 + Math.random() * 12}s`,
-    animationDelay: `${Math.random() * 8}s`,
-    fontSize: `${8 + Math.random() * 10}px`,
-    opacity: 0.15 + Math.random() * 0.35,
+  const snowflakes = Array.from({ length: 80 }, (_, i) => ({
+    left: `${(i / 80) * 100 + Math.random() * 2}%`,
+    animationDuration: `${6 + Math.random() * 10}s`,
+    animationDelay: `${Math.random() * 10}s`,
+    fontSize: `${6 + Math.random() * 14}px`,
+    opacity: 0.2 + Math.random() * 0.5,
   }));
 
   return (
