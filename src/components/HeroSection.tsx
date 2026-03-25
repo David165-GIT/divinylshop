@@ -1,6 +1,7 @@
 import heroImg from "@/assets/shop-interior-2.png";
 import logoText from "@/assets/divinyl-logo-text.png";
 import santaDj from "@/assets/santa-dj.jpg";
+import sapinVinyle from "@/assets/sapin-vinyle.png";
 import { Facebook, MapPin, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
