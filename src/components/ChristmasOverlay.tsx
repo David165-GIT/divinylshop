@@ -1,9 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import santaSleigh from "@/assets/santa-sleigh.png";
 
 const ChristmasOverlay = () => {
   const [enabled, setEnabled] = useState(false);
+  const [santa, setSanta] = useState<{ visible: boolean; top: number; direction: "ltr" | "rtl" } | null>(null);
 
+  const launchSanta = useCallback(() => {
+    const top = 5 + Math.random() * 60; // random vertical position 5-65%
+    const direction = Math.random() > 0.5 ? "ltr" : "rtl";
+    setSanta({ visible: true, top, direction });
+    // Hide after animation completes (4s)
+    setTimeout(() => setSanta(null), 4000);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+    // Launch once shortly after enabling
+    const initialTimeout = setTimeout(launchSanta, 3000);
+    // Then every 20 seconds
+    const interval = setInterval(launchSanta, 20000);
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, [enabled, launchSanta]);
   useEffect(() => {
     const fetchMode = async () => {
       const { data } = await supabase
@@ -91,6 +112,22 @@ const ChristmasOverlay = () => {
           />
         </svg>
       </div>
+
+      {/* Santa sleigh flying across */}
+      {santa?.visible && (
+        <div
+          className={`fixed z-[61] pointer-events-none ${santa.direction === "ltr" ? "animate-santa-ltr" : "animate-santa-rtl"}`}
+          style={{ top: `${santa.top}%`, left: 0 }}
+        >
+          <img
+            src={santaSleigh}
+            alt=""
+            className="h-20 md:h-28"
+            width={1024}
+            height={512}
+          />
+        </div>
+      )}
     </>
   );
 };
