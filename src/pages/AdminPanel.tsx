@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, TreePine } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -18,7 +18,6 @@ const AdminPanel = () => {
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
-  const [christmasMode, setChristmasMode] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [conditionIsCustom, setConditionIsCustom] = useState(false);
@@ -38,7 +37,6 @@ const AdminPanel = () => {
     checkAuth();
     fetchRecords();
     fetchVideoUrl();
-    fetchChristmasMode();
   }, []);
 
   const fetchVideoUrl = async () => {
@@ -50,22 +48,6 @@ const AdminPanel = () => {
     setVideoSaving(true);
     await supabase.from("site_settings").update({ value: videoUrl }).eq("key", "gallery_video_url");
     setVideoSaving(false);
-  };
-
-  const fetchChristmasMode = async () => {
-    const { data } = await supabase.from("site_settings").select("value").eq("key", "christmas_mode").single();
-    setChristmasMode(data?.value === "true");
-  };
-
-  const toggleChristmasMode = async () => {
-    const newVal = !christmasMode;
-    setChristmasMode(newVal);
-    const { data } = await supabase.from("site_settings").select("id").eq("key", "christmas_mode").single();
-    if (data) {
-      await supabase.from("site_settings").update({ value: String(newVal) }).eq("key", "christmas_mode");
-    } else {
-      await supabase.from("site_settings").insert({ key: "christmas_mode", value: String(newVal) });
-    }
   };
 
   const checkAuth = async () => {
@@ -268,19 +250,9 @@ const AdminPanel = () => {
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleChristmasMode}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-body font-medium transition-all ${christmasMode ? "bg-green-700 text-white" : "bg-muted text-muted-foreground hover:text-foreground"}`}
-              title={christmasMode ? "Désactiver le mode Noël" : "Activer le mode Noël"}
-            >
-              <TreePine className="w-4 h-4" />
-              Noël {christmasMode ? "ON" : "OFF"}
-            </button>
-            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
