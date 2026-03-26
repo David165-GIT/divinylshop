@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2 } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -26,6 +26,7 @@ const AdminPanel = () => {
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const [skipSuggestions, setSkipSuggestions] = useState(false);
+  const [recognizing, setRecognizing] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
@@ -242,6 +243,49 @@ const AdminPanel = () => {
     navigate("/admin/login");
   };
 
+  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setRecognizing(true);
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await supabase.functions.invoke("recognize-record", {
+        body: { imageBase64: base64, category: form.category || activeTab },
+      });
+
+      if (error) throw error;
+
+      if (data?.recognized) {
+        setForm((prev) => ({
+          ...prev,
+          title: data.title || prev.title,
+          artist: data.artist || prev.artist,
+          genre: data.genre || prev.genre,
+          description: data.description || prev.description,
+          condition: data.condition || prev.condition,
+        }));
+        toast({ title: "Article reconnu !", description: `${data.title || ""} — ${data.artist || ""}` });
+      } else {
+        toast({ title: "Article non reconnu", description: "Complétez les champs manuellement.", variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("Recognition error:", err);
+      toast({ title: "Erreur de reconnaissance", description: "Impossible d'analyser la photo.", variant: "destructive" });
+    } finally {
+      setRecognizing(false);
+      e.target.value = "";
+    }
+  };
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-body">Chargement…</div>;
 
   return (
@@ -287,9 +331,18 @@ const AdminPanel = () => {
             <div className="bg-background rounded-md border border-border p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-display font-bold">{editingRecord ? "Modifier" : "Ajouter"} un article</h2>
-                <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
-                  <X className="w-5 h-5 text-muted-foreground" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {!editingRecord && (
+                    <label className={`inline-flex items-center gap-1.5 px-3 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`}>
+                      {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                      <span className="hidden sm:inline">{recognizing ? "Analyse…" : "Scanner"}</span>
+                      <input type="file" accept="image/*" capture="environment" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
+                    </label>
+                  )}
+                  <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
+                    <X className="w-5 h-5 text-muted-foreground" />
+                  </button>
+                </div>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <select
