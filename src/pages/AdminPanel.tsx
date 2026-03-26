@@ -265,15 +265,36 @@ const AdminPanel = () => {
       if (error) throw error;
 
       if (data?.recognized) {
+        const recognizedTitle = data.title || form.title;
+        const recognizedArtist = data.artist || form.artist;
+        const recognizedCategory = form.category || activeTab;
         setForm((prev) => ({
           ...prev,
           title: data.title || prev.title,
           artist: data.artist || prev.artist,
           genre: data.genre || prev.genre,
-          description: data.description || prev.description,
           condition: data.condition || prev.condition,
         }));
-        toast({ title: "Article reconnu !", description: `${data.title || ""} — ${data.artist || ""}` });
+        toast({ title: "Article reconnu !", description: `${recognizedTitle} — ${recognizedArtist}` });
+
+        // Use suggest-record-info for description, image & genre (same source as manual flow)
+        if (recognizedTitle && recognizedArtist) {
+          try {
+            const { data: suggestData } = await supabase.functions.invoke("suggest-record-info", {
+              body: { title: recognizedTitle, artist: recognizedArtist, category: recognizedCategory, needsImage: true, needsDescription: true, needsGenre: true },
+            });
+            if (suggestData) {
+              setForm((prev) => ({
+                ...prev,
+                description: suggestData.description || prev.description,
+                genre: suggestData.genre || prev.genre,
+                image_url: suggestData.imageUrl || prev.image_url,
+              }));
+            }
+          } catch (suggestErr) {
+            console.error("Suggest after recognition error:", suggestErr);
+          }
+        }
       } else {
         toast({ title: "Article non reconnu", description: "Complétez les champs manuellement.", variant: "destructive" });
       }
