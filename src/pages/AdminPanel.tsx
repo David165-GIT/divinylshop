@@ -26,6 +26,7 @@ const AdminPanel = () => {
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const [skipSuggestions, setSkipSuggestions] = useState(false);
+  const [recognizing, setRecognizing] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
