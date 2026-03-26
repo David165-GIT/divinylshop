@@ -243,6 +243,49 @@ const AdminPanel = () => {
     navigate("/admin/login");
   };
 
+  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setRecognizing(true);
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await supabase.functions.invoke("recognize-record", {
+        body: { imageBase64: base64, category: form.category || activeTab },
+      });
+
+      if (error) throw error;
+
+      if (data?.recognized) {
+        setForm((prev) => ({
+          ...prev,
+          title: data.title || prev.title,
+          artist: data.artist || prev.artist,
+          genre: data.genre || prev.genre,
+          description: data.description || prev.description,
+          condition: data.condition || prev.condition,
+        }));
+        toast({ title: "Article reconnu !", description: `${data.title || ""} — ${data.artist || ""}` });
+      } else {
+        toast({ title: "Article non reconnu", description: "Complétez les champs manuellement.", variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("Recognition error:", err);
+      toast({ title: "Erreur de reconnaissance", description: "Impossible d'analyser la photo.", variant: "destructive" });
+    } finally {
+      setRecognizing(false);
+      e.target.value = "";
+    }
+  };
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-body">Chargement…</div>;
 
   return (
