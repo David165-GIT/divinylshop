@@ -277,22 +277,51 @@ const AdminPanel = () => {
         }));
         toast({ title: "Article reconnu !", description: `${recognizedTitle} — ${recognizedArtist}` });
 
-        // Use suggest-record-info for description, image & genre (same source as manual flow)
+        // Trigger suggestion popup (same flow as manual entry)
         if (recognizedTitle && recognizedArtist) {
           try {
+            setSuggestionLoading(true);
+            setSuggestion(null);
+            const recognizedForm: RecordInsert = {
+              title: recognizedTitle,
+              artist: recognizedArtist,
+              genre: data.genre || form.genre || "",
+              condition: data.condition || form.condition || "",
+              category: recognizedCategory,
+              price: form.price,
+              description: "",
+              image_url: null,
+            };
+            setPendingForm(recognizedForm);
             const { data: suggestData } = await supabase.functions.invoke("suggest-record-info", {
               body: { title: recognizedTitle, artist: recognizedArtist, category: recognizedCategory, needsImage: true, needsDescription: true, needsGenre: true },
             });
             if (suggestData) {
-              setForm((prev) => ({
-                ...prev,
-                description: suggestData.description || prev.description,
-                genre: suggestData.genre || prev.genre,
-                image_url: suggestData.imageUrl || prev.image_url,
-              }));
+              const hasVisualSuggestion = suggestData.imageUrl || suggestData.description;
+              if (hasVisualSuggestion) {
+                setSuggestion({
+                  imageUrl: suggestData.imageUrl || null,
+                  description: suggestData.description || null,
+                  genre: suggestData.genre || null,
+                });
+                setSuggestionLoading(false);
+              } else {
+                // Only genre, apply silently and go back to form
+                if (suggestData.genre) {
+                  setForm((prev) => ({ ...prev, ...recognizedForm, genre: suggestData.genre }));
+                }
+                setSuggestionLoading(false);
+                setPendingForm(null);
+              }
+            } else {
+              setSuggestionLoading(false);
+              setPendingForm(null);
+              setForm((prev) => ({ ...prev, ...recognizedForm }));
             }
           } catch (suggestErr) {
             console.error("Suggest after recognition error:", suggestErr);
+            setSuggestionLoading(false);
+            setPendingForm(null);
           }
         }
       } else {
