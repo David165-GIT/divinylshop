@@ -16,6 +16,7 @@ const AdminPanel = () => {
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
+  const [duplicateCategories, setDuplicateCategories] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
@@ -95,10 +96,13 @@ const AdminPanel = () => {
     } else {
       const { data: existing } = await supabase
         .from("records")
-        .select("id")
+        .select("id, category")
         .ilike("title", normalizedForm.title)
         .ilike("artist", normalizedForm.artist);
       if (existing && existing.length > 0) {
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+        setDuplicateCategories(cats);
         setShowDuplicateConfirm(true);
       } else {
         await proceedWithInsert(normalizedForm);
@@ -465,8 +469,11 @@ const AdminPanel = () => {
           <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
             <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
               <h3 className="font-display font-bold text-foreground text-lg mb-2">Doublon détecté</h3>
+              <p className="text-sm text-muted-foreground font-body mb-2">
+                Un article « {form.title} » de « {form.artist} » existe déjà dans : <span className="font-semibold text-foreground">{duplicateCategories.join(", ")}</span>.
+              </p>
               <p className="text-sm text-muted-foreground font-body mb-6">
-                Un article « {form.title} » de « {form.artist} » existe déjà. Voulez-vous continuer sa création ?
+                Voulez-vous continuer sa création ?
               </p>
               <div className="flex gap-3 justify-center">
                 <button
