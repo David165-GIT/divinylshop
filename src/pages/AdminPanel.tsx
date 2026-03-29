@@ -100,7 +100,7 @@ const AdminPanel = () => {
         .ilike("title", normalizedForm.title)
         .ilike("artist", normalizedForm.artist);
       if (existing && existing.length > 0) {
-        const catMap: Record<string, string> = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
         const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
         setDuplicateCategories(cats);
         setShowDuplicateConfirm(true);
