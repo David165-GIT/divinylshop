@@ -469,9 +469,7 @@ const AdminPanel = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-display font-bold">{editingRecord ? "Modifier" : "Ajouter"} un article</h2>
                 <div className="flex items-center gap-2">
-                  {!editingRecord && (() => {
-                    const [showScanMenu, setShowScanMenu] = useState(false);
-                    return (
+                  {!editingRecord && (
                       <div className="relative">
                         <button
                           type="button"
@@ -495,8 +493,7 @@ const AdminPanel = () => {
                           </div>
                         )}
                       </div>
-                    );
-                  })()}
+                  )}
                   <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
                     <X className="w-5 h-5 text-muted-foreground" />
                   </button>
