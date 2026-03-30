@@ -587,24 +587,27 @@ const AdminPanel = () => {
           <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
             <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
               <h3 className="font-display font-bold text-foreground text-lg mb-2">Doublon détecté</h3>
-              <p className="text-sm text-muted-foreground font-body mb-2">
+              <p className="text-sm text-muted-foreground font-body mb-4">
                 Un article « {form.title} » de « {form.artist} » existe déjà dans : <span className="font-semibold text-foreground">{duplicateCategories.join(", ")}</span>.
               </p>
-              <p className="text-sm text-muted-foreground font-body mb-6">
-                Voulez-vous continuer sa création ?
-              </p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => setShowDuplicateConfirm(false)}
-                  className="px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={incrementDuplicate}
+                  className="w-full px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
                 >
-                  Non
+                  +1 à l'existant
                 </button>
                 <button
                   onClick={insertAndReset}
-                  className="px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
+                  className="w-full px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Oui
+                  Créer quand même
+                </button>
+                <button
+                  onClick={() => setShowDuplicateConfirm(false)}
+                  className="w-full px-6 py-2 text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Annuler
                 </button>
               </div>
             </div>
