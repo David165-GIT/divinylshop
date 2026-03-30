@@ -47,8 +47,8 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
           try {
             const parsed = JSON.parse(raw);
             return {
-              correctedArtist: parsed.correctedArtist && parsed.correctedArtist.toLowerCase() !== artist.toLowerCase() ? parsed.correctedArtist : null,
-              correctedTitle: parsed.correctedTitle && parsed.correctedTitle.toLowerCase() !== title.toLowerCase() ? parsed.correctedTitle : null,
+              correctedArtist: parsed.correctedArtist && parsed.correctedArtist !== artist ? parsed.correctedArtist : null,
+              correctedTitle: parsed.correctedTitle && parsed.correctedTitle !== title ? parsed.correctedTitle : null,
             };
           } catch { return { correctedArtist: null, correctedTitle: null }; }
         }
