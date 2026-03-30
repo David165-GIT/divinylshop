@@ -17,6 +17,7 @@ const AdminPanel = () => {
   const [uploading, setUploading] = useState(false);
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [duplicateCategories, setDuplicateCategories] = useState<string[]>([]);
+  const [duplicateRecords, setDuplicateRecords] = useState<Record[]>([]);
   const [showSpellingCorrection, setShowSpellingCorrection] = useState(false);
   const [spellingCorrection, setSpellingCorrection] = useState<{ correctedArtist: string | null; correctedTitle: string | null }>({ correctedArtist: null, correctedTitle: null });
   const [pendingSpellingForm, setPendingSpellingForm] = useState<RecordInsert | null>(null);
