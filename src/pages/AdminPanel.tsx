@@ -98,6 +98,27 @@ const AdminPanel = () => {
       setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
       fetchRecords();
     } else {
+      // Spelling check first
+      if (!skipSuggestions && !spellingChecking) {
+        setSpellingChecking(true);
+        try {
+          const { data: spellData } = await supabase.functions.invoke("suggest-record-info", {
+            body: { title: normalizedForm.title, artist: normalizedForm.artist, category: normalizedForm.category, needsImage: false, needsDescription: false, needsGenre: false, checkSpelling: true },
+          });
+          if (spellData && (spellData.correctedArtist || spellData.correctedTitle)) {
+            setSpellingCorrection({ correctedArtist: spellData.correctedArtist, correctedTitle: spellData.correctedTitle });
+            setPendingSpellingForm(normalizedForm);
+            setSpellingChecking(false);
+            setShowSpellingCorrection(true);
+            return;
+          }
+        } catch (e) {
+          console.error("Spelling check error:", e);
+        }
+        setSpellingChecking(false);
+      }
+
+      // Duplicate check
       const { data: existing } = await supabase
         .from("records")
         .select("id, category")
@@ -111,6 +132,40 @@ const AdminPanel = () => {
       } else {
         await proceedWithInsert(normalizedForm);
       }
+    }
+  };
+
+  const handleSpellingAccept = () => {
+    if (!pendingSpellingForm) return;
+    const corrected = { ...pendingSpellingForm };
+    if (spellingCorrection.correctedArtist) corrected.artist = spellingCorrection.correctedArtist;
+    if (spellingCorrection.correctedTitle) corrected.title = spellingCorrection.correctedTitle;
+    setForm(corrected);
+    setShowSpellingCorrection(false);
+    setPendingSpellingForm(null);
+    setSpellingCorrection({ correctedArtist: null, correctedTitle: null });
+    toast({ title: "Correction appliquée", description: "Vérifiez le formulaire puis cliquez sur Ajouter." });
+  };
+
+  const handleSpellingReject = async () => {
+    if (!pendingSpellingForm) return;
+    setShowSpellingCorrection(false);
+    const formToUse = { ...pendingSpellingForm };
+    setPendingSpellingForm(null);
+    setSpellingCorrection({ correctedArtist: null, correctedTitle: null });
+    // Continue with duplicate check
+    const { data: existing } = await supabase
+      .from("records")
+      .select("id, category")
+      .ilike("title", formToUse.title)
+      .ilike("artist", formToUse.artist);
+    if (existing && existing.length > 0) {
+      const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+      const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+      setDuplicateCategories(cats);
+      setShowDuplicateConfirm(true);
+    } else {
+      await proceedWithInsert(formToUse);
     }
   };
 
