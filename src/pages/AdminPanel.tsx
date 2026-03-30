@@ -33,6 +33,7 @@ const AdminPanel = () => {
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const [skipSuggestions, setSkipSuggestions] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
+  const [showScanMenu, setShowScanMenu] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RecordInsert>({
