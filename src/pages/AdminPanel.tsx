@@ -468,18 +468,34 @@ const AdminPanel = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-display font-bold">{editingRecord ? "Modifier" : "Ajouter"} un article</h2>
                 <div className="flex items-center gap-2">
-                  {!editingRecord && (
-                    <div className="inline-flex items-center gap-1">
-                      <label className={`inline-flex items-center gap-1.5 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`} title="Prendre une photo">
-                        {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-                        <input type="file" accept="image/*" capture="environment" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
-                      </label>
-                      <label className={`inline-flex items-center gap-1.5 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`} title="Depuis la galerie">
-                        {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
-                        <input type="file" accept="image/*" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
-                      </label>
-                    </div>
-                  )}
+                  {!editingRecord && (() => {
+                    const [showScanMenu, setShowScanMenu] = useState(false);
+                    return (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          disabled={recognizing}
+                          onClick={() => setShowScanMenu(!showScanMenu)}
+                          className={`inline-flex items-center gap-1.5 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`}
+                          title="Scanner un article"
+                        >
+                          {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                        </button>
+                        {showScanMenu && (
+                          <div className="absolute right-0 top-full mt-1 bg-background border border-border rounded-md shadow-lg z-50 min-w-[160px]">
+                            <label className="flex items-center gap-2 px-3 py-2 hover:bg-muted cursor-pointer text-sm">
+                              <Camera className="w-4 h-4" /> Appareil photo
+                              <input type="file" accept="image/*" capture="environment" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
+                            </label>
+                            <label className="flex items-center gap-2 px-3 py-2 hover:bg-muted cursor-pointer text-sm">
+                              <ImageIcon className="w-4 h-4" /> Galerie
+                              <input type="file" accept="image/*" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
                     <X className="w-5 h-5 text-muted-foreground" />
                   </button>
