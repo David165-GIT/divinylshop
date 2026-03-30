@@ -523,6 +523,42 @@ const AdminPanel = () => {
           </div>
         )}
 
+        {/* Spelling correction modal */}
+        {showSpellingCorrection && (
+          <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
+            <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
+              <h3 className="font-display font-bold text-foreground text-lg mb-2">Correction suggérée</h3>
+              <div className="text-sm text-muted-foreground font-body mb-4 space-y-2">
+                {spellingCorrection.correctedArtist && (
+                  <p>
+                    Artiste : <span className="line-through text-destructive">{pendingSpellingForm?.artist}</span> → <span className="font-semibold text-foreground">{spellingCorrection.correctedArtist}</span>
+                  </p>
+                )}
+                {spellingCorrection.correctedTitle && (
+                  <p>
+                    Titre : <span className="line-through text-destructive">{pendingSpellingForm?.title}</span> → <span className="font-semibold text-foreground">{spellingCorrection.correctedTitle}</span>
+                  </p>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground font-body mb-6">Voulez-vous appliquer cette correction ?</p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={handleSpellingReject}
+                  className="px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Non
+                </button>
+                <button
+                  onClick={handleSpellingAccept}
+                  className="px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
+                >
+                  Corriger
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Duplicate confirmation modal */}
         {showDuplicateConfirm && (
           <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
