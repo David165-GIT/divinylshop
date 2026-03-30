@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Disc3, Headphones, Heart, Star, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import paoloImg from "@/assets/paolo-boutique.png";
+import paoloImg from "@/assets/paolo-boutique.webp";
 import boutiqueImg from "@/assets/boutique-interieur.png";
 
 const features = [
