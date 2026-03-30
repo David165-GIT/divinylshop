@@ -469,16 +469,11 @@ const AdminPanel = () => {
                 <h2 className="text-xl font-display font-bold">{editingRecord ? "Modifier" : "Ajouter"} un article</h2>
                 <div className="flex items-center gap-2">
                   {!editingRecord && (
-                    <div className="flex items-center gap-1">
-                      <label className={`inline-flex items-center gap-1 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`} title="Depuis la galerie">
-                        {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
-                        <input type="file" accept="image/*" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
-                      </label>
-                      <label className={`inline-flex items-center gap-1 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`} title="Appareil photo">
-                        {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-                        <input type="file" accept="image/*" capture="environment" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
-                      </label>
-                    </div>
+                    <label className={`inline-flex items-center gap-1.5 px-3 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`}>
+                      {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                      <span className="hidden sm:inline">{recognizing ? "Analyse…" : "Scanner"}</span>
+                      <input type="file" accept="image/*" onChange={handleCameraCapture} className="hidden" disabled={recognizing} />
+                    </label>
                   )}
                   <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
                     <X className="w-5 h-5 text-muted-foreground" />
