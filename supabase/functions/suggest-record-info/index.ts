@@ -32,7 +32,10 @@ serve(async (req) => {
           body: JSON.stringify({
             model: "google/gemini-2.5-flash-lite",
             messages: [
-              { role: "system", content: `Tu es un expert en musique. On te donne un nom d'artiste et un titre d'album/single. Si l'un ou l'autre contient une faute d'orthographe, retourne la correction. Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correctedArtist": "nom corrigé ou null si correct", "correctedTitle": "titre corrigé ou null si correct"}. Si les deux sont corrects, retourne {"correctedArtist": null, "correctedTitle": null}.` },
+              { role: "system", content: `Tu es un expert en musique. On te donne un nom d'artiste et un titre d'album/single. Vérifie deux choses :
+1. Les fautes d'orthographe dans le nom d'artiste et le titre.
+2. La capitalisation du titre d'album : compare avec le titre officiel connu. En général les titres d'albums ont une majuscule au début de chaque mot significatif (ex: "Des Roses et des Orties", "Back In Black", "Abbey Road"). Si le titre saisi n'a pas les bonnes majuscules par rapport au titre officiel, propose la correction.
+Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correctedArtist": "nom corrigé ou null si correct", "correctedTitle": "titre corrigé ou null si correct"}. Si les deux sont corrects, retourne {"correctedArtist": null, "correctedTitle": null}.` },
               { role: "user", content: `Artiste: "${artist}"\nTitre: "${title}"` },
             ],
           }),
