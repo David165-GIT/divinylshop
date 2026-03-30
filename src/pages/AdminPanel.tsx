@@ -17,6 +17,10 @@ const AdminPanel = () => {
   const [uploading, setUploading] = useState(false);
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [duplicateCategories, setDuplicateCategories] = useState<string[]>([]);
+  const [showSpellingCorrection, setShowSpellingCorrection] = useState(false);
+  const [spellingCorrection, setSpellingCorrection] = useState<{ correctedArtist: string | null; correctedTitle: string | null }>({ correctedArtist: null, correctedTitle: null });
+  const [pendingSpellingForm, setPendingSpellingForm] = useState<RecordInsert | null>(null);
+  const [spellingChecking, setSpellingChecking] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoSaving, setVideoSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("vinyl");
