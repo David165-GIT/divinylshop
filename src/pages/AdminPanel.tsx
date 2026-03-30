@@ -10,6 +10,13 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
 
 const AdminPanel = () => {
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
