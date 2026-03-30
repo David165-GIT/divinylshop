@@ -281,6 +281,26 @@ const AdminPanel = () => {
     await proceedWithInsert({ ...form, category: form.category || activeTab });
   };
 
+  const incrementDuplicate = async () => {
+    setShowDuplicateConfirm(false);
+    if (duplicateRecords.length > 0) {
+      const dup = duplicateRecords[0];
+      const { error } = await supabase
+        .from("records")
+        .update({ quantity: dup.quantity + 1 })
+        .eq("id", dup.id);
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      } else {
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        toast({ title: "Quantité mise à jour", description: `+1 exemplaire ajouté à « ${dup.title} » (${catMap[dup.category] || dup.category})` });
+        setShowForm(false);
+        setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
+        fetchRecords();
+      }
+    }
+  };
+
   const handleEdit = (record: Record) => {
     setEditingRecord(record);
     setConditionIsCustom(false);
