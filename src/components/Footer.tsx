@@ -25,7 +25,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img onClick={handleTap} src={logoText} alt="Divinyl" className="h-5 cursor-default select-none" />
+            <img onClick={handleTap} src={logoText} alt="Divinyl" className="h-5 cursor-default select-none" width={79} height={20} />
           </div>
 
           <p className="text-sm text-muted-foreground font-body text-center">

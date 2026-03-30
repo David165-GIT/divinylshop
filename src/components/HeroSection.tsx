@@ -9,7 +9,7 @@ const HeroSection = () => {
       <div className="relative flex-1 flex items-center justify-center bg-background pt-20 pb-8">
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
           <h1 className="mb-3 animate-fade-in-up">
-            <img src={logoText} alt="Divinyl" className="h-20 md:h-32 mx-auto" />
+            <img src={logoText} alt="Divinyl" className="h-20 md:h-32 mx-auto" width={503} height={128} />
           </h1>
           <div className="w-16 h-0.5 bg-accent mx-auto mb-4 animate-fade-in-up" style={{ animationDelay: "0.15s" }} />
           <p className="text-lg md:text-xl font-body text-muted-foreground tracking-[0.2em] uppercase animate-fade-in-up" style={{ animationDelay: "0.25s" }}>

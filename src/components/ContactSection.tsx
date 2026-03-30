@@ -83,6 +83,8 @@ const ContactSection = () => {
               alt="Façade de la boutique Divinyl à Nemours"
               className="w-full h-auto object-cover"
               loading="lazy"
+              width={878}
+              height={1001}
             />
           </div>
         </div>

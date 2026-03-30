@@ -6,7 +6,7 @@ import shopVinylWall from "@/assets/shop-vinyl-wall.webp";
 import shopDeepPurple from "@/assets/shop-deep-purple.webp";
 import shopCdAudio from "@/assets/shop-cd-audio.webp";
 import shopHifi from "@/assets/shop-hifi-matos.webp";
-import shopInterior1 from "@/assets/shop-interior-1.png";
+import shopInterior1 from "@/assets/shop-interior-1.webp";
 
 interface GalleryItem {
   src: string;
