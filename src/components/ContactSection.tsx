@@ -1,5 +1,5 @@
 import { MapPin, Clock, Phone, Facebook, ExternalLink } from "lucide-react";
-import shopFacadePhoto from "@/assets/shop-facade-photo.png";
+import shopFacadePhoto from "@/assets/shop-facade-photo.webp";
 
 const ContactSection = () => {
   return (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Facebook } from "lucide-react";
-import logo from "@/assets/logo-divinyl.png";
-import logoText from "@/assets/divinyl-logo-text.png";
+import logo from "@/assets/logo-divinyl.webp";
+import logoText from "@/assets/divinyl-logo-text.webp";
 
 
 const navLinks = [

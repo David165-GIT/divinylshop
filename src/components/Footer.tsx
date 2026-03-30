@@ -1,5 +1,5 @@
 import { Facebook } from "lucide-react";
-import logoText from "@/assets/divinyl-logo-text.png";
+import logoText from "@/assets/divinyl-logo-text.webp";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useRef } from "react";
 
