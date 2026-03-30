@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { title, artist, category, needsImage = true, needsDescription = true, needsGenre = false } = await req.json();
+    const { title, artist, category, needsImage = true, needsDescription = true, needsGenre = false, checkSpelling = false } = await req.json();
     if (!title || !artist) {
       return new Response(JSON.stringify({ error: "title and artist are required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -18,6 +18,43 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Spelling check for artist and title names
+    const spellingPromise = (async (): Promise<{ correctedArtist: string | null; correctedTitle: string | null }> => {
+      if (!checkSpelling) return { correctedArtist: null, correctedTitle: null };
+      try {
+        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-lite",
+            messages: [
+              { role: "system", content: `Tu es un expert en musique. On te donne un nom d'artiste et un titre d'album/single. Si l'un ou l'autre contient une faute d'orthographe, retourne la correction. Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correctedArtist": "nom corrigé ou null si correct", "correctedTitle": "titre corrigé ou null si correct"}. Si les deux sont corrects, retourne {"correctedArtist": null, "correctedTitle": null}.` },
+              { role: "user", content: `Artiste: "${artist}"\nTitre: "${title}"` },
+            ],
+          }),
+        });
+        if (aiResp.ok) {
+          const aiData = await aiResp.json();
+          let raw = aiData.choices?.[0]?.message?.content?.trim() || "";
+          raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+          try {
+            const parsed = JSON.parse(raw);
+            return {
+              correctedArtist: parsed.correctedArtist && parsed.correctedArtist.toLowerCase() !== artist.toLowerCase() ? parsed.correctedArtist : null,
+              correctedTitle: parsed.correctedTitle && parsed.correctedTitle.toLowerCase() !== title.toLowerCase() ? parsed.correctedTitle : null,
+            };
+          } catch { return { correctedArtist: null, correctedTitle: null }; }
+        }
+        return { correctedArtist: null, correctedTitle: null };
+      } catch (e) {
+        console.error("Spelling check error:", e);
+        return { correctedArtist: null, correctedTitle: null };
+      }
+    })();
 
     // Run image search, description generation, and genre detection in parallel
     const imagePromise = (async (): Promise<string | null> => {
@@ -100,11 +137,11 @@ serve(async (req) => {
       }
     })();
 
-    const [imageUrl, { description, genre }] = await Promise.all([imagePromise, descAndGenrePromise]);
+    const [imageUrl, { description, genre }, { correctedArtist, correctedTitle }] = await Promise.all([imagePromise, descAndGenrePromise, spellingPromise]);
 
-    console.log("Result:", { imageUrl: imageUrl ? "found" : "not found", description: description ? "generated" : "not generated", genre: genre || "not found" });
+    console.log("Result:", { imageUrl: imageUrl ? "found" : "not found", description: description ? "generated" : "not generated", genre: genre || "not found", correctedArtist, correctedTitle });
 
-    return new Response(JSON.stringify({ imageUrl, description, genre }), {
+    return new Response(JSON.stringify({ imageUrl, description, genre, correctedArtist, correctedTitle }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
