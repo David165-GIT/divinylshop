@@ -158,13 +158,14 @@ const AdminPanel = () => {
     // Continue with duplicate check
     const { data: existing } = await supabase
       .from("records")
-      .select("id, category")
+      .select("id, category, quantity")
       .ilike("title", formToUse.title)
       .ilike("artist", formToUse.artist);
     if (existing && existing.length > 0) {
       const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
       const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
       setDuplicateCategories(cats);
+      setDuplicateRecords(existing as Record[]);
       setShowDuplicateConfirm(true);
     } else {
       await proceedWithInsert(formToUse);
