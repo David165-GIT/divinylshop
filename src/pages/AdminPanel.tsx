@@ -17,6 +17,7 @@ const AdminPanel = () => {
   const [uploading, setUploading] = useState(false);
   const [showDuplicateConfirm, setShowDuplicateConfirm] = useState(false);
   const [duplicateCategories, setDuplicateCategories] = useState<string[]>([]);
+  const [duplicateRecords, setDuplicateRecords] = useState<Record[]>([]);
   const [showSpellingCorrection, setShowSpellingCorrection] = useState(false);
   const [spellingCorrection, setSpellingCorrection] = useState<{ correctedArtist: string | null; correctedTitle: string | null }>({ correctedArtist: null, correctedTitle: null });
   const [pendingSpellingForm, setPendingSpellingForm] = useState<RecordInsert | null>(null);
@@ -121,13 +122,14 @@ const AdminPanel = () => {
       // Duplicate check
       const { data: existing } = await supabase
         .from("records")
-        .select("id, category")
+        .select("id, category, quantity")
         .ilike("title", normalizedForm.title)
         .ilike("artist", normalizedForm.artist);
       if (existing && existing.length > 0) {
         const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
         const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
         setDuplicateCategories(cats);
+        setDuplicateRecords(existing as Record[]);
         setShowDuplicateConfirm(true);
       } else {
         await proceedWithInsert(normalizedForm);
@@ -156,13 +158,14 @@ const AdminPanel = () => {
     // Continue with duplicate check
     const { data: existing } = await supabase
       .from("records")
-      .select("id, category")
+      .select("id, category, quantity")
       .ilike("title", formToUse.title)
       .ilike("artist", formToUse.artist);
     if (existing && existing.length > 0) {
       const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
       const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
       setDuplicateCategories(cats);
+      setDuplicateRecords(existing as Record[]);
       setShowDuplicateConfirm(true);
     } else {
       await proceedWithInsert(formToUse);
@@ -276,6 +279,26 @@ const AdminPanel = () => {
   const insertAndReset = async () => {
     setShowDuplicateConfirm(false);
     await proceedWithInsert({ ...form, category: form.category || activeTab });
+  };
+
+  const incrementDuplicate = async () => {
+    setShowDuplicateConfirm(false);
+    if (duplicateRecords.length > 0) {
+      const dup = duplicateRecords[0];
+      const { error } = await supabase
+        .from("records")
+        .update({ quantity: dup.quantity + 1 })
+        .eq("id", dup.id);
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      } else {
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        toast({ title: "Quantité mise à jour", description: `+1 exemplaire ajouté à « ${dup.title} » (${catMap[dup.category] || dup.category})` });
+        setShowForm(false);
+        setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
+        fetchRecords();
+      }
+    }
   };
 
   const handleEdit = (record: Record) => {
@@ -564,24 +587,27 @@ const AdminPanel = () => {
           <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
             <div className="bg-background rounded-md border border-border p-6 w-full max-w-sm text-center">
               <h3 className="font-display font-bold text-foreground text-lg mb-2">Doublon détecté</h3>
-              <p className="text-sm text-muted-foreground font-body mb-2">
+              <p className="text-sm text-muted-foreground font-body mb-4">
                 Un article « {form.title} » de « {form.artist} » existe déjà dans : <span className="font-semibold text-foreground">{duplicateCategories.join(", ")}</span>.
               </p>
-              <p className="text-sm text-muted-foreground font-body mb-6">
-                Voulez-vous continuer sa création ?
-              </p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => setShowDuplicateConfirm(false)}
-                  className="px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={incrementDuplicate}
+                  className="w-full px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
                 >
-                  Non
+                  +1 à l'existant
                 </button>
                 <button
                   onClick={insertAndReset}
-                  className="px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
+                  className="w-full px-6 py-2 border border-border rounded-sm text-sm font-body font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Oui
+                  Créer quand même
+                </button>
+                <button
+                  onClick={() => setShowDuplicateConfirm(false)}
+                  className="w-full px-6 py-2 text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Annuler
                 </button>
               </div>
             </div>
