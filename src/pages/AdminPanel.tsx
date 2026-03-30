@@ -69,7 +69,12 @@ const AdminPanel = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/admin/login"); return; }
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin");
-    if (!roles || roles.length === 0) { navigate("/admin/login"); }
+    if (!roles || roles.length === 0) { navigate("/admin/login"); return; }
+    // Check MFA assurance level
+    const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aalData && aalData.nextLevel === "aal2" && aalData.currentLevel !== "aal2") {
+      navigate("/admin/login");
+    }
   };
 
   const fetchRecords = async () => {
