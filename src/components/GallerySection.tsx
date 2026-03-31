@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,26 +26,6 @@ const vinylItems: GalleryItem[] = [
 ];
 
 const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?: () => void }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) scale(1.03)`;
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    el.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
-  }, []);
-
-  const tiltClasses = "group relative overflow-hidden rounded-md shadow-sm hover:shadow-xl transition-shadow duration-500";
-  const tiltStyle = { transition: "transform 0.3s ease-out, box-shadow 0.5s ease", transformStyle: "preserve-3d" as const };
-
   const content = (
     <>
       <img
@@ -63,26 +43,22 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
   if (item.link) {
     return (
-      <div ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={tiltClasses} style={tiltStyle}>
-        <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="block">
-          {content}
-        </Link>
-      </div>
+      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+        {content}
+      </Link>
     );
   }
 
   if (item.video) {
     return (
-      <div ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={tiltClasses} style={tiltStyle}>
-        <button onClick={onVideoClick} className="block w-full text-left">
-          {content}
-        </button>
-      </div>
+      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 w-full text-left">
+        {content}
+      </button>
     );
   }
 
   return (
-    <div ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={`${tiltClasses} cursor-pointer`} style={tiltStyle}>
+    <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
       {content}
     </div>
   );
