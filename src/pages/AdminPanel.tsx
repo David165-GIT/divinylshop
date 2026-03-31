@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
