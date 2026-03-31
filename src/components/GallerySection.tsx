@@ -43,7 +43,7 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
   if (item.link) {
     return (
-      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500">
+      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
         {content}
       </Link>
     );
