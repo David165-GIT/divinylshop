@@ -81,7 +81,7 @@ const AboutSection = () => {
               </figcaption>
             </figure>
             <figure
-              className="rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500 flex flex-col"
+              className="rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-500 flex flex-col"
               onClick={() => setVideoOpen(true)}
             >
               <div className="overflow-hidden flex-1">
