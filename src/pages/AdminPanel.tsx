@@ -12,6 +12,8 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
 
 const AdminPanel = () => {
+  const isMobile = useIsMobile();
+  const desktopFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const meta = document.createElement('meta');
     meta.name = 'robots';
