@@ -481,29 +481,41 @@ const AdminPanel = () => {
                 <h2 className="text-xl font-display font-bold">{editingRecord ? "Modifier" : "Ajouter"} un article</h2>
                 <div className="flex items-center gap-2">
                   {!editingRecord && (
-                      <div className="relative">
+                      <>
                         <button
                           type="button"
                           disabled={recognizing}
-                          onClick={() => setShowScanMenu(!showScanMenu)}
+                          onClick={() => {
+                            if (isMobile) {
+                              setShowScanMenu(true);
+                            } else {
+                              desktopFileRef.current?.click();
+                            }
+                          }}
                           className={`inline-flex items-center gap-1.5 px-2 py-1.5 border border-accent rounded-sm text-sm font-body text-accent hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${recognizing ? "opacity-50 pointer-events-none" : ""}`}
                           title="Scanner un article"
                         >
                           {recognizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                         </button>
-                        {showScanMenu && (
-                          <div className="absolute right-0 top-full mt-1 bg-background border border-border rounded-md shadow-lg z-50 min-w-[160px]">
-                            <label className="flex items-center gap-2 px-3 py-2 hover:bg-muted cursor-pointer text-sm">
-                              <Camera className="w-4 h-4" /> Appareil photo
-                              <input type="file" accept="image/*" capture="environment" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
-                            </label>
-                            <label className="flex items-center gap-2 px-3 py-2 hover:bg-muted cursor-pointer text-sm">
-                              <ImageIcon className="w-4 h-4" /> Galerie
-                              <input type="file" accept="image/*" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
-                            </label>
-                          </div>
-                        )}
-                      </div>
+                        <input ref={desktopFileRef} type="file" accept="image/*" onChange={handleCameraCapture} className="hidden" />
+                        <Drawer open={showScanMenu} onOpenChange={setShowScanMenu}>
+                          <DrawerContent>
+                            <DrawerHeader>
+                              <DrawerTitle className="font-display">Scanner un article</DrawerTitle>
+                            </DrawerHeader>
+                            <div className="px-4 pb-6 space-y-2">
+                              <label className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-muted cursor-pointer text-sm font-body transition-colors">
+                                <Camera className="w-5 h-5 text-accent" /> Prendre une photo
+                                <input type="file" accept="image/*" capture="environment" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
+                              </label>
+                              <label className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-muted cursor-pointer text-sm font-body transition-colors">
+                                <ImageIcon className="w-5 h-5 text-accent" /> Choisir depuis la galerie
+                                <input type="file" accept="image/*" onChange={(e) => { setShowScanMenu(false); handleCameraCapture(e); }} className="hidden" />
+                              </label>
+                            </div>
+                          </DrawerContent>
+                        </Drawer>
+                      </>
                   )}
                   <button onClick={() => { setShowForm(false); setEditingRecord(null); }}>
                     <X className="w-5 h-5 text-muted-foreground" />
