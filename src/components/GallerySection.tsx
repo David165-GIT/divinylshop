@@ -36,14 +36,14 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
       />
       <div className="absolute inset-x-0 bottom-0 bg-background/85 backdrop-blur-sm p-4">
         <h3 className="font-display text-lg font-bold text-foreground">{item.title}</h3>
-        <p className={`text-sm font-body mt-0.5 ${item.link || item.video ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
+        <p className={`text-sm font-body mt-0.5 transition-colors duration-300 ${item.link || item.video ? "text-accent font-medium group-hover:text-accent/80" : "text-muted-foreground"}`}>{item.subtitle}</p>
       </div>
     </>
   );
 
   if (item.link) {
     return (
-      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500">
+      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
         {content}
       </Link>
     );
@@ -51,14 +51,14 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
   if (item.video) {
     return (
-      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500 w-full text-left">
+      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 w-full text-left">
         {content}
       </button>
     );
   }
 
   return (
-    <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-500">
+    <div className="group relative overflow-hidden rounded-md cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
       {content}
     </div>
   );

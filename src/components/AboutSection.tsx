@@ -68,7 +68,7 @@ const AboutSection = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16">
-            <figure className="rounded-md overflow-hidden shadow-md border border-border flex flex-col">
+            <figure className="rounded-md overflow-hidden shadow-md border border-border flex flex-col group hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
               <div className="overflow-hidden flex-1">
                 <img
                   src={paoloImg}
@@ -81,7 +81,7 @@ const AboutSection = () => {
               </figcaption>
             </figure>
             <figure
-              className="rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-lg transition-shadow duration-500 flex flex-col"
+              className="rounded-md overflow-hidden shadow-md border border-border cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-500 flex flex-col"
               onClick={() => setVideoOpen(true)}
             >
               <div className="overflow-hidden flex-1">
