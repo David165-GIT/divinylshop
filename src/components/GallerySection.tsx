@@ -36,7 +36,7 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
       />
       <div className="absolute inset-x-0 bottom-0 bg-background/85 backdrop-blur-sm p-4">
         <h3 className="font-display text-lg font-bold text-foreground">{item.title}</h3>
-        <p className={`text-sm font-body mt-0.5 ${item.link || item.video ? "text-accent font-medium" : "text-muted-foreground"}`}>{item.subtitle}</p>
+        <p className={`text-sm font-body mt-0.5 transition-colors duration-300 ${item.link || item.video ? "text-accent font-medium group-hover:text-accent/80" : "text-muted-foreground"}`}>{item.subtitle}</p>
       </div>
     </>
   );
