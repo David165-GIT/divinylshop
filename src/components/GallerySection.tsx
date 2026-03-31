@@ -51,7 +51,7 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
   if (item.video) {
     return (
-      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-lg transition-shadow duration-500 w-full text-left">
+      <button onClick={onVideoClick} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 w-full text-left">
         {content}
       </button>
     );
