@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook, Search, X } from "lucide-react";
+import { ArrowLeft, Facebook } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
@@ -12,7 +12,7 @@ const EditionsOriginales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  
   const { cols, gridRef } = usePinchGrid(2);
 
   useEffect(() => {
@@ -38,14 +38,7 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (!searchQuery.trim()) return records;
-    const terms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    return records.filter((r) => {
-      const haystack = `${r.artist} ${r.title}`.toLowerCase();
-      return terms.every((term) => haystack.includes(term));
-    });
-  }, [records, searchQuery]);
+  const filtered = records;
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,34 +74,10 @@ const EditionsOriginales = () => {
           </div>
         </div>
 
-        {/* Search bar */}
-        <div className="mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Recherche"
-              className="w-full pl-10 pr-10 py-3 rounded-md border border-border bg-card text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          <p className="mt-2 text-accent font-body font-semibold italic text-center text-[11px] sm:text-sm leading-tight whitespace-nowrap">
-            Vous ne trouvez pas ? Consultez-nous.
-          </p>
-        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : filtered.length === 0 && !searchQuery.trim() ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
