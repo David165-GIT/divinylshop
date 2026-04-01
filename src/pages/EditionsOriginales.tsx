@@ -97,7 +97,7 @@ const EditionsOriginales = () => {
             )}
           </div>
           <p className="mt-2 text-accent font-body font-semibold italic text-center text-[10px] sm:text-sm leading-tight">
-            Vous ne trouvez pas ? Consultez-nous, nous avons peut-être l'article en boutique !
+            Vous ne trouvez pas ? Consultez-nous.
           </p>
         </div>
 
