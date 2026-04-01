@@ -3,6 +3,7 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
@@ -14,6 +15,7 @@ const Catalogue = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
+  const { cols, gridRef } = usePinchGrid(1);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -92,48 +94,59 @@ const Catalogue = () => {
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((record) => (
-              <div
-                key={record.id}
-                className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
-                onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
-              >
-                <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-sm text-xs font-body font-semibold uppercase tracking-wide ${
-                  (record.quantity ?? 1) === 0
-                    ? "bg-destructive text-destructive-foreground"
-                    : "bg-accent text-accent-foreground"
-                }`}>
-                  {(record.quantity ?? 1) === 0 ? "Vendu" : "Dispo"}
-                </span>
-                {record.image_url ? (
-                  <div className="overflow-hidden">
-                    <img
-                      src={record.image_url}
-                      alt={`${record.artist} — ${record.title}`}
-                      className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full aspect-square bg-muted flex items-center justify-center">
-                    <span className="text-4xl text-muted-foreground/30">♫</span>
-                  </div>
-                )}
-                <div className="p-4">
-                  <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
-                    {record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
-                    {record.genre && ` · ${record.genre}`}
-                    {record.condition && ` · ${record.condition}`}
-                  </p>
-                  <h3 className="font-display font-bold text-foreground leading-tight">{record.title}</h3>
-                  <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
-                  {record.description && (
-                    <p className={`text-xs text-muted-foreground font-body mt-2 transition-all duration-300 ${expandedId === record.id ? "" : "line-clamp-2"}`}>{record.description}</p>
+          <div
+            ref={gridRef}
+            className={`grid ${
+              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
+            } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
+            style={{ touchAction: "pan-y" }}
+          >
+            {filtered.map((record) => {
+              const isCompact = cols && cols >= 2;
+              return (
+                <div
+                  key={record.id}
+                  className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
+                  onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
+                >
+                  <span className={`absolute top-1 right-1 z-10 ${isCompact ? "px-1 py-0.5 text-[9px]" : "px-2 py-0.5 text-xs"} rounded-sm font-body font-semibold uppercase tracking-wide ${
+                    (record.quantity ?? 1) === 0
+                      ? "bg-destructive text-destructive-foreground"
+                      : "bg-accent text-accent-foreground"
+                  }`}>
+                    {(record.quantity ?? 1) === 0 ? "Vendu" : "Dispo"}
+                  </span>
+                  {record.image_url ? (
+                    <div className="overflow-hidden">
+                      <img
+                        src={record.image_url}
+                        alt={`${record.artist} — ${record.title}`}
+                        className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-square bg-muted flex items-center justify-center">
+                      <span className={`${isCompact ? "text-2xl" : "text-4xl"} text-muted-foreground/30`}>♫</span>
+                    </div>
                   )}
+                  <div className={isCompact ? "p-2" : "p-4"}>
+                    {!isCompact && (
+                      <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
+                        {record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Édition Originale"}
+                        {record.genre && ` · ${record.genre}`}
+                        {record.condition && ` · ${record.condition}`}
+                      </p>
+                    )}
+                    <h3 className={`font-display font-bold text-foreground leading-tight ${isCompact ? "text-[11px] line-clamp-1" : ""}`}>{record.title}</h3>
+                    <p className={`text-muted-foreground font-body ${isCompact ? "text-[10px] line-clamp-1" : "text-sm"}`}>{record.artist}</p>
+                    {record.description && !isCompact && (
+                      <p className={`text-xs text-muted-foreground font-body mt-2 transition-all duration-300 ${expandedId === record.id ? "" : "line-clamp-2"}`}>{record.description}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
