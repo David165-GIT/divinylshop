@@ -123,7 +123,7 @@ const EditionsOriginales = () => {
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.map((record) => {
+            {filtered.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
