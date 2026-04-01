@@ -76,6 +76,9 @@ const EditionsOriginales = () => {
             <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Pièces rares & Pressages originaux</p>
             <a href="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</a>
           </div>
+          <div className="mt-2 pt-2 sm:mt-4 sm:pt-3 border-t border-border flex justify-center">
+            <p className="text-[10px] sm:text-sm text-accent font-body font-semibold italic tracking-wide whitespace-nowrap">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
+          </div>
         </div>
 
         {/* Search bar */}
