@@ -13,29 +13,36 @@ export function usePinchGrid(defaultCols = 1) {
   const startDistRef = useRef<number | null>(null);
   const startColsRef = useRef(defaultCols);
 
+  // Keep startColsRef in sync
+  useEffect(() => {
+    startColsRef.current = cols;
+  }, [cols]);
+
   const getDistance = (t1: Touch, t2: Touch) =>
     Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
 
   const onTouchStart = useCallback((e: TouchEvent) => {
     if (e.touches.length === 2) {
+      e.preventDefault();
       startDistRef.current = getDistance(e.touches[0], e.touches[1]);
-      startColsRef.current = cols;
     }
-  }, [cols]);
+  }, []);
 
   const onTouchMove = useCallback((e: TouchEvent) => {
     if (e.touches.length !== 2 || startDistRef.current === null) return;
+    e.preventDefault();
     const dist = getDistance(e.touches[0], e.touches[1]);
     const ratio = dist / startDistRef.current;
 
-    // Pinch out (zoom out / more columns)
-    if (ratio < 0.7 && startColsRef.current < 3) {
-      setCols(Math.min(startColsRef.current + 1, 3));
-      startDistRef.current = null; // prevent repeated triggers
+    const current = startColsRef.current;
+    // Pinch in (fingers closer = zoom out = more columns)
+    if (ratio < 0.65 && current < 3) {
+      setCols(current + 1);
+      startDistRef.current = null;
     }
-    // Pinch in (zoom in / fewer columns)
-    if (ratio > 1.4 && startColsRef.current > 1) {
-      setCols(Math.max(startColsRef.current - 1, 1));
+    // Pinch out (fingers apart = zoom in = fewer columns)
+    if (ratio > 1.5 && current > 1) {
+      setCols(current - 1);
       startDistRef.current = null;
     }
   }, []);
@@ -49,8 +56,9 @@ export function usePinchGrid(defaultCols = 1) {
     const el = gridRef.current;
     if (!el) return;
 
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    // Must NOT be passive so we can preventDefault to stop browser zoom
+    el.addEventListener("touchstart", onTouchStart, { passive: false });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
     el.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
