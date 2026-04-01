@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook } from "lucide-react";
+import { ArrowLeft, Facebook, Search, X } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
@@ -12,6 +12,7 @@ const EditionsOriginales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { cols, gridRef } = usePinchGrid(1);
 
   useEffect(() => {
@@ -36,6 +37,15 @@ const EditionsOriginales = () => {
 
     return () => { supabase.removeChannel(channel); };
   }, []);
+
+  const filtered = useMemo(() => {
+    if (!searchQuery.trim()) return records;
+    const terms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    return records.filter((r) => {
+      const haystack = `${r.artist} ${r.title}`.toLowerCase();
+      return terms.every((term) => haystack.includes(term));
+    });
+  }, [records, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,9 +76,34 @@ const EditionsOriginales = () => {
           <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique — 35 Rue Gautier 1er, 77140 Nemours</p>
         </div>
 
+        {/* Search bar */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher par artiste ou nom d'album…"
+            className="w-full pl-10 pr-10 py-3 rounded-md border border-border bg-card text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+          {searchQuery.trim() && !loading && filtered.length === 0 && (
+            <p className="mt-2 text-accent font-body font-semibold italic text-center text-xs sm:text-sm leading-tight">
+              Vous ne trouvez pas ? Consultez-nous, nous avons peut-être l'article en boutique !
+            </p>
+          )}
+        </div>
+
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : records.length === 0 ? (
+        ) : filtered.length === 0 && !searchQuery.trim() ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
@@ -88,7 +123,7 @@ const EditionsOriginales = () => {
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.map((record) => {
+            {filtered.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
