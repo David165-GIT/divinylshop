@@ -4,46 +4,54 @@ import { useIsMobile } from "./use-mobile";
 /**
  * Hook that lets mobile users pinch on a grid container
  * to cycle between 1, 2, and 3 columns.
- * Returns { cols, gridRef } – bind gridRef to the grid wrapper.
  */
 export function usePinchGrid(defaultCols = 1) {
   const isMobile = useIsMobile();
   const [cols, setCols] = useState(defaultCols);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const [gridElement, setGridElement] = useState<HTMLDivElement | null>(null);
   const startDistRef = useRef<number | null>(null);
-  const startColsRef = useRef(defaultCols);
+  const colsRef = useRef(defaultCols);
 
-  // Keep startColsRef in sync
   useEffect(() => {
-    startColsRef.current = cols;
+    colsRef.current = cols;
   }, [cols]);
+
+  const gridRef = useCallback((node: HTMLDivElement | null) => {
+    setGridElement(node);
+  }, []);
 
   const getDistance = (t1: Touch, t2: Touch) =>
     Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
 
   const onTouchStart = useCallback((e: TouchEvent) => {
-    if (e.touches.length === 2) {
-      e.preventDefault();
-      startDistRef.current = getDistance(e.touches[0], e.touches[1]);
-    }
+    if (e.touches.length !== 2) return;
+
+    e.preventDefault();
+    startDistRef.current = getDistance(e.touches[0], e.touches[1]);
   }, []);
 
   const onTouchMove = useCallback((e: TouchEvent) => {
     if (e.touches.length !== 2 || startDistRef.current === null) return;
+
     e.preventDefault();
+
     const dist = getDistance(e.touches[0], e.touches[1]);
     const ratio = dist / startDistRef.current;
+    const currentCols = colsRef.current;
 
-    const current = startColsRef.current;
-    // Pinch in (fingers closer = zoom out = more columns)
-    if (ratio < 0.65 && current < 3) {
-      setCols(current + 1);
-      startDistRef.current = null;
+    if (ratio < 0.9 && currentCols < 3) {
+      const nextCols = currentCols + 1;
+      colsRef.current = nextCols;
+      setCols(nextCols);
+      startDistRef.current = dist;
+      return;
     }
-    // Pinch out (fingers apart = zoom in = fewer columns)
-    if (ratio > 1.5 && current > 1) {
-      setCols(current - 1);
-      startDistRef.current = null;
+
+    if (ratio > 1.1 && currentCols > 1) {
+      const nextCols = currentCols - 1;
+      colsRef.current = nextCols;
+      setCols(nextCols);
+      startDistRef.current = dist;
     }
   }, []);
 
@@ -52,21 +60,20 @@ export function usePinchGrid(defaultCols = 1) {
   }, []);
 
   useEffect(() => {
-    if (!isMobile) return;
-    const el = gridRef.current;
-    if (!el) return;
+    if (!isMobile || !gridElement) return;
 
-    // Must NOT be passive so we can preventDefault to stop browser zoom
-    el.addEventListener("touchstart", onTouchStart, { passive: false });
-    el.addEventListener("touchmove", onTouchMove, { passive: false });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    gridElement.addEventListener("touchstart", onTouchStart, { passive: false });
+    gridElement.addEventListener("touchmove", onTouchMove, { passive: false });
+    gridElement.addEventListener("touchend", onTouchEnd, { passive: true });
+    gridElement.addEventListener("touchcancel", onTouchEnd, { passive: true });
 
     return () => {
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
+      gridElement.removeEventListener("touchstart", onTouchStart);
+      gridElement.removeEventListener("touchmove", onTouchMove);
+      gridElement.removeEventListener("touchend", onTouchEnd);
+      gridElement.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [isMobile, onTouchStart, onTouchMove, onTouchEnd]);
+  }, [gridElement, isMobile, onTouchEnd, onTouchMove, onTouchStart]);
 
   return { cols: isMobile ? cols : null, gridRef };
 }
