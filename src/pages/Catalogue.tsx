@@ -75,14 +75,14 @@ const Catalogue = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10">
+        <div className="bg-muted border border-border rounded-md px-3 py-2 sm:px-6 sm:py-5 mb-6 sm:mb-10">
           <div className="text-center">
-            <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
-            <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
+            <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Consultez-nous pour les prix ou venez découvrir en boutique</p>
+            <p className="text-xs sm:text-sm text-muted-foreground font-body mt-0.5 sm:mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
           </div>
           {filter !== "hifi" && filter !== "cd" && (
-            <div className="mt-4 pt-3 border-t border-border">
-              <p className="text-sm text-accent font-body font-semibold italic text-center tracking-wide">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
+            <div className="mt-2 pt-2 sm:mt-4 sm:pt-3 border-t border-border">
+              <p className="text-xs sm:text-sm text-accent font-body font-semibold italic text-center tracking-wide">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
             </div>
           )}
         </div>
