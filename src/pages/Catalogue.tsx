@@ -105,6 +105,12 @@ const Catalogue = () => {
               <X className="w-4 h-4" />
             </button>
           )}
+          {/* Message "pas trouvé" affiché dans la barre */}
+          {searchQuery.trim() && !loading && filtered.length === 0 && (
+            <p className="mt-2 text-accent font-body font-semibold italic text-center text-xs sm:text-sm leading-tight">
+              Vous ne trouvez pas ? Consultez-nous, nous avons peut-être l'article en boutique !
+            </p>
+          )}
         </div>
 
         {loading ? (
