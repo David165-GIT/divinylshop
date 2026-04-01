@@ -107,7 +107,7 @@ const Catalogue = () => {
               </button>
             )}
           </div>
-          <p className="mt-2 text-accent font-body font-semibold italic text-center text-[10px] sm:text-sm leading-tight">
+          <p className="mt-2 text-accent font-body font-semibold italic text-center text-[11px] sm:text-sm leading-tight whitespace-nowrap">
             Vous ne trouvez pas ? Consultez-nous.
           </p>
         </div>
