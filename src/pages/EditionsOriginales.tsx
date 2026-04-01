@@ -86,7 +86,7 @@ const EditionsOriginales = () => {
             className={`grid ${
               cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
-            style={{ touchAction: "pan-y" }}
+            style={{ touchAction: "manipulation" }}
           >
             {records.map((record) => {
               const isCompact = cols && cols >= 2;
