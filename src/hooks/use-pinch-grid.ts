@@ -39,19 +39,19 @@ export function usePinchGrid(defaultCols = 1) {
     const ratio = dist / startDistRef.current;
     const currentCols = colsRef.current;
 
-    if (ratio < 0.9 && currentCols < 3) {
+    if (ratio < 0.6 && currentCols < 3) {
       const nextCols = currentCols + 1;
       colsRef.current = nextCols;
       setCols(nextCols);
-      startDistRef.current = dist;
+      startDistRef.current = null;
       return;
     }
 
-    if (ratio > 1.1 && currentCols > 1) {
+    if (ratio > 1.6 && currentCols > 1) {
       const nextCols = currentCols - 1;
       colsRef.current = nextCols;
       setCols(nextCols);
-      startDistRef.current = dist;
+      startDistRef.current = null;
     }
   }, []);
 
