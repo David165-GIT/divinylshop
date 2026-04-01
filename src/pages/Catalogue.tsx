@@ -41,7 +41,15 @@ const Catalogue = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = records.filter((r) => r.category === filter);
+  const filtered = useMemo(() => {
+    const byCategory = records.filter((r) => r.category === filter);
+    if (!searchQuery.trim()) return byCategory;
+    const terms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    return byCategory.filter((r) => {
+      const haystack = `${r.artist} ${r.title}`.toLowerCase();
+      return terms.every((term) => haystack.includes(term));
+    });
+  }, [records, filter, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
