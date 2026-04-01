@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, X } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
@@ -78,7 +78,7 @@ const Catalogue = () => {
         <div className="bg-muted border border-border rounded-md px-3 py-2 sm:px-6 sm:py-5 mb-6 sm:mb-10">
           <div className="text-center">
             <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Consultez-nous pour les prix ou venez découvrir en boutique</p>
-            <Link to="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</Link>
+            <a href="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</a>
           </div>
           {filter !== "hifi" && filter !== "cd" && (
             <div className="mt-2 pt-2 sm:mt-4 sm:pt-3 border-t border-border">
