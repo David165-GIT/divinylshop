@@ -15,6 +15,7 @@ const Catalogue = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
+  const { cols, gridRef } = usePinchGrid(1);
 
   useEffect(() => {
     const fetchRecords = async () => {
