@@ -77,7 +77,7 @@ const EditionsOriginales = () => {
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : filtered.length === 0 && !searchQuery.trim() ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
