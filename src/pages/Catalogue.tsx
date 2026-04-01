@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook } from "lucide-react";
+import { ArrowLeft, Facebook, Search, X } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
@@ -13,6 +13,7 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
   const { cols, gridRef } = usePinchGrid(1);
@@ -40,7 +41,15 @@ const Catalogue = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = records.filter((r) => r.category === filter);
+  const filtered = useMemo(() => {
+    const byCategory = records.filter((r) => r.category === filter);
+    if (!searchQuery.trim()) return byCategory;
+    const terms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    return byCategory.filter((r) => {
+      const haystack = `${r.artist} ${r.title}`.toLowerCase();
+      return terms.every((term) => haystack.includes(term));
+    });
+  }, [records, filter, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,20 +87,48 @@ const Catalogue = () => {
           )}
         </div>
 
+        {/* Search bar */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher par artiste ou nom d'album…"
+            className="w-full pl-10 pr-10 py-3 rounded-md border border-border bg-card text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-muted-foreground font-body mb-4">Aucun article disponible pour le moment.</p>
-            <a
-              href="https://www.facebook.com/divinyl.shop/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-accent font-body hover:underline"
-            >
-              <Facebook className="w-4 h-4" /> Suivez-nous sur Facebook pour les nouveautés
-            </a>
+            {searchQuery.trim() ? (
+              <p className="text-muted-foreground font-body mb-2">
+                Vous n'avez pas trouvé ?{" "}
+                <span className="text-accent font-semibold">Consultez-nous, nous avons peut-être l'article en boutique !</span>
+              </p>
+            ) : (
+              <>
+                <p className="text-muted-foreground font-body mb-4">Aucun article disponible pour le moment.</p>
+                <a
+                  href="https://www.facebook.com/divinyl.shop/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-accent font-body hover:underline"
+                >
+                  <Facebook className="w-4 h-4" /> Suivez-nous sur Facebook pour les nouveautés
+                </a>
+              </>
+            )}
           </div>
         ) : (
           <div
