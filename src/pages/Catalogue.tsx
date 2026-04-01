@@ -145,9 +145,8 @@ const Catalogue = () => {
                     )}
                   </div>
                 </div>
-              );
+            })}
           </div>
-        )}
         )}
 
         {/* CTA */}
