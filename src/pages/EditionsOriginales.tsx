@@ -38,14 +38,7 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (!searchQuery.trim()) return records;
-    const terms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    return records.filter((r) => {
-      const haystack = `${r.artist} ${r.title}`.toLowerCase();
-      return terms.every((term) => haystack.includes(term));
-    });
-  }, [records, searchQuery]);
+  const filtered = records;
 
   return (
     <div className="min-h-screen bg-background">
