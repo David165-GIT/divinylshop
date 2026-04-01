@@ -145,6 +145,7 @@ const Catalogue = () => {
                     )}
                   </div>
                 </div>
+              );
             })}
           </div>
         )}
