@@ -73,7 +73,7 @@ const EditionsOriginales = () => {
         {/* Banner */}
         <div className="bg-muted border border-border rounded-md px-3 py-2 sm:px-6 sm:py-5 mb-6 sm:mb-10">
           <div className="text-center">
-            <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Pièces rares & pressages originaux</p>
+            <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Pièces rares & Pressages originaux</p>
             <a href="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</a>
           </div>
         </div>
