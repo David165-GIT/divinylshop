@@ -146,11 +146,8 @@ const Catalogue = () => {
                   </div>
                 </div>
               );
-            })}
-                </div>
-              </div>
-            ))}
           </div>
+        )}
         )}
 
         {/* CTA */}
