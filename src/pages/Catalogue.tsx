@@ -115,26 +115,17 @@ const Catalogue = () => {
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : filtered.length === 0 ? (
+        ) : filtered.length === 0 && !searchQuery.trim() ? (
           <div className="text-center py-16">
-            {searchQuery.trim() ? (
-              <p className="text-muted-foreground font-body mb-2">
-                Vous n'avez pas trouvé ?{" "}
-                <span className="text-accent font-semibold">Consultez-nous, nous avons peut-être l'article en boutique !</span>
-              </p>
-            ) : (
-              <>
-                <p className="text-muted-foreground font-body mb-4">Aucun article disponible pour le moment.</p>
-                <a
-                  href="https://www.facebook.com/divinyl.shop/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-accent font-body hover:underline"
-                >
-                  <Facebook className="w-4 h-4" /> Suivez-nous sur Facebook pour les nouveautés
-                </a>
-              </>
-            )}
+            <p className="text-muted-foreground font-body mb-4">Aucun article disponible pour le moment.</p>
+            <a
+              href="https://www.facebook.com/divinyl.shop/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-accent font-body hover:underline"
+            >
+              <Facebook className="w-4 h-4" /> Suivez-nous sur Facebook pour les nouveautés
+            </a>
           </div>
         ) : (
           <div
