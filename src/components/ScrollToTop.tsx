@@ -4,12 +4,14 @@ import { useLocation, useNavigationType } from "react-router-dom";
 const SCROLL_KEY = "divinyl-home-scroll";
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const navType = useNavigationType();
 
-  // Always scroll to top on initial page load
+  // Always scroll to top on initial page load (no hash)
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
   }, []);
 
   // Save scroll position when leaving homepage
@@ -25,6 +27,17 @@ const ScrollToTop = () => {
   }, []);
 
   useEffect(() => {
+    // If there's a hash, scroll to that element
+    if (hash) {
+      const el = document.querySelector(hash);
+      if (el) {
+        requestAnimationFrame(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        });
+        return;
+      }
+    }
+
     // On POP (back/forward), restore saved position for homepage
     if (navType === "POP" && pathname === "/") {
       const saved = sessionStorage.getItem(SCROLL_KEY);
@@ -37,7 +50,7 @@ const ScrollToTop = () => {
     }
     // For PUSH navigation, scroll to top
     window.scrollTo(0, 0);
-  }, [pathname, navType]);
+  }, [pathname, hash, navType]);
 
   return null;
 };
