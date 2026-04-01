@@ -96,7 +96,7 @@ const GallerySection = () => {
   return (
     <>
       {/* Vinyles */}
-      <section id="vinyles" className="relative py-24 bg-grain overflow-hidden">
+      <section id="gallery" className="relative py-24 bg-grain overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Sélection Vinyle et Matériel Hifi</h2>
