@@ -69,7 +69,6 @@ const Catalogue = () => {
         <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10">
           <div className="text-center">
             <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
-            <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
           </div>
           {filter !== "hifi" && filter !== "cd" && (
             <div className="mt-4 pt-3 border-t border-border">
