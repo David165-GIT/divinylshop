@@ -12,7 +12,18 @@ const EditionsOriginales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const scrollToIdRef = useRef<string | null>(null);
   const { cols, gridRef, setCols } = usePinchGrid(2);
+
+  useEffect(() => {
+    if (scrollToIdRef.current && cols === 1) {
+      const el = document.querySelector(`[data-record-id="${scrollToIdRef.current}"]`);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+      }
+      scrollToIdRef.current = null;
+    }
+  }, [cols]);
 
   useEffect(() => {
     const fetchRecords = async () => {
