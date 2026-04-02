@@ -97,7 +97,14 @@ const EditionsOriginales = () => {
                 <div
                   key={record.id}
                   className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
-                  onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
+                  onClick={() => {
+                    if (cols && cols >= 2) {
+                      setCols(1);
+                      setExpandedId(record.id);
+                    } else {
+                      setExpandedId(expandedId === record.id ? null : record.id);
+                    }
+                  }}
                 >
                   <span className={`absolute top-1 right-1 z-10 ${isCompact ? "px-1 py-0.5 text-[9px]" : "px-2 py-0.5 text-xs"} rounded-sm font-body font-semibold uppercase tracking-wide ${
                     (record.quantity ?? 1) === 0
