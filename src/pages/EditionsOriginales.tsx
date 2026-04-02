@@ -63,7 +63,7 @@ const EditionsOriginales = () => {
         {/* Banner */}
         <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10 text-center">
           <p className="font-display font-bold text-foreground text-lg">Pièces rares & pressages originaux</p>
-          <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique — 35 Rue Gautier 1er, 77140 Nemours</p>
+          <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique</p>
         </div>
 
         {loading ? (
