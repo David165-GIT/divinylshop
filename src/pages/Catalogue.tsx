@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
@@ -13,10 +13,9 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
-  const { cols, gridRef } = usePinchGrid(2);
+  const { cols, gridRef } = usePinchGrid(1);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -41,9 +40,7 @@ const Catalogue = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = useMemo(() => {
-    return records.filter((r) => r.category === filter);
-  }, [records, filter]);
+  const filtered = records.filter((r) => r.category === filter);
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +48,7 @@ const Catalogue = () => {
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/#gallery')} className="text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <h1 className="text-xl font-display font-bold text-gradient-dark">{filter === "hifi" ? "Matériel Hi-Fi" : filter === "cd" ? "CD Audio" : "Catalogue Vinyles"}</h1>
@@ -69,14 +66,16 @@ const Catalogue = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-3 py-2 sm:px-6 sm:py-5 mb-6 sm:mb-10">
+        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10">
           <div className="text-center">
-            <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Consultez-nous pour les prix ou venez découvrir en boutique</p>
-            <a href="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</a>
+            <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
+            <p className="text-sm text-muted-foreground font-body mt-1">35 Rue Gautier 1er, 77140 Nemours</p>
           </div>
-          <div className="mt-2 pt-2 sm:mt-4 sm:pt-3 border-t border-border flex justify-center">
-            <p className="text-[10px] sm:text-sm text-accent font-body font-semibold italic tracking-wide whitespace-nowrap">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
-          </div>
+          {filter !== "hifi" && filter !== "cd" && (
+            <div className="mt-4 pt-3 border-t border-border">
+              <p className="text-sm text-accent font-body font-semibold italic text-center tracking-wide">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
+            </div>
+          )}
         </div>
 
 

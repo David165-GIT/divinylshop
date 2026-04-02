@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook } from "lucide-react";
@@ -12,8 +12,7 @@ const EditionsOriginales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
-  const { cols, gridRef } = usePinchGrid(2);
+  const { cols, gridRef } = usePinchGrid(1);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -38,15 +37,13 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = records;
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/#gallery')} className="text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <h1 className="text-xl font-display font-bold text-gradient-dark">Éditions Originales</h1>
@@ -64,20 +61,14 @@ const EditionsOriginales = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-3 py-2 sm:px-6 sm:py-5 mb-6 sm:mb-10">
-          <div className="text-center">
-            <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">Pièces rares & Pressages originaux</p>
-            <a href="/#contact" className="text-xs sm:text-sm text-accent font-body mt-0.5 sm:mt-1 hover:underline inline-block">Nous contacter →</a>
-          </div>
-          <div className="mt-2 pt-2 sm:mt-4 sm:pt-3 border-t border-border flex justify-center">
-            <p className="text-[10px] sm:text-sm text-accent font-body font-semibold italic tracking-wide whitespace-nowrap">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
-          </div>
+        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10 text-center">
+          <p className="font-display font-bold text-foreground text-lg">Pièces rares & pressages originaux</p>
+          <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique — 35 Rue Gautier 1er, 77140 Nemours</p>
         </div>
-
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : filtered.length === 0 ? (
+        ) : records.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
@@ -97,7 +88,7 @@ const EditionsOriginales = () => {
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
             style={{ touchAction: "manipulation" }}
           >
-            {filtered.map((record) => {
+            {records.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
