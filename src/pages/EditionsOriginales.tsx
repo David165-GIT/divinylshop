@@ -65,7 +65,7 @@ const EditionsOriginales = () => {
           <p className="font-display font-bold text-foreground text-lg">Pièces rares & pressages originaux</p>
           <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique</p>
           <div className="mt-4 pt-3 border-t border-border">
-            <p className="text-xs sm:text-sm text-accent font-body font-semibold italic text-center tracking-wide whitespace-nowrap">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
+            <p className="text-accent font-body font-semibold italic text-center tracking-wide whitespace-nowrap" style={{ fontSize: 'clamp(0.55rem, 2.8vw, 0.875rem)' }}>✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
           </div>
         </div>
 
