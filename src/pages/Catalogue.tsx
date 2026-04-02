@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook } from "lucide-react";
@@ -13,9 +13,20 @@ const Catalogue = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const scrollToIdRef = useRef<string | null>(null);
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
   const { cols, gridRef, setCols } = usePinchGrid(2);
+
+  useEffect(() => {
+    if (scrollToIdRef.current && cols === 1) {
+      const el = document.querySelector(`[data-record-id="${scrollToIdRef.current}"]`);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+      }
+      scrollToIdRef.current = null;
+    }
+  }, [cols]);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -103,9 +114,11 @@ const Catalogue = () => {
               return (
                 <div
                   key={record.id}
+                  data-record-id={record.id}
                   className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
                   onClick={() => {
                     if (cols && cols >= 2) {
+                      scrollToIdRef.current = record.id;
                       setCols(1);
                       setExpandedId(record.id);
                     } else {
