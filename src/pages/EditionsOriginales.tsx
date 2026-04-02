@@ -62,7 +62,7 @@ const EditionsOriginales = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
         <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10 text-center">
-          <p className="font-display font-bold text-foreground text-lg">Pièces rares & pressages originaux</p>
+          <p className="font-display font-bold text-foreground text-lg">Pièces rares & Pressages originaux</p>
           <p className="text-sm text-muted-foreground font-body mt-1">Consultez-nous pour les prix ou venez découvrir en boutique</p>
           <div className="mt-4 pt-3 border-t border-border">
             <p className="text-accent font-body font-semibold italic text-center tracking-wide whitespace-nowrap" style={{ fontSize: 'clamp(0.55rem, 2.8vw, 0.875rem)' }}>✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
