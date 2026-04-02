@@ -75,5 +75,5 @@ export function usePinchGrid(defaultCols = 1) {
     };
   }, [gridElement, isMobile, onTouchEnd, onTouchMove, onTouchStart]);
 
-  return { cols: isMobile ? cols : null, gridRef };
+  return { cols: isMobile ? cols : null, gridRef, setCols };
 }
