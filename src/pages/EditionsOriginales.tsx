@@ -107,9 +107,11 @@ const EditionsOriginales = () => {
               return (
                 <div
                   key={record.id}
+                  data-record-id={record.id}
                   className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
                   onClick={() => {
                     if (cols && cols >= 2) {
+                      scrollToIdRef.current = record.id;
                       setCols(1);
                       setExpandedId(record.id);
                     } else {
