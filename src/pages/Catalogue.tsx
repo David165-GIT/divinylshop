@@ -14,6 +14,9 @@ const Catalogue = () => {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
+  const tabParam = searchParams.get("tab");
+  const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
+  const { cols, gridRef, setCols } = usePinchGrid(2);
 
   useEffect(() => {
     if (scrollToIdRef.current && cols === 1) {
@@ -24,9 +27,6 @@ const Catalogue = () => {
       scrollToIdRef.current = null;
     }
   }, [cols]);
-  const tabParam = searchParams.get("tab");
-  const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
-  const { cols, gridRef, setCols } = usePinchGrid(2);
 
   useEffect(() => {
     const fetchRecords = async () => {
