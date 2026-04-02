@@ -12,7 +12,7 @@ const EditionsOriginales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const { cols, gridRef } = usePinchGrid(2);
+  const { cols, gridRef, setCols } = usePinchGrid(2);
 
   useEffect(() => {
     const fetchRecords = async () => {
