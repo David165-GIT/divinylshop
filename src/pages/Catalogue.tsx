@@ -70,11 +70,9 @@ const Catalogue = () => {
           <div className="text-center">
             <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
           </div>
-          {filter !== "hifi" && filter !== "cd" && (
-            <div className="mt-4 pt-3 border-t border-border">
-              <p className="text-sm text-accent font-body font-semibold italic text-center tracking-wide">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
-            </div>
-          )}
+          <div className="mt-4 pt-3 border-t border-border">
+            <p className="text-xs sm:text-sm text-accent font-body font-semibold italic text-center tracking-wide whitespace-nowrap">✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
+          </div>
         </div>
 
 
