@@ -14,11 +14,18 @@ const Catalogue = () => {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
+  const prevColsRef = useRef<number | null>(null);
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
   const { cols, gridRef, setCols } = usePinchGrid(2);
 
   useEffect(() => {
+    const prevCols = prevColsRef.current;
+    prevColsRef.current = cols;
+
+    if (cols === null) return;
+
+    // Zoom in: multi-col → 1 col (click on article)
     if (scrollToIdRef.current && cols === 1) {
       const id = scrollToIdRef.current;
       scrollToIdRef.current = null;
@@ -26,8 +33,17 @@ const Catalogue = () => {
         const el = document.querySelector(`[data-record-id="${id}"]`);
         if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
       });
+      return;
     }
-  }, [cols]);
+
+    // Zoom out: 1 col → multi-col (pinch), scroll to the article being viewed
+    if (prevCols === 1 && cols > 1 && expandedId) {
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${expandedId}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
+    }
+  }, [cols, expandedId]);
 
   useEffect(() => {
     const fetchRecords = async () => {
