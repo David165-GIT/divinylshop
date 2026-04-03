@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageI
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import type { Database } from "@/integrations/supabase/types";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -46,6 +47,31 @@ const AdminPanel = () => {
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
   const navigate = useNavigate();
+  const { cols, gridRef, setCols } = usePinchGrid(2);
+  const scrollToIdRef = useRef<string | null>(null);
+  const prevColsRef = useRef<number | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const prevCols = prevColsRef.current;
+    prevColsRef.current = cols;
+    if (cols === null) return;
+    if (scrollToIdRef.current && cols === 1) {
+      const id = scrollToIdRef.current;
+      scrollToIdRef.current = null;
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${id}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
+      return;
+    }
+    if (prevCols === 1 && cols > 1 && expandedId) {
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${expandedId}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
+    }
+  }, [cols, expandedId]);
 
   const [form, setForm] = useState<RecordInsert>({
     title: "", artist: "", genre: "", price: null, condition: "",
@@ -725,33 +751,67 @@ const AdminPanel = () => {
         {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).length === 0 ? (
           <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : "Aucun article dans cette catégorie."}</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => (
-              <div key={record.id} className={`bg-card border border-border rounded-md p-4 ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""}`}>
-                {record.image_url && (
-                  <img src={record.image_url} alt={record.title} className="w-full aspect-square object-cover rounded-sm mb-3" />
-                )}
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-xs text-accent font-body uppercase tracking-wide">{record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Éd. Originale"} {record.genre && `· ${record.genre}`}</p>
-                    <h3 className="font-display font-bold text-foreground truncate">{record.title}</h3>
-                    <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
-                    {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}
-                    {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
-                    {(record.quantity ?? 1) === 0 && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
-                  </div>
-                  <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
-                    <button onClick={() => handleEdit(record)} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
-                    <div className="flex items-center gap-1 border border-border rounded-sm">
-                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, -1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">−</button>
-                      <span className="text-xs font-body font-semibold text-foreground min-w-[1.2rem] text-center">{record.quantity ?? 1}</span>
-                      <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, 1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">+</button>
+          <div
+            ref={gridRef}
+            className={`grid ${
+              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
+            } md:grid-cols-2 lg:grid-cols-3`}
+            style={{ touchAction: "manipulation" }}
+          >
+            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => {
+              const isCompact = cols && cols >= 2;
+              return (
+                <div
+                  key={record.id}
+                  data-record-id={record.id}
+                  className={`bg-card border border-border rounded-md overflow-hidden cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""} ${isCompact ? "" : "p-4"}`}
+                  onClick={() => {
+                    if (cols && cols >= 2) {
+                      scrollToIdRef.current = record.id;
+                      setCols(1);
+                      setExpandedId(record.id);
+                    } else {
+                      setExpandedId(expandedId === record.id ? null : record.id);
+                    }
+                  }}
+                >
+                  {record.image_url && (
+                    <img src={record.image_url} alt={record.title} className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
+                  )}
+                  {isCompact ? (
+                    <div className="p-2">
+                      <h3 className="font-display font-bold text-foreground text-[11px] line-clamp-1">{record.title}</h3>
+                      <p className="text-muted-foreground font-body text-[10px] line-clamp-1">{record.artist}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className={`text-[9px] rounded-sm px-1 py-0.5 font-body font-semibold ${(record.quantity ?? 1) === 0 ? "bg-destructive/10 text-destructive" : "bg-accent/10 text-accent"}`}>
+                          {(record.quantity ?? 1) === 0 ? "Vendu" : `×${record.quantity ?? 1}`}
+                        </span>
+                      </div>
                     </div>
-                    <button onClick={() => handleDelete(record.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
-                  </div>
+                  ) : (
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs text-accent font-body uppercase tracking-wide">{record.category === "vinyl" ? "Vinyle" : record.category === "cd" ? "CD Audio" : record.category === "hifi" ? "Hi-Fi" : "Éd. Originale"} {record.genre && `· ${record.genre}`}</p>
+                        <h3 className="font-display font-bold text-foreground truncate">{record.title}</h3>
+                        <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
+                        {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}
+                        {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
+                        {(record.quantity ?? 1) === 0 && <span className="inline-block text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-sm mt-1 font-body">Vendu</span>}
+                      </div>
+                      <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
+                        <button onClick={(e) => { e.stopPropagation(); handleEdit(record); }} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
+                        <div className="flex items-center gap-1 border border-border rounded-sm">
+                          <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, -1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">−</button>
+                          <span className="text-xs font-body font-semibold text-foreground min-w-[1.2rem] text-center">{record.quantity ?? 1}</span>
+                          <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(record, 1); }} className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-body">+</button>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); handleDelete(record.id); }} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
