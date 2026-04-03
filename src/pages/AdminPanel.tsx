@@ -47,6 +47,31 @@ const AdminPanel = () => {
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
   const navigate = useNavigate();
+  const { cols, gridRef, setCols } = usePinchGrid(2);
+  const scrollToIdRef = useRef<string | null>(null);
+  const prevColsRef = useRef<number | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const prevCols = prevColsRef.current;
+    prevColsRef.current = cols;
+    if (cols === null) return;
+    if (scrollToIdRef.current && cols === 1) {
+      const id = scrollToIdRef.current;
+      scrollToIdRef.current = null;
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${id}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
+      return;
+    }
+    if (prevCols === 1 && cols > 1 && expandedId) {
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${expandedId}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
+    }
+  }, [cols, expandedId]);
 
   const [form, setForm] = useState<RecordInsert>({
     title: "", artist: "", genre: "", price: null, condition: "",
