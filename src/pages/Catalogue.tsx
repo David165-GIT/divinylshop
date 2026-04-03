@@ -20,11 +20,12 @@ const Catalogue = () => {
 
   useEffect(() => {
     if (scrollToIdRef.current && cols === 1) {
-      const el = document.querySelector(`[data-record-id="${scrollToIdRef.current}"]`);
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
-      }
+      const id = scrollToIdRef.current;
       scrollToIdRef.current = null;
+      requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-record-id="${id}"]`);
+        if (el) el.scrollIntoView({ behavior: "instant", block: "center" });
+      });
     }
   }, [cols]);
 
