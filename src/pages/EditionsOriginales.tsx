@@ -17,6 +17,9 @@ const EditionsOriginales = () => {
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
   const { cols, gridRef, setCols } = usePinchGrid(2);
+  const isMobile = useIsMobile();
+  const [desktopCols, setDesktopCols] = useState(4);
+  const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
 
   useEffect(() => {
     const prevCols = prevColsRef.current;
