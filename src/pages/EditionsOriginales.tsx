@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook, Search } from "lucide-react";
+import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -16,6 +17,9 @@ const EditionsOriginales = () => {
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
   const { cols, gridRef, setCols } = usePinchGrid(2);
+  const isMobile = useIsMobile();
+  const [desktopCols, setDesktopCols] = useState(4);
+  const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
 
   useEffect(() => {
     const prevCols = prevColsRef.current;
@@ -107,15 +111,26 @@ const EditionsOriginales = () => {
         </div>
 
         {/* Search */}
-        <div className="relative mb-8">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher"
-            className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+        <div className="relative mb-8 flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Rechercher"
+              className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          {!isMobile && (
+            <button
+              onClick={cycleDesktopCols}
+              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
+              title={`Affichage ${desktopCols} colonnes`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {loading ? (
@@ -137,7 +152,7 @@ const EditionsOriginales = () => {
             ref={gridRef}
             className={`grid ${
               cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
-            } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
+            } ${!isMobile ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
             {filteredRecords.map((record) => {
