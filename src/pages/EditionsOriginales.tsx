@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook } from "lucide-react";
+import { ArrowLeft, Facebook, Search } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
@@ -11,6 +11,7 @@ const EditionsOriginales = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
@@ -63,6 +64,16 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
+  const filteredRecords = records.filter((r) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      r.title.toLowerCase().includes(q) ||
+      r.artist.toLowerCase().includes(q) ||
+      (r.genre && r.genre.toLowerCase().includes(q))
+    );
+  });
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -95,9 +106,21 @@ const EditionsOriginales = () => {
           </div>
         </div>
 
+        {/* Search */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher"
+            className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : records.length === 0 ? (
+        ) : filteredRecords.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
@@ -117,7 +140,7 @@ const EditionsOriginales = () => {
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.map((record) => {
+            {filteredRecords.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div

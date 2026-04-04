@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook } from "lucide-react";
+import { ArrowLeft, Facebook, Search } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
@@ -12,6 +12,7 @@ const Catalogue = () => {
   const navigate = useNavigate();
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
@@ -68,7 +69,16 @@ const Catalogue = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const filtered = records.filter((r) => r.category === filter);
+  const filtered = records.filter((r) => {
+    if (r.category !== filter) return false;
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      r.title.toLowerCase().includes(q) ||
+      r.artist.toLowerCase().includes(q) ||
+      (r.genre && r.genre.toLowerCase().includes(q))
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,6 +113,17 @@ const Catalogue = () => {
           </div>
         </div>
 
+        {/* Search */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher"
+            className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
