@@ -113,6 +113,17 @@ const Catalogue = () => {
           </div>
         </div>
 
+        {/* Search */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher"
+            className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
 
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
