@@ -64,6 +64,16 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
+  const filteredRecords = records.filter((r) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      r.title.toLowerCase().includes(q) ||
+      r.artist.toLowerCase().includes(q) ||
+      (r.genre && r.genre.toLowerCase().includes(q))
+    );
+  });
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
