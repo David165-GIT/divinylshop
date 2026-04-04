@@ -108,7 +108,17 @@ const EditionsOriginales = () => {
           />
         </div>
 
-        {loading ? (
+        {(() => {
+          const filtered = records.filter((r) => {
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.toLowerCase();
+            return (
+              r.title.toLowerCase().includes(q) ||
+              r.artist.toLowerCase().includes(q) ||
+              (r.genre && r.genre.toLowerCase().includes(q))
+            );
+          });
+          return loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : records.length === 0 ? (
           <div className="text-center py-16">
