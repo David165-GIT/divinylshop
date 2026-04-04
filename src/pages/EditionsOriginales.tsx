@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook, Search } from "lucide-react";
+import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
