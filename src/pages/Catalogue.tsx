@@ -104,7 +104,7 @@ const Catalogue = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-10">
+        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-3">
           <div className="text-center">
             <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
           </div>
