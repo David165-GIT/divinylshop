@@ -20,6 +20,9 @@ const Catalogue = () => {
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
   const { cols, gridRef, setCols } = usePinchGrid(2);
+  const isMobile = useIsMobile();
+  const [desktopCols, setDesktopCols] = useState(4);
+  const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
 
   useEffect(() => {
     const prevCols = prevColsRef.current;
