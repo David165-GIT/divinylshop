@@ -108,19 +108,9 @@ const EditionsOriginales = () => {
           />
         </div>
 
-        {(() => {
-          const filtered = records.filter((r) => {
-            if (!searchQuery.trim()) return true;
-            const q = searchQuery.toLowerCase();
-            return (
-              r.title.toLowerCase().includes(q) ||
-              r.artist.toLowerCase().includes(q) ||
-              (r.genre && r.genre.toLowerCase().includes(q))
-            );
-          });
-          return loading ? (
+        {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
-        ) : records.length === 0 ? (
+        ) : filteredRecords.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
             <a
@@ -140,7 +130,7 @@ const EditionsOriginales = () => {
             } sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.map((record) => {
+            {filteredRecords.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
