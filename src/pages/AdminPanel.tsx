@@ -49,7 +49,9 @@ const AdminPanel = () => {
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
   const navigate = useNavigate();
-  const { cols, gridRef, setCols } = usePinchGrid(2);
+  const maxPinchCols = isTablet ? 5 : 3;
+  const defaultPinchCols = isTablet ? 3 : 2;
+  const { cols, gridRef, setCols } = usePinchGrid(defaultPinchCols, maxPinchCols);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
