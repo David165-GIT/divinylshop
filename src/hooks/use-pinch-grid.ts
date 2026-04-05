@@ -39,7 +39,7 @@ export function usePinchGrid(defaultCols = 1, maxCols = 3) {
     const ratio = dist / startDistRef.current;
     const currentCols = colsRef.current;
 
-    if (ratio < 0.6 && currentCols < 3) {
+    if (ratio < 0.6 && currentCols < maxCols) {
       const nextCols = currentCols + 1;
       colsRef.current = nextCols;
       setCols(nextCols);
