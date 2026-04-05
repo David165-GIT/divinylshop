@@ -14,6 +14,8 @@ type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
 
 const AdminPanel = () => {
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const isTouchDevice = useIsTouchDevice();
   const desktopFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const meta = document.createElement('meta');
