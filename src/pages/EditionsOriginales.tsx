@@ -155,8 +155,8 @@ const EditionsOriginales = () => {
           <div
             ref={gridRef}
             className={`grid ${
-              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
-            } ${!isMobile ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
+              cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
+            } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
             {filteredRecords.map((record) => {
