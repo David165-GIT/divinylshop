@@ -758,8 +758,8 @@ const AdminPanel = () => {
           <div
             ref={gridRef}
             className={`grid ${
-              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
-            } md:grid-cols-2 lg:grid-cols-3`}
+              cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
+            } ${!isTouchDevice ? "md:grid-cols-2 lg:grid-cols-3" : ""}`}
             style={{ touchAction: "manipulation" }}
           >
             {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => {
