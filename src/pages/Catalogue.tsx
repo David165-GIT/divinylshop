@@ -121,27 +121,29 @@ const Catalogue = () => {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative mb-8 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher"
-              className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            />
+        {/* Search - sticky */}
+        <div className="sticky top-0 z-30 bg-background py-2 -mx-4 px-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher"
+                className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            {!isTouchDevice && (
+              <button
+                onClick={cycleDesktopCols}
+                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                title={`Affichage ${desktopCols} colonnes`}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+            )}
           </div>
-          {!isTouchDevice && (
-            <button
-              onClick={cycleDesktopCols}
-              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
-              title={`Affichage ${desktopCols} colonnes`}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-          )}
         </div>
 
         {loading ? (
