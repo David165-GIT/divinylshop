@@ -60,7 +60,7 @@ export function usePinchGrid(defaultCols = 1, maxCols = 3) {
   }, []);
 
   useEffect(() => {
-    if (!isMobile || !gridElement) return;
+    if (!isTouchDevice || !gridElement) return;
 
     gridElement.addEventListener("touchstart", onTouchStart, { passive: false });
     gridElement.addEventListener("touchmove", onTouchMove, { passive: false });
