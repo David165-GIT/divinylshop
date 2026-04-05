@@ -121,8 +121,9 @@ const Catalogue = () => {
           </div>
         </div>
 
-        {/* Search - sticky */}
-        <div className="sticky top-0 z-30 bg-background py-2 -mx-4 px-4">
+      {/* Search - sticky below header */}
+      <div className="sticky top-[57px] z-40 bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -145,7 +146,9 @@ const Catalogue = () => {
             )}
           </div>
         </div>
+      </div>
 
+      <div className="container mx-auto px-4 pt-4">
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filtered.length === 0 ? (
