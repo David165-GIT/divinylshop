@@ -110,9 +110,9 @@ const Catalogue = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-8 pb-3">
         {/* Banner */}
-        <div className="bg-muted border border-border rounded-md px-6 py-5 mb-3">
+        <div className="bg-muted border border-border rounded-md px-6 py-5">
           <div className="text-center">
             <p className="font-display font-bold text-foreground text-lg">Consultez-nous pour les prix ou venez découvrir en boutique</p>
           </div>
@@ -120,9 +120,11 @@ const Catalogue = () => {
             <p className="text-accent font-body font-semibold italic text-center tracking-wide whitespace-nowrap" style={{ fontSize: 'clamp(0.55rem, 2.8vw, 0.875rem)' }}>✦ Liste non exhaustive, bien plus encore en magasin ✦</p>
           </div>
         </div>
+      </div>
 
-        {/* Search - sticky */}
-        <div className="sticky top-0 z-30 bg-background py-2 -mx-4 px-4">
+      {/* Search - sticky below header */}
+      <div className="sticky top-[57px] z-40 bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -145,7 +147,9 @@ const Catalogue = () => {
             )}
           </div>
         </div>
+      </div>
 
+      <div className="container mx-auto px-4 pt-4">
         {loading ? (
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filtered.length === 0 ? (
