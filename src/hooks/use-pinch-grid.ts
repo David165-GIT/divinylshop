@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useIsMobile } from "./use-mobile";
+import { useIsTouchDevice } from "./use-mobile";
 
 /**
- * Hook that lets mobile users pinch on a grid container
- * to cycle between 1, 2, and 3 columns.
+ * Hook that lets touch-device users (mobile + tablet) pinch on a grid container
+ * to cycle between 1 and maxCols columns.
  */
-export function usePinchGrid(defaultCols = 1) {
-  const isMobile = useIsMobile();
+export function usePinchGrid(defaultCols = 1, maxCols = 3) {
+  const isTouchDevice = useIsTouchDevice();
   const [cols, setCols] = useState(defaultCols);
   const [gridElement, setGridElement] = useState<HTMLDivElement | null>(null);
   const startDistRef = useRef<number | null>(null);
@@ -39,7 +39,7 @@ export function usePinchGrid(defaultCols = 1) {
     const ratio = dist / startDistRef.current;
     const currentCols = colsRef.current;
 
-    if (ratio < 0.6 && currentCols < 3) {
+    if (ratio < 0.6 && currentCols < maxCols) {
       const nextCols = currentCols + 1;
       colsRef.current = nextCols;
       setCols(nextCols);
@@ -60,7 +60,7 @@ export function usePinchGrid(defaultCols = 1) {
   }, []);
 
   useEffect(() => {
-    if (!isMobile || !gridElement) return;
+    if (!isTouchDevice || !gridElement) return;
 
     gridElement.addEventListener("touchstart", onTouchStart, { passive: false });
     gridElement.addEventListener("touchmove", onTouchMove, { passive: false });
@@ -73,7 +73,7 @@ export function usePinchGrid(defaultCols = 1) {
       gridElement.removeEventListener("touchend", onTouchEnd);
       gridElement.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [gridElement, isMobile, onTouchEnd, onTouchMove, onTouchStart]);
+  }, [gridElement, isTouchDevice, onTouchEnd, onTouchMove, onTouchStart]);
 
-  return { cols: isMobile ? cols : null, gridRef, setCols };
+  return { cols: isTouchDevice ? cols : null, gridRef, setCols };
 }

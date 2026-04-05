@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
@@ -16,8 +16,12 @@ const EditionsOriginales = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
-  const { cols, gridRef, setCols } = usePinchGrid(2);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const isTouchDevice = useIsTouchDevice();
+  const maxPinchCols = isTablet ? 5 : 3;
+  const defaultPinchCols = isTablet ? 3 : 2;
+  const { cols, gridRef, setCols } = usePinchGrid(defaultPinchCols, maxPinchCols);
   const [desktopCols, setDesktopCols] = useState(4);
   const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
 
@@ -122,7 +126,7 @@ const EditionsOriginales = () => {
               className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          {!isMobile && (
+          {!isTouchDevice && (
             <button
               onClick={cycleDesktopCols}
               className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
@@ -151,8 +155,8 @@ const EditionsOriginales = () => {
           <div
             ref={gridRef}
             className={`grid ${
-              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
-            } ${!isMobile ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
+              cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
+            } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
             {filteredRecords.map((record) => {

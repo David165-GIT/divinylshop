@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -14,6 +14,8 @@ type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
 
 const AdminPanel = () => {
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const isTouchDevice = useIsTouchDevice();
   const desktopFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const meta = document.createElement('meta');
@@ -47,7 +49,9 @@ const AdminPanel = () => {
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
   const navigate = useNavigate();
-  const { cols, gridRef, setCols } = usePinchGrid(2);
+  const maxPinchCols = isTablet ? 5 : 3;
+  const defaultPinchCols = isTablet ? 3 : 2;
+  const { cols, gridRef, setCols } = usePinchGrid(defaultPinchCols, maxPinchCols);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -754,8 +758,8 @@ const AdminPanel = () => {
           <div
             ref={gridRef}
             className={`grid ${
-              cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
-            } md:grid-cols-2 lg:grid-cols-3`}
+              cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
+            } ${!isTouchDevice ? "md:grid-cols-2 lg:grid-cols-3" : ""}`}
             style={{ touchAction: "manipulation" }}
           >
             {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => {
