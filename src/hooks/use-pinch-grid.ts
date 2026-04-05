@@ -73,7 +73,7 @@ export function usePinchGrid(defaultCols = 1, maxCols = 3) {
       gridElement.removeEventListener("touchend", onTouchEnd);
       gridElement.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [gridElement, isMobile, onTouchEnd, onTouchMove, onTouchStart]);
+  }, [gridElement, isTouchDevice, onTouchEnd, onTouchMove, onTouchStart]);
 
-  return { cols: isMobile ? cols : null, gridRef, setCols };
+  return { cols: isTouchDevice ? cols : null, gridRef, setCols };
 }
