@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useIsMobile } from "./use-mobile";
+import { useIsTouchDevice } from "./use-mobile";
 
 /**
- * Hook that lets mobile users pinch on a grid container
- * to cycle between 1, 2, and 3 columns.
+ * Hook that lets touch-device users (mobile + tablet) pinch on a grid container
+ * to cycle between 1 and maxCols columns.
  */
-export function usePinchGrid(defaultCols = 1) {
-  const isMobile = useIsMobile();
+export function usePinchGrid(defaultCols = 1, maxCols = 3) {
+  const isTouchDevice = useIsTouchDevice();
   const [cols, setCols] = useState(defaultCols);
   const [gridElement, setGridElement] = useState<HTMLDivElement | null>(null);
   const startDistRef = useRef<number | null>(null);
