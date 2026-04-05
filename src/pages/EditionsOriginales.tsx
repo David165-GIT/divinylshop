@@ -126,7 +126,7 @@ const EditionsOriginales = () => {
               className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          {!isMobile && (
+          {!isTouchDevice && (
             <button
               onClick={cycleDesktopCols}
               className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
