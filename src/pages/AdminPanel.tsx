@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import type { Database } from "@/integrations/supabase/types";
@@ -366,6 +367,8 @@ const AdminPanel = () => {
     fetchRecords();
   };
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
@@ -472,7 +475,7 @@ const AdminPanel = () => {
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
-          <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => setShowLogoutConfirm(true)} className="text-muted-foreground hover:text-foreground transition-colors">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
@@ -819,6 +822,21 @@ const AdminPanel = () => {
           </div>
         )}
       </div>
+      {/* Logout confirmation */}
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Déconnexion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Voulez-vous quitter le portail d'administration ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Non</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Oui</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
