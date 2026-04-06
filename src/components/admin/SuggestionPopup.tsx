@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { X, Check } from "lucide-react";
+import { X, Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface SuggestionPopupProps {
   title: string;
   artist: string;
   imageUrl: string | null;
+  imageUrls?: string[];
   description: string | null;
   loading: boolean;
   onAccept: (imageUrl: string | null, description: string | null) => void;
   onReject: () => void;
 }
 
-const SuggestionPopup = ({ title, artist, imageUrl, description, loading, onAccept, onReject }: SuggestionPopupProps) => {
+const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, onAccept, onReject }: SuggestionPopupProps) => {
+  const allImages = imageUrls.length > 0 ? imageUrls : (imageUrl ? [imageUrl] : []);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [acceptImage, setAcceptImage] = useState(true);
   const [acceptDescription, setAcceptDescription] = useState(true);
 
@@ -28,9 +31,11 @@ const SuggestionPopup = ({ title, artist, imageUrl, description, loading, onAcce
     );
   }
 
-  if (!imageUrl && !description) {
-    return null; // Nothing found, will auto-dismiss
+  if (allImages.length === 0 && !description) {
+    return null;
   }
+
+  const selectedImage = allImages[selectedImageIndex] || null;
 
   return (
     <div className="fixed inset-0 bg-foreground/50 z-[70] flex items-center justify-center p-4">
@@ -46,7 +51,7 @@ const SuggestionPopup = ({ title, artist, imageUrl, description, loading, onAcce
           Voici ce que j'ai trouvé pour « {title} » de {artist}. Validez ce que vous souhaitez garder.
         </p>
 
-        {imageUrl && (
+        {allImages.length > 0 && (
           <div className="mb-4">
             <label className="flex items-center gap-2 mb-2 cursor-pointer">
               <input
@@ -55,13 +60,42 @@ const SuggestionPopup = ({ title, artist, imageUrl, description, loading, onAcce
                 onChange={(e) => setAcceptImage(e.target.checked)}
                 className="accent-accent"
               />
-              <span className="text-sm font-body font-medium text-foreground">Image proposée</span>
+              <span className="text-sm font-body font-medium text-foreground">
+                Image proposée {allImages.length > 1 ? `(${selectedImageIndex + 1}/${allImages.length})` : ""}
+              </span>
             </label>
-            <img
-              src={imageUrl}
-              alt={`${title} - ${artist}`}
-              className={`w-full max-w-[250px] aspect-square object-cover rounded-sm mx-auto ${!acceptImage ? "opacity-30" : ""}`}
-            />
+            <div className={`relative ${!acceptImage ? "opacity-30" : ""}`}>
+              <img
+                src={selectedImage!}
+                alt={`${title} - ${artist}`}
+                className="w-full max-w-[250px] aspect-square object-cover rounded-sm mx-auto"
+              />
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setSelectedImageIndex((i) => (i - 1 + allImages.length) % allImages.length)}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 bg-background/80 border border-border rounded-full p-1 shadow-sm hover:bg-background transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-foreground" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedImageIndex((i) => (i + 1) % allImages.length)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-background/80 border border-border rounded-full p-1 shadow-sm hover:bg-background transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-foreground" />
+                  </button>
+                  <div className="flex justify-center gap-1.5 mt-2">
+                    {allImages.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedImageIndex(i)}
+                        className={`w-2 h-2 rounded-full transition-colors ${i === selectedImageIndex ? "bg-accent" : "bg-border"}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 
@@ -91,7 +125,7 @@ const SuggestionPopup = ({ title, artist, imageUrl, description, loading, onAcce
           </button>
           <button
             onClick={() => onAccept(
-              acceptImage ? imageUrl : null,
+              acceptImage ? selectedImage : null,
               acceptDescription ? description : null,
             )}
             className="inline-flex items-center gap-2 px-6 py-2 bg-foreground text-background rounded-sm text-sm font-body font-semibold hover:opacity-85 transition-all"
