@@ -233,6 +233,7 @@ const AdminPanel = () => {
           if (hasVisualSuggestion) {
             setSuggestion({
               imageUrl: needsImage ? data.imageUrl : null,
+              imageUrls: needsImage ? (data.imageUrls || []) : [],
               description: needsDescription ? data.description : null,
               genre: needsGenre ? data.genre : null,
             });
