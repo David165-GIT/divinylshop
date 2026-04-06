@@ -150,11 +150,11 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
       }
     })();
 
-    const [imageUrl, { description, genre }, { correctedArtist, correctedTitle }] = await Promise.all([imagePromise, descAndGenrePromise, spellingPromise]);
+    const [imageUrls, { description, genre }, { correctedArtist, correctedTitle }] = await Promise.all([imagePromise, descAndGenrePromise, spellingPromise]);
 
-    console.log("Result:", { imageUrl: imageUrl ? "found" : "not found", description: description ? "generated" : "not generated", genre: genre || "not found", correctedArtist, correctedTitle });
+    console.log("Result:", { imageUrls: imageUrls.length, description: description ? "generated" : "not generated", genre: genre || "not found", correctedArtist, correctedTitle });
 
-    return new Response(JSON.stringify({ imageUrl, description, genre, correctedArtist, correctedTitle }), {
+    return new Response(JSON.stringify({ imageUrl: imageUrls[0] || null, imageUrls, description, genre, correctedArtist, correctedTitle }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
