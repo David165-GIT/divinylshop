@@ -727,6 +727,7 @@ const AdminPanel = () => {
             title={pendingForm.title}
             artist={pendingForm.artist}
             imageUrl={suggestion?.imageUrl || null}
+            imageUrls={suggestion?.imageUrls || []}
             description={suggestion?.description || null}
             loading={suggestionLoading}
             onAccept={handleSuggestionAccept}
