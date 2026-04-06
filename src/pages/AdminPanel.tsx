@@ -367,6 +367,8 @@ const AdminPanel = () => {
     fetchRecords();
   };
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
