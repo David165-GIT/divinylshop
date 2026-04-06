@@ -44,7 +44,7 @@ const AdminPanel = () => {
   const [conditionIsCustom, setConditionIsCustom] = useState(false);
   const [showMultiple, setShowMultiple] = useState(false);
   const [suggestionLoading, setSuggestionLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; description: string | null; genre: string | null } | null>(null);
+  const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; imageUrls?: string[]; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const [skipSuggestions, setSkipSuggestions] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
@@ -233,6 +233,7 @@ const AdminPanel = () => {
           if (hasVisualSuggestion) {
             setSuggestion({
               imageUrl: needsImage ? data.imageUrl : null,
+              imageUrls: needsImage ? (data.imageUrls || []) : [],
               description: needsDescription ? data.description : null,
               genre: needsGenre ? data.genre : null,
             });
@@ -462,6 +463,7 @@ const AdminPanel = () => {
               if (hasVisualSuggestion) {
                 setSuggestion({
                   imageUrl: suggestData.imageUrl || null,
+                  imageUrls: suggestData.imageUrls || [],
                   description: suggestData.description || null,
                   genre: suggestData.genre || null,
                 });
@@ -725,6 +727,7 @@ const AdminPanel = () => {
             title={pendingForm.title}
             artist={pendingForm.artist}
             imageUrl={suggestion?.imageUrl || null}
+            imageUrls={suggestion?.imageUrls || []}
             description={suggestion?.description || null}
             loading={suggestionLoading}
             onAccept={handleSuggestionAccept}

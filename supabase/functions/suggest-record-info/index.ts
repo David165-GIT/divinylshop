@@ -60,23 +60,33 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
     })();
 
     // Run image search, description generation, and genre detection in parallel
-    const imagePromise = (async (): Promise<string | null> => {
-      if (!needsImage || category === "hifi") return null;
+    const imagePromise = (async (): Promise<string[]> => {
+      if (!needsImage || category === "hifi") return [];
       try {
         const query = encodeURIComponent(`${artist} ${title}`);
         const resp = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=5`);
-        if (!resp.ok) return null;
+        if (!resp.ok) return [];
         const data = await resp.json();
         if (data.results && data.results.length > 0) {
-          const artwork = data.results[0].artworkUrl100;
-          if (artwork) {
-            return artwork.replace("100x100bb", "600x600bb");
+          const urls: string[] = [];
+          const seen = new Set<string>();
+          for (const result of data.results) {
+            const artwork = result.artworkUrl100;
+            if (artwork) {
+              const highRes = artwork.replace("100x100bb", "600x600bb");
+              if (!seen.has(highRes)) {
+                seen.add(highRes);
+                urls.push(highRes);
+                if (urls.length >= 3) break;
+              }
+            }
           }
+          return urls;
         }
       } catch (e) {
         console.error("iTunes search error:", e);
       }
-      return null;
+      return [];
     })();
 
     const descAndGenrePromise = (async (): Promise<{ description: string | null; genre: string | null }> => {
@@ -140,11 +150,11 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
       }
     })();
 
-    const [imageUrl, { description, genre }, { correctedArtist, correctedTitle }] = await Promise.all([imagePromise, descAndGenrePromise, spellingPromise]);
+    const [imageUrls, { description, genre }, { correctedArtist, correctedTitle }] = await Promise.all([imagePromise, descAndGenrePromise, spellingPromise]);
 
-    console.log("Result:", { imageUrl: imageUrl ? "found" : "not found", description: description ? "generated" : "not generated", genre: genre || "not found", correctedArtist, correctedTitle });
+    console.log("Result:", { imageUrls: imageUrls.length, description: description ? "generated" : "not generated", genre: genre || "not found", correctedArtist, correctedTitle });
 
-    return new Response(JSON.stringify({ imageUrl, description, genre, correctedArtist, correctedTitle }), {
+    return new Response(JSON.stringify({ imageUrl: imageUrls[0] || null, imageUrls, description, genre, correctedArtist, correctedTitle }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
