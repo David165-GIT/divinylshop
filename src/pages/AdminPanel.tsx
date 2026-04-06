@@ -368,10 +368,40 @@ const AdminPanel = () => {
   };
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(false);
+
+  // Intercept browser back button
+  useEffect(() => {
+    // Push a dummy state so we can intercept the back button
+    window.history.pushState({ adminGuard: true }, "");
+
+    const handlePopState = (e: PopStateEvent) => {
+      // Show confirmation instead of navigating away
+      setShowLogoutConfirm(true);
+      setPendingNavigation(true);
+      // Re-push state to prevent actual navigation
+      window.history.pushState({ adminGuard: true }, "");
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
+  };
+
+  const handleConfirmLogout = async () => {
+    setPendingNavigation(false);
+    await handleLogout();
+  };
+
+  const handleCancelLogout = () => {
+    setPendingNavigation(false);
+    setShowLogoutConfirm(false);
   };
 
   const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
