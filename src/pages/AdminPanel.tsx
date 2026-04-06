@@ -862,8 +862,8 @@ const AdminPanel = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Non</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout}>Oui</AlertDialogAction>
+            <AlertDialogCancel onClick={handleCancelLogout}>Non</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmLogout}>Oui</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
