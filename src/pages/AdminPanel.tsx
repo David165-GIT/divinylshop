@@ -502,7 +502,75 @@ const AdminPanel = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-body">Chargement…</div>;
+  const handleCsvImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setImportLoading(true);
+    setImportProgress(null);
+    try {
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) {
+        toast({ title: "Fichier vide", description: "Le CSV doit contenir au moins un en-tête et une ligne de données.", variant: "destructive" });
+        setImportLoading(false);
+        return;
+      }
+      // Parse CSV header
+      const parseCSVLine = (line: string): string[] => {
+        const result: string[] = [];
+        let current = "";
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (inQuotes) {
+            if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+            else if (ch === '"') { inQuotes = false; }
+            else { current += ch; }
+          } else {
+            if (ch === '"') { inQuotes = true; }
+            else if (ch === ',' || ch === ';') { result.push(current.trim()); current = ""; }
+            else { current += ch; }
+          }
+        }
+        result.push(current.trim());
+        return result;
+      };
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, ""));
+      const records = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        const record: any = {};
+        headers.forEach((h, idx) => { record[h] = values[idx] || ""; });
+        records.push(record);
+      }
+      
+      toast({ title: "Import en cours…", description: `${records.length} article(s) en cours de traitement. Cela peut prendre quelques minutes.` });
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke("import-records", {
+        body: { records },
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      
+      if (error) throw error;
+      
+      setImportProgress(data);
+      toast({
+        title: "Import terminé",
+        description: `${data.success} importé(s), ${data.errors} erreur(s) sur ${data.total} article(s).`,
+        variant: data.errors > 0 ? "destructive" : "default",
+      });
+      fetchRecords();
+    } catch (err) {
+      console.error("CSV import error:", err);
+      toast({ title: "Erreur d'import", description: "Impossible de traiter le fichier CSV.", variant: "destructive" });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-background">
