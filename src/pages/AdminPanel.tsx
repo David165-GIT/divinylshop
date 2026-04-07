@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, FileUp } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
@@ -49,6 +49,9 @@ const AdminPanel = () => {
   const [skipSuggestions, setSkipSuggestions] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ total: number; success: number; errors: number; details: any[] } | null>(null);
+  const importFileRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const maxPinchCols = isTablet ? 5 : 3;
   const defaultPinchCols = isTablet ? 3 : 2;
@@ -499,7 +502,75 @@ const AdminPanel = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-body">Chargement…</div>;
+  const handleCsvImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setImportLoading(true);
+    setImportProgress(null);
+    try {
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) {
+        toast({ title: "Fichier vide", description: "Le CSV doit contenir au moins un en-tête et une ligne de données.", variant: "destructive" });
+        setImportLoading(false);
+        return;
+      }
+      // Parse CSV header
+      const parseCSVLine = (line: string): string[] => {
+        const result: string[] = [];
+        let current = "";
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (inQuotes) {
+            if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+            else if (ch === '"') { inQuotes = false; }
+            else { current += ch; }
+          } else {
+            if (ch === '"') { inQuotes = true; }
+            else if (ch === ',' || ch === ';') { result.push(current.trim()); current = ""; }
+            else { current += ch; }
+          }
+        }
+        result.push(current.trim());
+        return result;
+      };
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, ""));
+      const records = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        const record: any = {};
+        headers.forEach((h, idx) => { record[h] = values[idx] || ""; });
+        records.push(record);
+      }
+      
+      toast({ title: "Import en cours…", description: `${records.length} article(s) en cours de traitement. Cela peut prendre quelques minutes.` });
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke("import-records", {
+        body: { records },
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      
+      if (error) throw error;
+      
+      setImportProgress(data);
+      toast({
+        title: "Import terminé",
+        description: `${data.success} importé(s), ${data.errors} erreur(s) sur ${data.total} article(s).`,
+        variant: data.errors > 0 ? "destructive" : "default",
+      });
+      fetchRecords();
+    } catch (err) {
+      console.error("CSV import error:", err);
+      toast({ title: "Erreur d'import", description: "Impossible de traiter le fichier CSV.", variant: "destructive" });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -778,12 +849,23 @@ const AdminPanel = () => {
             >
               Plusieurs ex.
             </button>
-            <button
-              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all ml-auto"
-            >
-              <Plus className="w-4 h-4" /> Ajouter
-            </button>
+            <div className="flex items-center gap-2 ml-auto">
+              <input ref={importFileRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
+              <button
+                onClick={() => importFileRef.current?.click()}
+                disabled={importLoading}
+                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
+              >
+                {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
+                {importLoading ? "Import…" : "Importer CSV"}
+              </button>
+              <button
+                onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all"
+              >
+                <Plus className="w-4 h-4" /> Ajouter
+              </button>
+            </div>
           </div>
         </div>
 
@@ -855,6 +937,40 @@ const AdminPanel = () => {
           </div>
         )}
       </div>
+      {/* Import results modal */}
+      {importProgress && (
+        <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-background rounded-md border border-border p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <h3 className="font-display font-bold text-foreground text-lg mb-4">Résultat de l'import</h3>
+            <div className="flex gap-4 mb-4">
+              <div className="text-center flex-1">
+                <p className="text-2xl font-bold text-accent">{importProgress.success}</p>
+                <p className="text-xs text-muted-foreground font-body">Importé(s)</p>
+              </div>
+              <div className="text-center flex-1">
+                <p className="text-2xl font-bold text-destructive">{importProgress.errors}</p>
+                <p className="text-xs text-muted-foreground font-body">Erreur(s)</p>
+              </div>
+            </div>
+            {importProgress.errors > 0 && (
+              <div className="mb-4 space-y-1">
+                <p className="text-xs font-body font-semibold text-foreground mb-1">Détails des erreurs :</p>
+                {importProgress.details.filter((d: any) => d.status === "error").map((d: any, idx: number) => (
+                  <p key={idx} className="text-xs text-destructive font-body">
+                    Ligne {d.index + 2} — {d.title || "?"} / {d.artist || "?"} : {d.error}
+                  </p>
+                ))}
+              </div>
+            )}
+            <button
+              onClick={() => setImportProgress(null)}
+              className="w-full py-2 bg-foreground text-background font-body font-semibold rounded-sm text-sm hover:opacity-85 transition-all"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
       {/* Logout confirmation */}
       <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
         <AlertDialogContent>
