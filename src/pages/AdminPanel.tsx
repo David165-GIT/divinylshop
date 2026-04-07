@@ -849,12 +849,23 @@ const AdminPanel = () => {
             >
               Plusieurs ex.
             </button>
-            <button
-              onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all ml-auto"
-            >
-              <Plus className="w-4 h-4" /> Ajouter
-            </button>
+            <div className="flex items-center gap-2 ml-auto">
+              <input ref={importFileRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
+              <button
+                onClick={() => importFileRef.current?.click()}
+                disabled={importLoading}
+                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
+              >
+                {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
+                {importLoading ? "Import…" : "Importer CSV"}
+              </button>
+              <button
+                onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all"
+              >
+                <Plus className="w-4 h-4" /> Ajouter
+              </button>
+            </div>
           </div>
         </div>
 
