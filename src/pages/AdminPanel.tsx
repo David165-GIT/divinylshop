@@ -937,6 +937,40 @@ const AdminPanel = () => {
           </div>
         )}
       </div>
+      {/* Import results modal */}
+      {importProgress && (
+        <div className="fixed inset-0 bg-foreground/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-background rounded-md border border-border p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <h3 className="font-display font-bold text-foreground text-lg mb-4">Résultat de l'import</h3>
+            <div className="flex gap-4 mb-4">
+              <div className="text-center flex-1">
+                <p className="text-2xl font-bold text-accent">{importProgress.success}</p>
+                <p className="text-xs text-muted-foreground font-body">Importé(s)</p>
+              </div>
+              <div className="text-center flex-1">
+                <p className="text-2xl font-bold text-destructive">{importProgress.errors}</p>
+                <p className="text-xs text-muted-foreground font-body">Erreur(s)</p>
+              </div>
+            </div>
+            {importProgress.errors > 0 && (
+              <div className="mb-4 space-y-1">
+                <p className="text-xs font-body font-semibold text-foreground mb-1">Détails des erreurs :</p>
+                {importProgress.details.filter((d: any) => d.status === "error").map((d: any, idx: number) => (
+                  <p key={idx} className="text-xs text-destructive font-body">
+                    Ligne {d.index + 2} — {d.title || "?"} / {d.artist || "?"} : {d.error}
+                  </p>
+                ))}
+              </div>
+            )}
+            <button
+              onClick={() => setImportProgress(null)}
+              className="w-full py-2 bg-foreground text-background font-body font-semibold rounded-sm text-sm hover:opacity-85 transition-all"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
       {/* Logout confirmation */}
       <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
         <AlertDialogContent>
