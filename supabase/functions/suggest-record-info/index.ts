@@ -60,7 +60,8 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
     })();
 
     // Run image search, description generation, and genre detection in parallel
-    const imagePromise = (async (): Promise<string[]> => {
+    // Search iTunes for cover art
+    const itunesPromise = (async (): Promise<string[]> => {
       if (!needsImage || category === "hifi") return [];
       try {
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -77,7 +78,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
               if (!seen.has(highRes)) {
                 seen.add(highRes);
                 urls.push(highRes);
-                if (urls.length >= 3) break;
+                if (urls.length >= 5) break;
               }
             }
           }
@@ -87,6 +88,57 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
         console.error("iTunes search error:", e);
       }
       return [];
+    })();
+
+    // Search MusicBrainz + Cover Art Archive for cover art
+    const musicBrainzPromise = (async (): Promise<string[]> => {
+      if (!needsImage || category === "hifi") return [];
+      try {
+        const query = encodeURIComponent(`release:${title} AND artist:${artist}`);
+        const resp = await fetch(`https://musicbrainz.org/ws/2/release/?query=${query}&limit=5&fmt=json`, {
+          headers: { "User-Agent": "DivinylShop/1.0 (contact@divinylshop.com)" },
+        });
+        if (!resp.ok) return [];
+        const data = await resp.json();
+        const urls: string[] = [];
+        if (data.releases) {
+          for (const release of data.releases) {
+            try {
+              const coverResp = await fetch(`https://coverartarchive.org/release/${release.id}`, {
+                headers: { "User-Agent": "DivinylShop/1.0 (contact@divinylshop.com)" },
+              });
+              if (coverResp.ok) {
+                const coverData = await coverResp.json();
+                const front = coverData.images?.find((img: any) => img.front);
+                if (front?.thumbnails?.large || front?.image) {
+                  urls.push(front.thumbnails?.large || front.image);
+                  if (urls.length >= 3) break;
+                }
+              }
+            } catch { /* skip this release */ }
+          }
+        }
+        return urls;
+      } catch (e) {
+        console.error("MusicBrainz search error:", e);
+        return [];
+      }
+    })();
+
+    // Combine results from all sources, deduplicate
+    const imagePromise = (async (): Promise<string[]> => {
+      const [itunesUrls, mbUrls] = await Promise.all([itunesPromise, musicBrainzPromise]);
+      const seen = new Set<string>();
+      const combined: string[] = [];
+      // Interleave: iTunes first, then MusicBrainz extras
+      for (const url of [...itunesUrls, ...mbUrls]) {
+        if (!seen.has(url)) {
+          seen.add(url);
+          combined.push(url);
+          if (combined.length >= 5) break;
+        }
+      }
+      return combined;
     })();
 
     const descAndGenrePromise = (async (): Promise<{ description: string | null; genre: string | null }> => {
