@@ -49,6 +49,9 @@ const AdminPanel = () => {
   const [skipSuggestions, setSkipSuggestions] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ total: number; success: number; errors: number; details: any[] } | null>(null);
+  const importFileRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const maxPinchCols = isTablet ? 5 : 3;
   const defaultPinchCols = isTablet ? 3 : 2;
