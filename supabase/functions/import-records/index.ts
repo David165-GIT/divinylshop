@@ -60,7 +60,7 @@ serve(async (req) => {
         let category = (r.categorie || r.category || "vinyl").trim().toLowerCase();
         if (!validCategories.includes(category)) category = "vinyl";
 
-        const genre = (r.genre || "").trim() || null;
+        let genre = (r.genre || "").trim() || null;
         const price = r.prix || r.price ? parseFloat(String(r.prix || r.price)) : null;
         const condition = (r.etat || r.condition || "").trim() || null;
         let description = (r.description || "").trim() || null;
