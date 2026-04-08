@@ -66,6 +66,28 @@ serve(async (req) => {
         let description = (r.description || "").trim() || null;
         const quantity = r.quantite || r.quantity ? parseInt(String(r.quantite || r.quantity), 10) : 1;
 
+        // Auto-generate genre if empty
+        if (!genre && LOVABLE_API_KEY && category !== "hifi") {
+          try {
+            const genreResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: "google/gemini-2.5-flash-lite",
+                messages: [
+                  { role: "system", content: "Tu es un expert en musique. Donne uniquement le genre musical principal de cet album/single en un ou deux mots en français (ex: Rock, Jazz, Chanson française, Variété, Pop, Reggae, Soul, Funk, Classique, Électro, Hip-hop, Blues, R&B, Disco, Metal, Punk, Folk, Country, World). Réponds avec le genre uniquement, sans ponctuation ni explication." },
+                  { role: "user", content: `"${title}" de ${artist}` },
+                ],
+              }),
+            });
+            if (genreResp.ok) {
+              const genreData = await genreResp.json();
+              const rawGenre = genreData.choices?.[0]?.message?.content?.trim();
+              if (rawGenre && rawGenre.length < 50) genre = rawGenre;
+            }
+          } catch (e) { console.error("AI genre error:", e); }
+        }
+
         // Auto-generate description if empty
         if (!description && LOVABLE_API_KEY && category !== "hifi") {
           try {
