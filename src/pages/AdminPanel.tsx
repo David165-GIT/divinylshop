@@ -914,18 +914,55 @@ const AdminPanel = () => {
           </div>
         </div>
 
+        {/* Search bar - sticky */}
+        <div className="sticky top-[57px] z-40 bg-background border-b border-border mb-4 -mx-4 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={adminSearchQuery}
+                onChange={(e) => setAdminSearchQuery(e.target.value)}
+                placeholder="Rechercher"
+                className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            {!isTouchDevice && (
+              <button
+                onClick={cycleDesktopCols}
+                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                title={`Affichage ${desktopCols} colonnes`}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Records list */}
-        {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).length === 0 ? (
+        {records.filter((r) => {
+          if (r.category !== activeTab) return false;
+          if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
+          if (!adminSearchQuery.trim()) return true;
+          const q = adminSearchQuery.toLowerCase();
+          return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
+        }).length === 0 ? (
           <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : "Aucun article dans cette catégorie."}</p>
         ) : (
           <div
             ref={gridRef}
             className={`grid ${
               cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-4"
-            } ${!isTouchDevice ? "md:grid-cols-2 lg:grid-cols-3" : ""}`}
+            } ${!isTouchDevice ? (desktopCols === 5 ? "md:grid-cols-5" : desktopCols === 4 ? "md:grid-cols-4" : "md:grid-cols-3") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.filter((r) => r.category === activeTab && (showOutOfStock ? (r.quantity ?? 1) === 0 : showMultiple ? (r.quantity ?? 1) > 1 : true)).map((record) => {
+            {records.filter((r) => {
+              if (r.category !== activeTab) return false;
+              if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
+              if (!adminSearchQuery.trim()) return true;
+              const q = adminSearchQuery.toLowerCase();
+              return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
+            }).map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
