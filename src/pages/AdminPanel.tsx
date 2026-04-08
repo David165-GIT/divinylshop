@@ -709,11 +709,53 @@ const AdminPanel = () => {
                   {form.image_url && (
                     <img src={form.image_url} alt="Preview" className="w-24 h-24 object-cover rounded-sm mb-2" />
                   )}
-                  <label className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm font-body text-muted-foreground hover:border-accent cursor-pointer transition-colors">
-                    <Upload className="w-4 h-4" />
-                    {uploading ? "Envoi…" : "Choisir une image"}
-                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <label className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm font-body text-muted-foreground hover:border-accent cursor-pointer transition-colors">
+                      <Upload className="w-4 h-4" />
+                      {uploading ? "Envoi…" : "Choisir une image"}
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                    </label>
+                    {form.title && form.artist && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setSuggestionLoading(true);
+                          setSuggestion(null);
+                          setPendingForm(form);
+                          setShowForm(false);
+                          try {
+                            const { data, error } = await supabase.functions.invoke("suggest-record-info", {
+                              body: { title: form.title, artist: form.artist, category: form.category, needsImage: true, needsDescription: false, needsGenre: false },
+                            });
+                            if (!error && data && (data.imageUrl || (data.imageUrls && data.imageUrls.length > 0))) {
+                              setSuggestion({
+                                imageUrl: data.imageUrl || null,
+                                imageUrls: data.imageUrls || [],
+                                description: null,
+                                genre: null,
+                              });
+                            } else {
+                              setSuggestionLoading(false);
+                              setPendingForm(null);
+                              setShowForm(true);
+                              toast({ title: "Aucune pochette trouvée", description: "Aucune image n'a été trouvée pour cet article." });
+                            }
+                          } catch (e) {
+                            console.error("Image suggestion error:", e);
+                            setSuggestionLoading(false);
+                            setPendingForm(null);
+                            setShowForm(true);
+                            toast({ title: "Erreur", description: "Impossible de rechercher des pochettes.", variant: "destructive" });
+                          }
+                          setSuggestionLoading(false);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm font-body text-muted-foreground hover:border-accent transition-colors"
+                      >
+                        <Search className="w-4 h-4" />
+                        Rechercher pochette
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <button type="submit" className="w-full py-3 bg-foreground text-background font-body font-semibold rounded-sm uppercase text-sm hover:opacity-85 transition-all">
