@@ -52,6 +52,9 @@ const AdminPanel = () => {
   const [importLoading, setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState<{ total: number; success: number; errors: number; details: any[] } | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
+  const [adminSearchQuery, setAdminSearchQuery] = useState("");
+  const [desktopCols, setDesktopCols] = useState(3);
+  const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
   const navigate = useNavigate();
   const maxPinchCols = isTablet ? 5 : 3;
   const defaultPinchCols = isTablet ? 3 : 2;
