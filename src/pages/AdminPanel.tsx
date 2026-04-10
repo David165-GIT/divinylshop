@@ -555,18 +555,35 @@ const AdminPanel = () => {
       toast({ title: "Import en cours…", description: `${records.length} article(s) en cours de traitement. Cela peut prendre quelques minutes.` });
       
       const { data: { session } } = await supabase.auth.getSession();
-      const { data, error } = await supabase.functions.invoke("import-records", {
-        body: { records },
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      });
-      
-      if (error) throw error;
-      
-      setImportProgress(data);
+      const BATCH_SIZE = 20;
+      let totalSuccess = 0;
+      let totalErrors = 0;
+      const allDetails: any[] = [];
+
+      for (let b = 0; b < records.length; b += BATCH_SIZE) {
+        const batch = records.slice(b, b + BATCH_SIZE);
+        try {
+          const { data, error } = await supabase.functions.invoke("import-records", {
+            body: { records: batch },
+            headers: { Authorization: `Bearer ${session?.access_token}` },
+          });
+          if (error) throw error;
+          totalSuccess += data.success || 0;
+          totalErrors += data.errors || 0;
+          if (data.details) allDetails.push(...data.details.map((d: any, i: number) => ({ ...d, index: b + i })));
+        } catch (batchErr) {
+          console.error(`Batch ${b}-${b + batch.length} error:`, batchErr);
+          totalErrors += batch.length;
+          batch.forEach((_, i) => allDetails.push({ index: b + i, title: batch[i].titre || batch[i].title || "", artist: batch[i].artiste || batch[i].artist || "", status: "error", error: "Échec du lot" }));
+        }
+      }
+
+      const importData = { success: totalSuccess, errors: totalErrors, total: records.length, details: allDetails };
+      setImportProgress(importData);
       toast({
         title: "Import terminé",
-        description: `${data.success} importé(s), ${data.errors} erreur(s) sur ${data.total} article(s).`,
-        variant: data.errors > 0 ? "destructive" : "default",
+        description: `${totalSuccess} importé(s), ${totalErrors} erreur(s) sur ${records.length} article(s).`,
+        variant: totalErrors > 0 ? "destructive" : "default",
       });
       fetchRecords();
     } catch (err) {
