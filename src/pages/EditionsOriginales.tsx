@@ -5,6 +5,7 @@ import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
+import { fetchAllRecords } from "@/lib/fetchAllRecords";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
@@ -51,13 +52,11 @@ const EditionsOriginales = () => {
 
   useEffect(() => {
     const fetchRecords = async () => {
-      const { data } = await supabase
-        .from("records")
-        .select("*")
-        .eq("category", "editions_originales")
-        .order("artist", { ascending: true })
-        .order("title", { ascending: true });
-      setRecords(data || []);
+      const data = await fetchAllRecords(
+        { categoryEq: "editions_originales" },
+        [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
+      );
+      setRecords(data);
       setLoading(false);
     };
     fetchRecords();

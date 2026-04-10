@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
+import { fetchAllRecords } from "@/lib/fetchAllRecords";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
@@ -56,13 +57,11 @@ const Catalogue = () => {
 
   useEffect(() => {
     const fetchRecords = async () => {
-      const { data } = await supabase
-        .from("records")
-        .select("*")
-        .not("category", "eq", "editions_originales")
-        .order("artist", { ascending: true })
-        .order("title", { ascending: true });
-      setRecords(data || []);
+      const data = await fetchAllRecords(
+        { categoryNeq: "editions_originales" },
+        [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
+      );
+      setRecords(data);
       setLoading(false);
     };
     fetchRecords();
