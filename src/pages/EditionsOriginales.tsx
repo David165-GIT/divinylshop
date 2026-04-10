@@ -51,13 +51,11 @@ const EditionsOriginales = () => {
 
   useEffect(() => {
     const fetchRecords = async () => {
-      const { data } = await supabase
-        .from("records")
-        .select("*")
-        .eq("category", "editions_originales")
-        .order("artist", { ascending: true })
-        .order("title", { ascending: true });
-      setRecords(data || []);
+      const data = await fetchAllRecords(
+        { categoryEq: "editions_originales" },
+        [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
+      );
+      setRecords(data);
       setLoading(false);
     };
     fetchRecords();

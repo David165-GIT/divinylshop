@@ -114,8 +114,11 @@ const AdminPanel = () => {
   };
 
   const fetchRecords = async () => {
-    const { data } = await supabase.from("records").select("*").order("artist", { ascending: true }).order("title", { ascending: true });
-    setRecords(data || []);
+    const data = await fetchAllRecords(
+      undefined,
+      [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
+    );
+    setRecords(data);
     setLoading(false);
   };
 
