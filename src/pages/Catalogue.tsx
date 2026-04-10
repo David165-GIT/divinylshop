@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
+import { fetchAllRecords } from "@/lib/fetchAllRecords";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 

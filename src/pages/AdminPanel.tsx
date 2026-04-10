@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import type { Database } from "@/integrations/supabase/types";
+import { fetchAllRecords } from "@/lib/fetchAllRecords";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
