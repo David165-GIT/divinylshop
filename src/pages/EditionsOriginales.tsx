@@ -72,6 +72,7 @@ const EditionsOriginales = () => {
   }, []);
 
   const filteredRecords = records.filter((r) => {
+    if ((r.quantity ?? 1) === 0) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
@@ -181,13 +182,6 @@ const EditionsOriginales = () => {
                     }
                   }}
                 >
-                  <span className={`absolute top-1 right-1 z-10 ${isCompact ? "px-1 py-0.5 text-[9px]" : "px-2 py-0.5 text-xs"} rounded-sm font-body font-semibold uppercase tracking-wide ${
-                    (record.quantity ?? 1) === 0
-                      ? "bg-destructive text-destructive-foreground"
-                      : "bg-accent text-accent-foreground"
-                  }`}>
-                    {(record.quantity ?? 1) === 0 ? "Vendu" : "Dispo"}
-                  </span>
                   {record.image_url ? (
                     <div className="overflow-hidden">
                       <img
