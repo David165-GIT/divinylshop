@@ -12,8 +12,7 @@ export async function fetchAllRecords(
     categoryEq?: string;
     categoryNeq?: string;
   },
-  order?: { column: string; ascending: boolean }[],
-  columns?: string
+  order?: { column: string; ascending: boolean }[]
 ): Promise<Record[]> {
   const PAGE_SIZE = 1000;
   let allData: Record[] = [];
@@ -21,7 +20,7 @@ export async function fetchAllRecords(
   let hasMore = true;
 
   while (hasMore) {
-    let query = supabase.from("records").select(columns || "*");
+    let query = supabase.from("records").select("*");
 
     if (filters?.categoryEq) {
       query = query.eq("category", filters.categoryEq);
@@ -45,7 +44,7 @@ export async function fetchAllRecords(
       break;
     }
 
-    allData = allData.concat((data as Record[]) || []);
+    allData = allData.concat(data || []);
 
     if (!data || data.length < PAGE_SIZE) {
       hasMore = false;
