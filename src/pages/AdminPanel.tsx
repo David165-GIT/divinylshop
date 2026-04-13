@@ -989,7 +989,7 @@ const AdminPanel = () => {
                 <div
                   key={record.id}
                   data-record-id={record.id}
-                  className={`bg-card border border-border rounded-md overflow-hidden cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-60" : ""} ${isCompact ? "" : "p-4"}`}
+                  className={`bg-card rounded-md overflow-hidden cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-60 border-2 border-destructive" : "border border-border"} ${isCompact ? "" : "p-4"}`}
                   onClick={() => {
                     if (cols && cols >= 2) {
                       scrollToIdRef.current = record.id;
