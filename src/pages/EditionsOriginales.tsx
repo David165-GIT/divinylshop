@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
-import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
+import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
 
@@ -171,7 +171,7 @@ const EditionsOriginales = () => {
                 <div
                   key={record.id}
                   data-record-id={record.id}
-                  className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
+                  className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
                   onClick={() => {
                     if (cols && cols >= 2) {
                       scrollToIdRef.current = record.id;

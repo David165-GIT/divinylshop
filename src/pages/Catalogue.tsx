@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
@@ -178,7 +178,7 @@ const Catalogue = () => {
                 <div
                   key={record.id}
                   data-record-id={record.id}
-                  className={`group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer ${(record.quantity ?? 1) === 0 ? "opacity-70" : ""}`}
+                  className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
                   onClick={() => {
                     if (cols && cols >= 2) {
                       scrollToIdRef.current = record.id;
