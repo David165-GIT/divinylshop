@@ -17,7 +17,7 @@ const EditionsOriginales = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
-  const isMobile = useIsMobile();
+  
   const isTablet = useIsTablet();
   const isTouchDevice = useIsTouchDevice();
   const maxPinchCols = isTablet ? 5 : 3;

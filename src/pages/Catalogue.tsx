@@ -20,7 +20,7 @@ const Catalogue = () => {
   const prevColsRef = useRef<number | null>(null);
   const tabParam = searchParams.get("tab");
   const filter = tabParam === "hifi" ? "hifi" : tabParam === "cd" ? "cd" : "vinyl";
-  const isMobile = useIsMobile();
+  
   const isTablet = useIsTablet();
   const isTouchDevice = useIsTouchDevice();
   const maxPinchCols = isTablet ? 5 : 3;
