@@ -188,7 +188,10 @@ const EditionsOriginales = () => {
                         src={record.image_url}
                         alt={`${record.artist} — ${record.title}`}
                         className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
+                        width={600}
+                        height={600}
                         loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   ) : (
