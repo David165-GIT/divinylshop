@@ -45,7 +45,7 @@ export async function fetchAllRecords(
       break;
     }
 
-    allData = allData.concat(data || []);
+    allData = allData.concat((data as Record[]) || []);
 
     if (!data || data.length < PAGE_SIZE) {
       hasMore = false;
