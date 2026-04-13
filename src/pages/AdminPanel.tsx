@@ -1000,6 +1000,11 @@ const AdminPanel = () => {
                     }
                   }}
                 >
+                  {(record.quantity ?? 1) === 0 && (
+                    <span className="absolute top-1 left-1 z-20 text-[11px] rounded-sm px-1.5 py-0.5 font-body font-bold bg-destructive text-destructive-foreground uppercase tracking-wide">
+                      Plus en Stock
+                    </span>
+                  )}
                   {record.image_url && (
                     <img src={record.image_url} alt={record.title} className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
                   )}
@@ -1008,8 +1013,8 @@ const AdminPanel = () => {
                       <h3 className="font-display font-bold text-foreground text-[11px] line-clamp-1">{record.title}</h3>
                       <p className="text-muted-foreground font-body text-[10px] line-clamp-1">{record.artist}</p>
                       <div className="flex items-center justify-between mt-1">
-                        <span className={`text-[9px] rounded-sm px-1 py-0.5 font-body font-semibold ${(record.quantity ?? 1) === 0 ? "bg-destructive text-destructive-foreground" : "bg-accent/10 text-accent"}`}>
-                          {(record.quantity ?? 1) === 0 ? "Plus en Stock" : `×${record.quantity ?? 1}`}
+                        <span className={`text-[10px] rounded-sm px-1 py-0.5 font-body font-semibold ${(record.quantity ?? 1) === 0 ? "hidden" : "bg-accent/10 text-accent"}`}>
+                          {`×${record.quantity ?? 1}`}
                         </span>
                       </div>
                     </div>
@@ -1021,7 +1026,7 @@ const AdminPanel = () => {
                         <p className="text-sm text-muted-foreground font-body">{record.artist}</p>
                         {record.price && <p className="text-sm font-body font-semibold text-foreground mt-1">{record.price} €</p>}
                         {record.condition && <p className="text-xs text-muted-foreground font-body">État : {record.condition}</p>}
-                        {(record.quantity ?? 1) === 0 && <span className="inline-block text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-sm mt-1 font-body font-semibold">Plus en Stock</span>}
+                        
                       </div>
                       <div className="flex flex-col gap-1.5 flex-shrink-0 items-center">
                         <button onClick={(e) => { e.stopPropagation(); handleEdit(record); }} className="text-muted-foreground hover:text-foreground transition-colors"><Pencil className="w-4 h-4" /></button>
