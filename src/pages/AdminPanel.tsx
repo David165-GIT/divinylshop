@@ -128,12 +128,21 @@ const AdminPanel = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("record-images").upload(path, file);
-    if (!error) {
-      const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
-      setForm({ ...form, image_url: urlData.publicUrl });
+    try {
+      const webpBlob = await convertToWebp(file);
+      const path = `${crypto.randomUUID()}.webp`;
+      const { error } = await supabase.storage
+        .from("record-images")
+        .upload(path, webpBlob, { contentType: "image/webp" });
+      if (!error) {
+        const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
+        setForm({ ...form, image_url: urlData.publicUrl });
+      } else {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("WebP conversion error:", err);
+      toast({ title: "Erreur", description: "Conversion image échouée", variant: "destructive" });
     }
     setUploading(false);
   };
