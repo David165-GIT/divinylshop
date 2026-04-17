@@ -10,6 +10,7 @@ import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import type { Database } from "@/integrations/supabase/types";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
+import { convertToWebp } from "@/lib/convertToWebp";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 type RecordInsert = Database["public"]["Tables"]["records"]["Insert"];
@@ -127,12 +128,21 @@ const AdminPanel = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("record-images").upload(path, file);
-    if (!error) {
-      const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
-      setForm({ ...form, image_url: urlData.publicUrl });
+    try {
+      const webpBlob = await convertToWebp(file);
+      const path = `${crypto.randomUUID()}.webp`;
+      const { error } = await supabase.storage
+        .from("record-images")
+        .upload(path, webpBlob, { contentType: "image/webp" });
+      if (!error) {
+        const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
+        setForm({ ...form, image_url: urlData.publicUrl });
+      } else {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("WebP conversion error:", err);
+      toast({ title: "Erreur", description: "Conversion image échouée", variant: "destructive" });
     }
     setUploading(false);
   };
@@ -279,9 +289,11 @@ const AdminPanel = () => {
       try {
         const resp = await fetch(imageUrl);
         const blob = await resp.blob();
-        const ext = "jpg";
-        const path = `${crypto.randomUUID()}.${ext}`;
-        const { error } = await supabase.storage.from("record-images").upload(path, blob);
+        const webpBlob = await convertToWebp(blob);
+        const path = `${crypto.randomUUID()}.webp`;
+        const { error } = await supabase.storage
+          .from("record-images")
+          .upload(path, webpBlob, { contentType: "image/webp" });
         if (!error) {
           const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
           updatedForm.image_url = urlData.publicUrl;
