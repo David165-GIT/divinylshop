@@ -289,9 +289,11 @@ const AdminPanel = () => {
       try {
         const resp = await fetch(imageUrl);
         const blob = await resp.blob();
-        const ext = "jpg";
-        const path = `${crypto.randomUUID()}.${ext}`;
-        const { error } = await supabase.storage.from("record-images").upload(path, blob);
+        const webpBlob = await convertToWebp(blob);
+        const path = `${crypto.randomUUID()}.webp`;
+        const { error } = await supabase.storage
+          .from("record-images")
+          .upload(path, webpBlob, { contentType: "image/webp" });
         if (!error) {
           const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
           updatedForm.image_url = urlData.publicUrl;
