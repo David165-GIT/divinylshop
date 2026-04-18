@@ -93,7 +93,8 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const batchSize = Math.min(Number(body.batchSize) || 10, 20);
+    const batchSize = Math.min(Number(body.batchSize) || 3, 5);
+    console.log(`[migrate-webp] start batch size=${batchSize}`);
 
     const { data: records, error: fetchErr } = await supabase
       .from("records")
@@ -101,6 +102,7 @@ Deno.serve(async (req) => {
       .not("image_url", "is", null)
       .not("image_url", "ilike", "%.webp")
       .limit(batchSize);
+    console.log(`[migrate-webp] fetched ${records?.length ?? 0} records`);
 
     if (fetchErr) throw fetchErr;
     if (!records || records.length === 0) {
