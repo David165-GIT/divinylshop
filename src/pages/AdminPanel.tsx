@@ -608,6 +608,40 @@ const AdminPanel = () => {
     }
   };
 
+  const handleMigrateToWebp = async () => {
+    if (webpMigrating) return;
+    const ok = window.confirm("Convertir toutes les images existantes en WebP ? Cette opération peut prendre plusieurs minutes.");
+    if (!ok) return;
+    setWebpMigrating(true);
+    setWebpProgress({ processed: 0, remaining: 0, errors: 0 });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      let totalProcessed = 0;
+      let totalErrors = 0;
+      let remaining = Infinity;
+      let safety = 200; // max 200 lots (4000 images)
+      while (remaining > 0 && safety-- > 0) {
+        const { data, error } = await supabase.functions.invoke("migrate-images-to-webp", {
+          body: { batchSize: 20 },
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (error) throw error;
+        const res = data as { processed: number; remaining: number; results: { status: string }[] };
+        totalProcessed += res.processed;
+        totalErrors += (res.results || []).filter(r => r.status === "error").length;
+        remaining = res.remaining;
+        setWebpProgress({ processed: totalProcessed, remaining, errors: totalErrors });
+        if (res.processed === 0) break;
+      }
+      toast({ title: "Migration terminée", description: `${totalProcessed} image(s) converties, ${totalErrors} erreur(s).` });
+      await loadRecords();
+    } catch (e: any) {
+      toast({ title: "Erreur de migration", description: e?.message || "Échec inconnu", variant: "destructive" });
+    } finally {
+      setWebpMigrating(false);
+    }
+  };
+
 
 
   return (
