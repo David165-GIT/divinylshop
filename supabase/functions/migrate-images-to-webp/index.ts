@@ -1,5 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { Image } from "https://deno.land/x/imagescript@1.2.17/mod.ts";
+import decodeJpeg, { init as initJpegDec } from "https://esm.sh/@jsquash/jpeg@1.4.0/decode";
+import decodePng, { init as initPngDec } from "https://esm.sh/@jsquash/png@3.0.0/decode";
+import encodeWebp, { init as initWebpEnc } from "https://esm.sh/@jsquash/webp@1.4.0/encode";
+import resize, { initResize } from "https://esm.sh/@jsquash/resize@2.1.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,6 +12,48 @@ const corsHeaders = {
 
 const BUCKET = "record-images";
 const MAX_SIZE = 800;
+
+async function fetchWasm(url: string): Promise<WebAssembly.Module> {
+  const res = await fetch(url);
+  const bytes = await res.arrayBuffer();
+  return await WebAssembly.compile(bytes);
+}
+
+let initialized = false;
+async function ensureInit() {
+  if (initialized) return;
+  // Charger les modules wasm explicitement (Deno edge runtime ne sait pas faire le fetch implicite)
+  const [jpegMod, pngMod, webpMod, resizeMod] = await Promise.all([
+    fetchWasm("https://esm.sh/@jsquash/jpeg@1.4.0/codec/dec/mozjpeg_dec.wasm"),
+    fetchWasm("https://esm.sh/@jsquash/png@3.0.0/codec/squoosh_png_bg.wasm"),
+    fetchWasm("https://esm.sh/@jsquash/webp@1.4.0/codec/enc/webp_enc_simd.wasm"),
+    fetchWasm("https://esm.sh/@jsquash/resize@2.1.0/lib/resize/squoosh_resize_bg.wasm"),
+  ]);
+  await Promise.all([
+    initJpegDec(jpegMod),
+    initPngDec(pngMod),
+    initWebpEnc(webpMod),
+    initResize(resizeMod),
+  ]);
+  initialized = true;
+}
+
+async function convertToWebp(bytes: Uint8Array, mimeHint: string): Promise<Uint8Array> {
+  await ensureInit();
+  let imgData: ImageData;
+  if (mimeHint.includes("png")) {
+    imgData = await decodePng(bytes);
+  } else {
+    imgData = await decodeJpeg(bytes);
+  }
+  const ratio = Math.min(1, MAX_SIZE / Math.max(imgData.width, imgData.height));
+  if (ratio < 1) {
+    const w = Math.round(imgData.width * ratio);
+    const h = Math.round(imgData.height * ratio);
+    imgData = await resize(imgData, { width: w, height: h });
+  }
+  return await encodeWebp(imgData, { quality: 82 });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -21,7 +66,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Vérification admin
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -49,9 +93,8 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const batchSize = Math.min(Number(body.batchSize) || 20, 50);
+    const batchSize = Math.min(Number(body.batchSize) || 10, 20);
 
-    // Récupérer un lot d'enregistrements à convertir
     const { data: records, error: fetchErr } = await supabase
       .from("records")
       .select("id, image_url")
@@ -62,10 +105,8 @@ Deno.serve(async (req) => {
     if (fetchErr) throw fetchErr;
     if (!records || records.length === 0) {
       return new Response(
-        JSON.stringify({ done: true, processed: 0, remaining: 0 }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ done: true, processed: 0, remaining: 0, results: [] }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -74,70 +115,39 @@ Deno.serve(async (req) => {
     for (const rec of records) {
       try {
         const url = rec.image_url as string;
-        // Extraire le path depuis l'URL publique
         const marker = `/${BUCKET}/`;
         const idx = url.indexOf(marker);
         if (idx === -1) throw new Error("URL non reconnue");
         const oldPath = url.substring(idx + marker.length);
 
-        // Télécharger
         const { data: blob, error: dlErr } = await supabase.storage
           .from(BUCKET)
           .download(oldPath);
         if (dlErr || !blob) throw dlErr || new Error("Téléchargement échoué");
 
-        const buf = new Uint8Array(await blob.arrayBuffer());
-        const img = await Image.decode(buf);
-        const ratio = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
-        if (ratio < 1) {
-          img.resize(
-            Math.round(img.width * ratio),
-            Math.round(img.height * ratio)
-          );
-        }
-        const webp = await img.encode(); // imagescript encode = PNG par défaut
-        // imagescript ne supporte pas WebP nativement => utiliser encodeJPEG ? On préfère WebP
-        // Alternative : utiliser encodeWEBP via wasm. Imagescript >=1.2.15 supporte encodeWEBP.
-        // Si non disponible, fallback JPEG
-        let outBytes: Uint8Array;
-        let contentType = "image/webp";
-        let ext = "webp";
-        // @ts-ignore
-        if (typeof img.encodeWEBP === "function") {
-          // @ts-ignore
-          outBytes = await img.encodeWEBP(85);
-        } else {
-          outBytes = await img.encodeJPEG(85);
-          contentType = "image/jpeg";
-          ext = "jpg";
-        }
+        const inputBytes = new Uint8Array(await blob.arrayBuffer());
+        const mimeHint = blob.type || (oldPath.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg");
+        const webpBytes = await convertToWebp(inputBytes, mimeHint);
 
-        // Nouveau path
         const baseName = oldPath.replace(/\.[^.]+$/, "");
-        const newPath = `${baseName}.${ext}`;
+        const newPath = `${baseName}.webp`;
 
-        // Upload
         const { error: upErr } = await supabase.storage
           .from(BUCKET)
-          .upload(newPath, outBytes, {
-            contentType,
+          .upload(newPath, webpBytes, {
+            contentType: "image/webp",
             upsert: true,
           });
         if (upErr) throw upErr;
 
-        // URL publique
-        const { data: pub } = supabase.storage
-          .from(BUCKET)
-          .getPublicUrl(newPath);
+        const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(newPath);
 
-        // Mettre à jour le record
         const { error: updErr } = await supabase
           .from("records")
           .update({ image_url: pub.publicUrl })
           .eq("id", rec.id);
         if (updErr) throw updErr;
 
-        // Supprimer l'ancien fichier si différent
         if (oldPath !== newPath) {
           await supabase.storage.from(BUCKET).remove([oldPath]);
         }
@@ -152,7 +162,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Compter le restant
     const { count } = await supabase
       .from("records")
       .select("id", { count: "exact", head: true })
@@ -165,9 +174,7 @@ Deno.serve(async (req) => {
         remaining: count ?? 0,
         results,
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
     return new Response(
