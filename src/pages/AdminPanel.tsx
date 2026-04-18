@@ -634,7 +634,7 @@ const AdminPanel = () => {
         if (res.processed === 0) break;
       }
       toast({ title: "Migration terminée", description: `${totalProcessed} image(s) converties, ${totalErrors} erreur(s).` });
-      await loadRecords();
+      await fetchRecords();
     } catch (e: any) {
       toast({ title: "Erreur de migration", description: e?.message || "Échec inconnu", variant: "destructive" });
     } finally {
