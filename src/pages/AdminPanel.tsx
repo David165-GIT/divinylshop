@@ -53,6 +53,8 @@ const AdminPanel = () => {
   const [showScanMenu, setShowScanMenu] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState<{ total: number; success: number; errors: number; details: any[] } | null>(null);
+  const [webpMigrating, setWebpMigrating] = useState(false);
+  const [webpProgress, setWebpProgress] = useState<{ processed: number; remaining: number; errors: number } | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [desktopCols, setDesktopCols] = useState(3);
@@ -606,6 +608,40 @@ const AdminPanel = () => {
     }
   };
 
+  const handleMigrateToWebp = async () => {
+    if (webpMigrating) return;
+    const ok = window.confirm("Convertir toutes les images existantes en WebP ? Cette opération peut prendre plusieurs minutes.");
+    if (!ok) return;
+    setWebpMigrating(true);
+    setWebpProgress({ processed: 0, remaining: 0, errors: 0 });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      let totalProcessed = 0;
+      let totalErrors = 0;
+      let remaining = Infinity;
+      let safety = 200; // max 200 lots (4000 images)
+      while (remaining > 0 && safety-- > 0) {
+        const { data, error } = await supabase.functions.invoke("migrate-images-to-webp", {
+          body: { batchSize: 20 },
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (error) throw error;
+        const res = data as { processed: number; remaining: number; results: { status: string }[] };
+        totalProcessed += res.processed;
+        totalErrors += (res.results || []).filter(r => r.status === "error").length;
+        remaining = res.remaining;
+        setWebpProgress({ processed: totalProcessed, remaining, errors: totalErrors });
+        if (res.processed === 0) break;
+      }
+      toast({ title: "Migration terminée", description: `${totalProcessed} image(s) converties, ${totalErrors} erreur(s).` });
+      await fetchRecords();
+    } catch (e: any) {
+      toast({ title: "Erreur de migration", description: e?.message || "Échec inconnu", variant: "destructive" });
+    } finally {
+      setWebpMigrating(false);
+    }
+  };
+
 
 
   return (
@@ -936,6 +972,17 @@ const AdminPanel = () => {
               >
                 {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
                 {importLoading ? "Import…" : "Importer CSV"}
+              </button>
+              <button
+                onClick={handleMigrateToWebp}
+                disabled={webpMigrating}
+                title="Convertir toutes les images existantes en WebP"
+                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
+              >
+                {webpMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
+                {webpMigrating
+                  ? `WebP… ${webpProgress?.processed ?? 0}${webpProgress?.remaining ? ` / reste ${webpProgress.remaining}` : ""}`
+                  : "Convertir WebP"}
               </button>
               <button
                 onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
