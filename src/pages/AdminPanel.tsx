@@ -618,22 +618,33 @@ const AdminPanel = () => {
       const { data: { session } } = await supabase.auth.getSession();
       let totalProcessed = 0;
       let totalErrors = 0;
+      let consecutiveNoProgress = 0;
       let remaining = Infinity;
-      let safety = 200; // max 200 lots (4000 images)
+      let safety = 500;
       while (remaining > 0 && safety-- > 0) {
         const { data, error } = await supabase.functions.invoke("migrate-images-to-webp", {
-          body: { batchSize: 20 },
+          body: { batchSize: 3 },
           headers: { Authorization: `Bearer ${session?.access_token}` },
         });
         if (error) throw error;
         const res = data as { processed: number; remaining: number; results: { status: string }[] };
-        totalProcessed += res.processed;
-        totalErrors += (res.results || []).filter(r => r.status === "error").length;
+        const okCount = (res.results || []).filter(r => r.status === "ok").length;
+        const errCount = (res.results || []).filter(r => r.status === "error").length;
+        totalProcessed += okCount;
+        totalErrors += errCount;
         remaining = res.remaining;
         setWebpProgress({ processed: totalProcessed, remaining, errors: totalErrors });
-        if (res.processed === 0) break;
+        if (okCount === 0) {
+          consecutiveNoProgress++;
+          if (consecutiveNoProgress >= 3) {
+            toast({ title: "Migration interrompue", description: `Aucune image convertie sur les 3 derniers lots. ${totalErrors} erreur(s) au total. Voir les logs.`, variant: "destructive" });
+            break;
+          }
+        } else {
+          consecutiveNoProgress = 0;
+        }
       }
-      toast({ title: "Migration terminée", description: `${totalProcessed} image(s) converties, ${totalErrors} erreur(s).` });
+      toast({ title: "Migration terminée", description: `${totalProcessed} converties, ${totalErrors} erreur(s), reste ${remaining}.` });
       await fetchRecords();
     } catch (e: any) {
       toast({ title: "Erreur de migration", description: e?.message || "Échec inconnu", variant: "destructive" });

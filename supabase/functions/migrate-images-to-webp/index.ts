@@ -93,7 +93,8 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const batchSize = Math.min(Number(body.batchSize) || 10, 20);
+    const batchSize = Math.min(Number(body.batchSize) || 3, 5);
+    console.log(`[migrate-webp] start batch size=${batchSize}`);
 
     const { data: records, error: fetchErr } = await supabase
       .from("records")
@@ -101,6 +102,7 @@ Deno.serve(async (req) => {
       .not("image_url", "is", null)
       .not("image_url", "ilike", "%.webp")
       .limit(batchSize);
+    console.log(`[migrate-webp] fetched ${records?.length ?? 0} records`);
 
     if (fetchErr) throw fetchErr;
     if (!records || records.length === 0) {
@@ -113,12 +115,14 @@ Deno.serve(async (req) => {
     const results: { id: string; status: string; error?: string }[] = [];
 
     for (const rec of records) {
+      const t0 = Date.now();
       try {
         const url = rec.image_url as string;
         const marker = `/${BUCKET}/`;
         const idx = url.indexOf(marker);
         if (idx === -1) throw new Error("URL non reconnue");
-        const oldPath = url.substring(idx + marker.length);
+        const oldPath = decodeURIComponent(url.substring(idx + marker.length));
+        console.log(`[migrate-webp] ${rec.id} download ${oldPath}`);
 
         const { data: blob, error: dlErr } = await supabase.storage
           .from(BUCKET)
@@ -127,6 +131,7 @@ Deno.serve(async (req) => {
 
         const inputBytes = new Uint8Array(await blob.arrayBuffer());
         const mimeHint = blob.type || (oldPath.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg");
+        console.log(`[migrate-webp] ${rec.id} encode ${inputBytes.length}B mime=${mimeHint}`);
         const webpBytes = await convertToWebp(inputBytes, mimeHint);
 
         const baseName = oldPath.replace(/\.[^.]+$/, "");
@@ -152,13 +157,12 @@ Deno.serve(async (req) => {
           await supabase.storage.from(BUCKET).remove([oldPath]);
         }
 
+        console.log(`[migrate-webp] ${rec.id} OK in ${Date.now() - t0}ms`);
         results.push({ id: rec.id, status: "ok" });
       } catch (e) {
-        results.push({
-          id: rec.id,
-          status: "error",
-          error: e instanceof Error ? e.message : String(e),
-        });
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error(`[migrate-webp] ${rec.id} FAIL in ${Date.now() - t0}ms: ${msg}`);
+        results.push({ id: rec.id, status: "error", error: msg });
       }
     }
 
