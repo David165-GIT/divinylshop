@@ -608,42 +608,109 @@ const AdminPanel = () => {
     }
   };
 
+  const countRemainingNonWebp = async () => {
+    const { count, error } = await supabase
+      .from("records")
+      .select("id", { count: "exact", head: true })
+      .not("image_url", "is", null)
+      .not("image_url", "ilike", "%.webp");
+
+    if (error) throw error;
+    return count ?? 0;
+  };
+
+  const getStoragePathFromImageUrl = (url: string) => {
+    try {
+      const parsed = new URL(url);
+      const marker = "/storage/v1/object/public/record-images/";
+      const index = parsed.pathname.indexOf(marker);
+      if (index === -1) return null;
+      return decodeURIComponent(parsed.pathname.slice(index + marker.length));
+    } catch {
+      return null;
+    }
+  };
+
+  const migrateRecordImageToWebp = async (record: Pick<Record, "id" | "image_url">) => {
+    if (!record.image_url) throw new Error("Image manquante");
+
+    const response = await fetch(record.image_url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Téléchargement HTTP ${response.status}`);
+
+    const sourceBlob = await response.blob();
+    const webpBlob = await convertToWebp(sourceBlob);
+    const oldPath = getStoragePathFromImageUrl(record.image_url);
+    const newPath = oldPath
+      ? oldPath.replace(/\.[^.]+$/, ".webp")
+      : `${crypto.randomUUID()}.webp`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("record-images")
+      .upload(newPath, webpBlob, { contentType: "image/webp", upsert: true });
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(newPath);
+    const { error: updateError } = await supabase
+      .from("records")
+      .update({ image_url: urlData.publicUrl })
+      .eq("id", record.id);
+    if (updateError) throw updateError;
+
+    if (oldPath && oldPath !== newPath) {
+      const { error: removeError } = await supabase.storage.from("record-images").remove([oldPath]);
+      if (removeError) {
+        console.warn("WebP cleanup warning:", removeError.message);
+      }
+    }
+  };
+
   const handleMigrateToWebp = async () => {
     if (webpMigrating) return;
     const ok = window.confirm("Convertir toutes les images existantes en WebP ? Cette opération peut prendre plusieurs minutes.");
     if (!ok) return;
+
     setWebpMigrating(true);
-    setWebpProgress({ processed: 0, remaining: 0, errors: 0 });
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const BATCH_SIZE = 3;
+      const failedIds = new Set<string>();
       let totalProcessed = 0;
       let totalErrors = 0;
-      let consecutiveNoProgress = 0;
-      let remaining = Infinity;
-      let safety = 500;
-      while (remaining > 0 && safety-- > 0) {
-        const { data, error } = await supabase.functions.invoke("migrate-images-to-webp", {
-          body: { batchSize: 3 },
-          headers: { Authorization: `Bearer ${session?.access_token}` },
-        });
+      let remaining = await countRemainingNonWebp();
+      setWebpProgress({ processed: 0, remaining, errors: 0 });
+
+      while (remaining > 0) {
+        const { data, error } = await supabase
+          .from("records")
+          .select("id, image_url")
+          .not("image_url", "is", null)
+          .not("image_url", "ilike", "%.webp")
+          .limit(30);
+
         if (error) throw error;
-        const res = data as { processed: number; remaining: number; results: { status: string }[] };
-        const okCount = (res.results || []).filter(r => r.status === "ok").length;
-        const errCount = (res.results || []).filter(r => r.status === "error").length;
-        totalProcessed += okCount;
-        totalErrors += errCount;
-        remaining = res.remaining;
-        setWebpProgress({ processed: totalProcessed, remaining, errors: totalErrors });
-        if (okCount === 0) {
-          consecutiveNoProgress++;
-          if (consecutiveNoProgress >= 3) {
-            toast({ title: "Migration interrompue", description: `Aucune image convertie sur les 3 derniers lots. ${totalErrors} erreur(s) au total. Voir les logs.`, variant: "destructive" });
-            break;
+
+        const batch = (data ?? [])
+          .filter((record) => !failedIds.has(record.id))
+          .slice(0, BATCH_SIZE);
+
+        if (batch.length === 0) break;
+
+        for (const record of batch) {
+          try {
+            await migrateRecordImageToWebp(record);
+            totalProcessed += 1;
+          } catch (err) {
+            failedIds.add(record.id);
+            totalErrors += 1;
+            console.error("WebP migration error:", record.id, err);
           }
-        } else {
-          consecutiveNoProgress = 0;
+
+          await new Promise((resolve) => window.setTimeout(resolve, 0));
         }
+
+        remaining = await countRemainingNonWebp();
+        setWebpProgress({ processed: totalProcessed, remaining, errors: totalErrors });
       }
+
       toast({ title: "Migration terminée", description: `${totalProcessed} converties, ${totalErrors} erreur(s), reste ${remaining}.` });
       await fetchRecords();
     } catch (e: any) {
