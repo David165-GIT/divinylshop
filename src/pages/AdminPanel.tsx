@@ -53,6 +53,8 @@ const AdminPanel = () => {
   const [showScanMenu, setShowScanMenu] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState<{ total: number; success: number; errors: number; details: any[] } | null>(null);
+  const [webpMigrating, setWebpMigrating] = useState(false);
+  const [webpProgress, setWebpProgress] = useState<{ processed: number; remaining: number; errors: number } | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [desktopCols, setDesktopCols] = useState(3);
