@@ -1245,6 +1245,9 @@ const AdminPanel = () => {
             })}
           </div>
         )}
+            </>)}
+          </div>
+        </main>
       </div>
       {/* Import results modal */}
       {importProgress && (
