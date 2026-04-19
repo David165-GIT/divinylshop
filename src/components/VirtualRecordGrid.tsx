@@ -11,7 +11,7 @@ interface VirtualRecordGridProps {
   isTouchDevice: boolean;
   expandedId: string | null;
   onCardClick: (record: Record) => void;
-  gridRef: React.RefObject<HTMLDivElement>;
+  gridRef: React.Ref<HTMLDivElement> | ((node: HTMLDivElement | null) => void);
   renderCategoryLabel: (record: Record) => string;
 }
 
@@ -100,7 +100,9 @@ const VirtualRecordGrid = ({
   // Combine refs
   const setRefs = (node: HTMLDivElement | null) => {
     containerRef.current = node;
-    if (gridRef && "current" in gridRef) {
+    if (typeof gridRef === "function") {
+      gridRef(node);
+    } else if (gridRef && "current" in gridRef) {
       (gridRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
     }
   };
