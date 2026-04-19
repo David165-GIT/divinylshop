@@ -48,7 +48,6 @@ const VirtualRecordGrid = ({
       setEffectiveCols(c);
 
       // gap matching the original tailwind classes (rough px)
-      const gapMap: window["Object"] | Record<string, number> = {} as any;
       const gapPxMobile: { [k: number]: number } = { 1: 24, 2: 12, 3: 8, 4: 8, 5: 4 };
       const gapPxDesktop: { [k: number]: number } = { 3: 16, 4: 16, 5: 12 };
       const gap = isDesktop ? gapPxDesktop[c] ?? 16 : gapPxMobile[c] ?? 12;
