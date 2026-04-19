@@ -60,6 +60,8 @@ const AdminPanel = () => {
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [desktopCols, setDesktopCols] = useState(3);
   const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
+  const [activeSection, setActiveSection] = useState<"library" | "video" | "events">("library");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const maxPinchCols = isTablet ? 5 : 3;
   const defaultPinchCols = isTablet ? 3 : 2;
