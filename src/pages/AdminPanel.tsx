@@ -820,7 +820,9 @@ const AdminPanel = () => {
             </button>
           </div>
         </div>
+            )}
 
+            {activeSection === "library" && (<>
         {/* Form Modal */}
         {showForm && (
           <div className="fixed inset-0 bg-foreground/50 z-50 flex items-center justify-center p-4">
