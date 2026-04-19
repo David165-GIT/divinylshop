@@ -6,6 +6,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
+import VirtualRecordGrid from "@/components/VirtualRecordGrid";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
@@ -158,65 +159,24 @@ const EditionsOriginales = () => {
             </a>
           </div>
         ) : (
-          <div
-            ref={gridRef}
-            className={`grid ${
-              cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
-            } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
-            style={{ touchAction: "manipulation" }}
-          >
-            {filteredRecords.map((record) => {
-              const isCompact = cols && cols >= 2;
-              return (
-                <div
-                  key={record.id}
-                  data-record-id={record.id}
-                  className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
-                  onClick={() => {
-                    if (cols && cols >= 2) {
-                      scrollToIdRef.current = record.id;
-                      setCols(1);
-                      setExpandedId(record.id);
-                    } else {
-                      setExpandedId(expandedId === record.id ? null : record.id);
-                    }
-                  }}
-                >
-                  {record.image_url ? (
-                    <div className="overflow-hidden">
-                      <img
-                        src={record.image_url}
-                        alt={`${record.artist} — ${record.title}`}
-                        className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
-                        width={600}
-                        height={600}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-square bg-muted flex items-center justify-center">
-                      <span className={`${isCompact ? "text-2xl" : "text-4xl"} text-muted-foreground/30`}>♫</span>
-                    </div>
-                  )}
-                  <div className={isCompact ? "p-2" : "p-4"}>
-                    {!isCompact && (
-                      <p className="text-xs text-accent font-body uppercase tracking-wide mb-1">
-                        Édition Originale
-                        {record.genre && ` · ${record.genre}`}
-                        {record.condition && ` · ${record.condition}`}
-                      </p>
-                    )}
-                    <h3 className={`font-display font-bold text-foreground leading-tight ${isCompact ? "text-[11px] line-clamp-1" : ""}`}>{record.title}</h3>
-                    <p className={`text-muted-foreground font-body ${isCompact ? "text-[10px] line-clamp-1" : "text-sm"}`}>{record.artist}</p>
-                    {record.description && !isCompact && (
-                      <p className={`text-xs text-muted-foreground font-body mt-2 transition-all duration-300 ${expandedId === record.id ? "" : "line-clamp-2"}`}>{record.description}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <VirtualRecordGrid
+            records={filteredRecords}
+            cols={cols ?? 2}
+            desktopCols={desktopCols}
+            isTouchDevice={isTouchDevice}
+            expandedId={expandedId}
+            gridRef={gridRef}
+            onCardClick={(record) => {
+              if (cols && cols >= 2) {
+                scrollToIdRef.current = record.id;
+                setCols(1);
+                setExpandedId(record.id);
+              } else {
+                setExpandedId(expandedId === record.id ? null : record.id);
+              }
+            }}
+            renderCategoryLabel={() => "Édition Originale"}
+          />
         )}
 
         {/* CTA */}
