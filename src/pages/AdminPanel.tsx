@@ -729,16 +729,75 @@ const AdminPanel = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
-          <button onClick={() => setShowLogoutConfirm(true)} className="text-muted-foreground hover:text-foreground transition-colors">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Ouvrir le menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-display font-bold text-gradient-dark">Admin — Divinyl</h1>
+          </div>
+          <button onClick={() => setShowLogoutConfirm(true)} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Déconnexion">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Video URL Setting */}
+      {/* Sidebar overlay (mobile) */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-foreground/40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex w-full">
+        {/* Sidebar */}
+        <aside
+          className={`fixed md:sticky top-0 md:top-[57px] left-0 z-50 md:z-30 h-screen md:h-[calc(100vh-57px)] w-64 bg-card border-r border-border transform transition-transform duration-200 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 flex flex-col`}
+        >
+          <div className="md:hidden flex items-center justify-between px-4 py-4 border-b border-border">
+            <span className="font-display font-bold text-foreground">Menu</span>
+            <button onClick={() => setSidebarOpen(false)} aria-label="Fermer">
+              <X className="w-5 h-5 text-muted-foreground" />
+            </button>
+          </div>
+          <nav className="p-3 space-y-1">
+            {[
+              { key: "library" as const, label: "Mettre à jour ma bibliothèque", icon: Library },
+              { key: "video" as const, label: "Vidéo de ma galerie", icon: Video },
+              { key: "events" as const, label: "Créer un évènement", icon: CalendarIcon },
+            ].map((item) => {
+              const Icon = item.icon;
+              const active = activeSection === item.key;
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => { setActiveSection(item.key); setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-body text-left transition-all ${
+                    active
+                      ? "bg-foreground text-background font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* Main content */}
+        <main className="flex-1 min-w-0">
+          <div className="container mx-auto px-4 py-8">
+            {activeSection === "events" && <EventsManager />}
+            {activeSection === "video" && (
         <div className="bg-card border border-border rounded-md p-4 mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Video className="w-4 h-4 text-accent" />
