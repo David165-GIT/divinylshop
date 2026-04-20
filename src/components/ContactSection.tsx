@@ -3,9 +3,9 @@ import shopFacadePhoto from "@/assets/shop-facade-photo.webp";
 
 const ContactSection = () => {
   return (
-    <section id="contact" className="py-24 bg-secondary bg-grain">
+    <section id="contact" className="py-16 bg-secondary bg-grain">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">Nous trouver</h2>
           <p className="text-muted-foreground font-body max-w-md mx-auto">
             Passez nous voir en boutique à Nemours ou retrouvez-nous sur Facebook !
