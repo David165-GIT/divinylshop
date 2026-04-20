@@ -21,6 +21,7 @@ export type Database = {
           event_date: string
           id: string
           image_url: string | null
+          is_featured: boolean
           title: string
           updated_at: string
         }
@@ -30,6 +31,7 @@ export type Database = {
           event_date: string
           id?: string
           image_url?: string | null
+          is_featured?: boolean
           title: string
           updated_at?: string
         }
@@ -39,6 +41,7 @@ export type Database = {
           event_date?: string
           id?: string
           image_url?: string | null
+          is_featured?: boolean
           title?: string
           updated_at?: string
         }
