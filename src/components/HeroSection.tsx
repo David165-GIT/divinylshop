@@ -1,8 +1,32 @@
+import { useEffect, useState } from "react";
 import heroImg from "@/assets/shop-interior-2.webp";
 import logoText from "@/assets/divinyl-logo-text.webp";
-import { Facebook, MapPin, ChevronDown } from "lucide-react";
+import { Facebook, MapPin, ChevronDown, Calendar as CalendarIcon } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+type FeaturedEvent = {
+  id: string;
+  title: string;
+  event_date: string;
+  description: string | null;
+  image_url: string | null;
+};
 
 const HeroSection = () => {
+  const [featured, setFeatured] = useState<FeaturedEvent | null>(null);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from("events")
+        .select("id, title, event_date, description, image_url")
+        .eq("is_featured", true)
+        .maybeSingle();
+      if (data) setFeatured(data as FeaturedEvent);
+    };
+    fetchFeatured();
+  }, []);
+
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col">
       {/* Top - Content */}
@@ -40,16 +64,55 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Bottom - Full-width image */}
-      <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
-        <img
-          src={heroImg}
-          alt="Intérieur de la boutique Divinyl à Nemours"
-          className="w-full h-full object-cover object-center"
-          fetchPriority="high"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
-      </div>
+      {/* Bottom - Featured event banner OR shop image */}
+      {featured ? (
+        <div className="relative bg-card border-t border-border overflow-hidden">
+          <div className="container mx-auto px-4 py-6 md:py-8">
+            <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-6 max-w-4xl mx-auto">
+              {featured.image_url && (
+                <div className="md:w-1/3 flex-shrink-0">
+                  <img
+                    src={featured.image_url}
+                    alt={featured.title}
+                    className="w-full aspect-square md:aspect-[4/3] object-cover rounded-md border border-border shadow-md"
+                    fetchPriority="high"
+                  />
+                </div>
+              )}
+              <div className="flex-1 flex flex-col justify-center text-center md:text-left">
+                <p className="inline-flex items-center justify-center md:justify-start gap-1.5 text-xs text-accent font-body uppercase tracking-[0.2em] font-semibold">
+                  <CalendarIcon className="w-3.5 h-3.5" />
+                  Évènement à venir
+                </p>
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-2">
+                  {featured.title}
+                </h2>
+                <p className="text-sm md:text-base font-body text-accent font-semibold mt-1">
+                  {new Date(featured.event_date).toLocaleString("fr-FR", {
+                    dateStyle: "long",
+                    timeStyle: "short",
+                  })}
+                </p>
+                {featured.description && (
+                  <p className="text-sm md:text-base font-body text-muted-foreground mt-3 leading-relaxed whitespace-pre-line">
+                    {featured.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
+          <img
+            src={heroImg}
+            alt="Intérieur de la boutique Divinyl à Nemours"
+            className="w-full h-full object-cover object-center"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
+        </div>
+      )}
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce">
         <ChevronDown className="w-6 h-6 text-foreground/40" />
