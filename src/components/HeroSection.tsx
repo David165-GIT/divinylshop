@@ -114,9 +114,6 @@ const HeroSection = () => {
         </div>
       )}
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-        <ChevronDown className="w-6 h-6 text-foreground/40" />
-      </div>
     </section>
   );
 };
