@@ -68,13 +68,13 @@ const HeroSection = () => {
       {featured ? (
         <div className="relative bg-card border-t border-border overflow-hidden">
           <div className="container mx-auto px-4 py-6 md:py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-6 md:gap-10 max-w-5xl mx-auto">
               {featured.image_url && (
                 <div className="flex justify-center md:justify-end">
                   <img
                     src={featured.image_url}
                     alt={featured.title}
-                    className="w-full max-w-md max-h-64 md:max-h-72 object-contain rounded-md"
+                    className="w-full max-w-md h-48 md:h-56 object-cover rounded-md"
                     fetchPriority="high"
                   />
                 </div>
