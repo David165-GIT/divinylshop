@@ -51,9 +51,9 @@ const AboutSection = () => {
 
   return (
     <>
-      <section id="apropos" className="py-24 bg-grain">
+      <section id="apropos" className="py-16 bg-grain">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">À propos</h2>
             <p className="text-muted-foreground font-body max-w-lg mx-auto">
               Divinyl, c'est un disquaire indépendant à Nemours (77), né de la passion pour

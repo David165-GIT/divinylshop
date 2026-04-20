@@ -2,7 +2,7 @@ import { Facebook, Package } from "lucide-react";
 
 const SellSection = () => {
   return (
-    <section className="py-20 bg-grain">
+    <section className="py-14 bg-grain">
       <div className="container mx-auto px-4">
         <div className="relative max-w-2xl mx-auto text-center p-10 rounded-lg overflow-hidden">
           {/* Animated glowing border */}
