@@ -178,7 +178,12 @@ const EventsManager = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map((ev) => (
-            <div key={ev.id} className="bg-card border border-border rounded-md overflow-hidden flex flex-col">
+            <div key={ev.id} className={`bg-card border rounded-md overflow-hidden flex flex-col relative ${ev.is_featured ? "border-accent ring-2 ring-accent/30" : "border-border"}`}>
+              {ev.is_featured && (
+                <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 text-[10px] rounded-sm px-1.5 py-0.5 font-body font-bold bg-accent text-accent-foreground uppercase tracking-wide">
+                  <Star className="w-3 h-3 fill-current" /> À la une
+                </span>
+              )}
               {ev.image_url && (
                 <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full aspect-square object-cover" />
               )}
@@ -191,16 +196,24 @@ const EventsManager = () => {
                 {ev.description && (
                   <p className="text-sm text-muted-foreground font-body mt-2 line-clamp-3">{ev.description}</p>
                 )}
-                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border">
+                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border flex-wrap">
+                  <button
+                    onClick={() => handleToggleFeatured(ev)}
+                    className={`inline-flex items-center gap-1.5 text-xs font-body transition-colors ${ev.is_featured ? "text-accent hover:text-foreground" : "text-muted-foreground hover:text-accent"}`}
+                    title={ev.is_featured ? "Retirer de la page d'accueil" : "Afficher sur la page d'accueil"}
+                  >
+                    <Star className={`w-3.5 h-3.5 ${ev.is_featured ? "fill-current" : ""}`} />
+                    {ev.is_featured ? "À la une" : "Mettre à la une"}
+                  </button>
                   <button
                     onClick={() => openEdit(ev)}
-                    className="inline-flex items-center gap-1.5 text-xs font-body text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-body text-muted-foreground hover:text-foreground transition-colors ml-auto"
                   >
                     <Pencil className="w-3.5 h-3.5" /> Modifier
                   </button>
                   <button
                     onClick={() => setDeleteId(ev.id)}
-                    className="inline-flex items-center gap-1.5 text-xs font-body text-muted-foreground hover:text-destructive transition-colors ml-auto"
+                    className="inline-flex items-center gap-1.5 text-xs font-body text-muted-foreground hover:text-destructive transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Supprimer
                   </button>
