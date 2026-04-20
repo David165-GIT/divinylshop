@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Upload, X, Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, X, Calendar as CalendarIcon, Loader2, Star } from "lucide-react";
 import { convertToWebp } from "@/lib/convertToWebp";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 
@@ -11,13 +11,14 @@ type EventRow = {
   event_date: string;
   description: string | null;
   image_url: string | null;
+  is_featured: boolean;
   created_at: string;
   updated_at: string;
 };
 
 type EventForm = {
   title: string;
-  event_date: string; // datetime-local string
+  event_date: string;
   description: string;
   image_url: string | null;
 };
