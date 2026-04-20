@@ -68,18 +68,18 @@ const HeroSection = () => {
       {featured ? (
         <div className="relative bg-card border-t border-border overflow-hidden">
           <div className="container mx-auto px-4 py-6 md:py-8">
-            <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-6 max-w-5xl mx-auto">
               {featured.image_url && (
-                <div className="md:w-1/2 flex-shrink-0">
+                <div className="flex justify-center md:justify-end">
                   <img
                     src={featured.image_url}
                     alt={featured.title}
-                    className="w-full h-64 md:h-full md:max-h-80 object-cover rounded-md border border-border shadow-md"
+                    className="w-full max-w-md max-h-64 md:max-h-72 object-contain rounded-md"
                     fetchPriority="high"
                   />
                 </div>
               )}
-              <div className="md:w-1/2 flex flex-col justify-center text-center md:text-left">
+              <div className="flex flex-col justify-center text-center md:text-left">
                 <p className="inline-flex items-center justify-center md:justify-start gap-1.5 text-xs text-accent font-body uppercase tracking-[0.2em] font-semibold">
                   <CalendarIcon className="w-3.5 h-3.5" />
                   Évènement à venir
