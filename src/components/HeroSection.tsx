@@ -74,7 +74,7 @@ const HeroSection = () => {
                   <img
                     src={featured.image_url}
                     alt={featured.title}
-                    className="w-full h-full aspect-video md:aspect-auto object-cover rounded-md border border-border shadow-md"
+                    className="w-full h-64 md:h-full md:max-h-80 object-cover rounded-md border border-border shadow-md"
                     fetchPriority="high"
                   />
                 </div>
