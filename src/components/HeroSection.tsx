@@ -74,7 +74,7 @@ const HeroSection = () => {
                   <img
                     src={featured.image_url}
                     alt={featured.title}
-                    className="w-full max-w-md h-48 md:h-56 object-cover rounded-md"
+                    className="w-full max-w-md h-auto md:h-56 max-h-64 object-contain md:object-cover rounded-md"
                     fetchPriority="high"
                   />
                 </div>
