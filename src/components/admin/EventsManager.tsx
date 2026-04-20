@@ -137,6 +137,22 @@ const EventsManager = () => {
     setDeleteId(null);
   };
 
+  const handleToggleFeatured = async (ev: EventRow) => {
+    const { error } = await supabase
+      .from("events")
+      .update({ is_featured: !ev.is_featured })
+      .eq("id", ev.id);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({
+      title: ev.is_featured ? "Évènement retiré de la une" : "Évènement mis à la une",
+      description: ev.is_featured ? undefined : "Il s'affiche désormais sur la page d'accueil.",
+    });
+    fetchEvents();
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
