@@ -32,7 +32,7 @@ const HeroSection = () => {
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col">
       {/* Top - Content */}
-      <div className="relative flex-1 flex items-center justify-center bg-background pt-20 pb-8">
+      <div className="relative flex-1 flex items-center justify-center bg-background pt-20 pb-2 md:pb-4">
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
           <h1 className="mb-3 animate-fade-in-up">
             <img src={logoText} alt="Divinyl" className="h-20 md:h-32 mx-auto" width={503} height={128} />
@@ -69,7 +69,7 @@ const HeroSection = () => {
       {/* Bottom - Featured event banner OR shop image */}
       {featured ? (
         <div className="relative bg-card border-t border-border overflow-hidden">
-          <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="container mx-auto px-4 py-4 md:py-5">
             <div className="grid grid-cols-1 md:grid-cols-2 md:items-start items-center gap-6 md:gap-12 max-w-6xl mx-auto">
               {featured.image_url && (
                 <div className="flex justify-center md:justify-start md:pl-8">
