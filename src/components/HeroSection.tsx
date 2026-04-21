@@ -82,11 +82,11 @@ const HeroSection = () => {
                 </div>
               )}
               <div className="flex flex-col justify-start text-center md:text-left md:pr-8">
-                <p className="inline-flex items-center justify-center md:justify-start gap-1.5 text-xs text-accent font-body uppercase tracking-[0.2em] font-semibold">
-                  <CalendarIcon className="w-3.5 h-3.5" />
+                <p className="inline-flex items-center justify-center md:justify-start gap-1.5 text-sm md:text-base text-accent font-body uppercase tracking-[0.2em] font-semibold">
+                  <CalendarIcon className="w-4 h-4" />
                   Évènement à venir
                 </p>
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-2">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-5">
                   {featured.title}
                 </h2>
                 {formatEventDate(featured.event_date, featured.end_date) && (
