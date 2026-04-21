@@ -51,7 +51,7 @@ const AboutSection = () => {
 
   return (
     <>
-      <section id="apropos" className="py-16 bg-grain">
+      <section id="apropos" className="pt-8 pb-16 bg-grain">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gradient-dark mb-4">À propos</h2>
