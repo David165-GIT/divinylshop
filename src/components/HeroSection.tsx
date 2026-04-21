@@ -3,11 +3,13 @@ import heroImg from "@/assets/shop-interior-2.webp";
 import logoText from "@/assets/divinyl-logo-text.webp";
 import { Facebook, MapPin, ChevronDown, Calendar as CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { formatEventDate } from "@/lib/formatEventDate";
 
 type FeaturedEvent = {
   id: string;
   title: string;
-  event_date: string;
+  event_date: string | null;
+  end_date: string | null;
   description: string | null;
   image_url: string | null;
 };
@@ -19,7 +21,7 @@ const HeroSection = () => {
     const fetchFeatured = async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, event_date, description, image_url")
+        .select("id, title, event_date, end_date, description, image_url")
         .eq("is_featured", true)
         .maybeSingle();
       if (data) setFeatured(data as FeaturedEvent);
@@ -87,12 +89,11 @@ const HeroSection = () => {
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-2">
                   {featured.title}
                 </h2>
-                <p className="text-sm md:text-base font-body text-accent font-semibold mt-1">
-                  {new Date(featured.event_date).toLocaleString("fr-FR", {
-                    dateStyle: "long",
-                    timeStyle: "short",
-                  })}
-                </p>
+                {formatEventDate(featured.event_date, featured.end_date) && (
+                  <p className="text-sm md:text-base font-body text-accent font-semibold mt-1">
+                    {formatEventDate(featured.event_date, featured.end_date)}
+                  </p>
+                )}
                 {featured.description && (
                   <p className="text-sm md:text-base font-body text-muted-foreground mt-3 leading-relaxed whitespace-pre-line">
                     {featured.description}

@@ -4,11 +4,13 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Upload, X, Calendar as CalendarIcon, Loader2, Star } from "lucide-react";
 import { convertToWebp } from "@/lib/convertToWebp";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
+import { formatEventDate } from "@/lib/formatEventDate";
 
 type EventRow = {
   id: string;
   title: string;
-  event_date: string;
+  event_date: string | null;
+  end_date: string | null;
   description: string | null;
   image_url: string | null;
   is_featured: boolean;
@@ -18,17 +20,31 @@ type EventRow = {
 
 type EventForm = {
   title: string;
-  event_date: string;
+  start_date: string; // YYYY-MM-DD
+  start_time: string; // HH:mm
+  end_date: string;   // YYYY-MM-DD
   description: string;
   image_url: string | null;
 };
 
-const emptyForm: EventForm = { title: "", event_date: "", description: "", image_url: null };
+const emptyForm: EventForm = { title: "", start_date: "", start_time: "", end_date: "", description: "", image_url: null };
 
-const toLocalInputValue = (iso: string) => {
+const splitIso = (iso: string | null) => {
+  if (!iso) return { date: "", time: "" };
   const d = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const h = d.getHours();
+  const m = d.getMinutes();
+  // Treat 00:00 as "no time set"
+  const time = h === 0 && m === 0 ? "" : `${pad(h)}:${pad(m)}`;
+  return { date, time };
+};
+
+const buildIso = (date: string, time: string) => {
+  if (!date) return null;
+  const t = time || "00:00";
+  return new Date(`${date}T${t}:00`).toISOString();
 };
 
 const EventsManager = () => {
@@ -46,7 +62,7 @@ const EventsManager = () => {
     const { data, error } = await supabase
       .from("events")
       .select("*")
-      .order("event_date", { ascending: true });
+      .order("event_date", { ascending: true, nullsFirst: false });
     if (!error && data) setEvents(data as EventRow[]);
     setLoading(false);
   };
@@ -63,9 +79,13 @@ const EventsManager = () => {
 
   const openEdit = (ev: EventRow) => {
     setEditing(ev);
+    const start = splitIso(ev.event_date);
+    const end = splitIso(ev.end_date);
     setForm({
       title: ev.title,
-      event_date: toLocalInputValue(ev.event_date),
+      start_date: start.date,
+      start_time: start.time,
+      end_date: end.date,
       description: ev.description ?? "",
       image_url: ev.image_url,
     });
@@ -96,14 +116,23 @@ const EventsManager = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.event_date) {
-      toast({ title: "Champs requis", description: "Le titre et la date sont obligatoires.", variant: "destructive" });
+    if (!form.title.trim()) {
+      toast({ title: "Champ requis", description: "Le titre est obligatoire.", variant: "destructive" });
+      return;
+    }
+    if (form.end_date && !form.start_date) {
+      toast({ title: "Date manquante", description: "Renseignez une date de début pour utiliser une date de fin.", variant: "destructive" });
+      return;
+    }
+    if (form.end_date && form.start_date && form.end_date < form.start_date) {
+      toast({ title: "Dates invalides", description: "La date de fin doit être après la date de début.", variant: "destructive" });
       return;
     }
     setSaving(true);
     const payload = {
       title: form.title.trim(),
-      event_date: new Date(form.event_date).toISOString(),
+      event_date: buildIso(form.start_date, form.start_time),
+      end_date: form.end_date ? buildIso(form.end_date, "") : null,
       description: form.description.trim() || null,
       image_url: form.image_url,
     };
@@ -177,7 +206,9 @@ const EventsManager = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {events.map((ev) => (
+          {events.map((ev) => {
+            const dateLabel = formatEventDate(ev.event_date, ev.end_date);
+            return (
             <div key={ev.id} className={`bg-card border rounded-md overflow-hidden flex flex-col relative ${ev.is_featured ? "border-accent ring-2 ring-accent/30" : "border-border"}`}>
               {ev.is_featured && (
                 <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 text-[10px] rounded-sm px-1.5 py-0.5 font-body font-bold bg-accent text-accent-foreground uppercase tracking-wide">
@@ -188,10 +219,12 @@ const EventsManager = () => {
                 <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full aspect-square object-cover" />
               )}
               <div className="p-4 flex-1 flex flex-col">
-                <p className="text-xs text-accent font-body uppercase tracking-wide flex items-center gap-1">
-                  <CalendarIcon className="w-3 h-3" />
-                  {new Date(ev.event_date).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })}
-                </p>
+                {dateLabel && (
+                  <p className="text-xs text-accent font-body uppercase tracking-wide flex items-center gap-1">
+                    <CalendarIcon className="w-3 h-3" />
+                    {dateLabel}
+                  </p>
+                )}
                 <h3 className="font-display font-bold text-foreground mt-1">{ev.title}</h3>
                 {ev.description && (
                   <p className="text-sm text-muted-foreground font-body mt-2 line-clamp-3">{ev.description}</p>
@@ -220,7 +253,7 @@ const EventsManager = () => {
                 </div>
               </div>
             </div>
-          ))}
+          );})}
         </div>
       )}
 
@@ -243,16 +276,42 @@ const EventsManager = () => {
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
               />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-body text-muted-foreground mb-2">Date de début</label>
+                  <input
+                    type="date"
+                    value={form.start_date}
+                    onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+                    className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-body text-muted-foreground mb-2">Date de fin</label>
+                  <input
+                    type="date"
+                    value={form.end_date}
+                    min={form.start_date || undefined}
+                    onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+                    className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
+                  />
+                </div>
+              </div>
               <div>
-                <label className="block text-sm font-body text-muted-foreground mb-2">Date et heure *</label>
+                <label className="block text-sm font-body text-muted-foreground mb-2">
+                  Heure (uniquement pour les évènements sur une journée)
+                </label>
                 <input
-                  type="datetime-local"
-                  required
-                  value={form.event_date}
-                  onChange={(e) => setForm({ ...form, event_date: e.target.value })}
-                  className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent"
+                  type="time"
+                  value={form.start_time}
+                  disabled={!!form.end_date}
+                  onChange={(e) => setForm({ ...form, start_time: e.target.value })}
+                  className="w-full bg-muted border border-border rounded-sm px-4 py-3 text-sm font-body text-foreground focus:outline-none focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
+              <p className="text-xs text-muted-foreground font-body -mt-2">
+                Tous les champs ci-dessus sont optionnels. Seul le titre est obligatoire.
+              </p>
               <textarea
                 rows={4}
                 placeholder="Description"
