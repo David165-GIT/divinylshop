@@ -227,7 +227,7 @@ const EventsManager = () => {
                 )}
                 <h3 className="font-display font-bold text-foreground mt-1">{ev.title}</h3>
                 {ev.description && (
-                  <p className="text-sm text-muted-foreground font-body mt-2 line-clamp-3">{ev.description}</p>
+                  <p className="text-sm text-muted-foreground font-body mt-2 line-clamp-3 whitespace-pre-line break-words">{ev.description}</p>
                 )}
                 <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border flex-wrap">
                   <button

@@ -4,6 +4,7 @@ import logoText from "@/assets/divinyl-logo-text.webp";
 import { Facebook, MapPin, ChevronDown, Calendar as CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatEventDate } from "@/lib/formatEventDate";
+import { linkifyText } from "@/lib/linkify";
 
 type FeaturedEvent = {
   id: string;
@@ -95,8 +96,8 @@ const HeroSection = () => {
                   </p>
                 )}
                 {featured.description && (
-                  <p className="text-sm md:text-base font-body text-muted-foreground mt-3 leading-relaxed whitespace-pre-line">
-                    {featured.description}
+                  <p className="text-sm md:text-base font-body text-muted-foreground mt-3 leading-relaxed whitespace-pre-line break-words">
+                    {linkifyText(featured.description)}
                   </p>
                 )}
               </div>
