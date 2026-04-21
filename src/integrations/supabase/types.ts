@@ -18,7 +18,8 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          event_date: string
+          end_date: string | null
+          event_date: string | null
           id: string
           image_url: string | null
           is_featured: boolean
@@ -28,7 +29,8 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          event_date: string
+          end_date?: string | null
+          event_date?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean
@@ -38,7 +40,8 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          event_date?: string
+          end_date?: string | null
+          event_date?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean
