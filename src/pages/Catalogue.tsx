@@ -200,7 +200,7 @@ const Catalogue = () => {
             } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
-            {filtered.map((record) => {
+            {visible.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
@@ -252,6 +252,11 @@ const Catalogue = () => {
               );
             })}
           </div>
+        )}
+
+        {/* Infinite scroll sentinel */}
+        {!loading && visibleCount < filtered.length && (
+          <div ref={sentinelRef} className="h-10" aria-hidden="true" />
         )}
 
         {/* CTA */}
