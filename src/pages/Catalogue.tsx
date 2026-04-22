@@ -57,28 +57,35 @@ const Catalogue = () => {
     }
   }, [cols, expandedId]);
 
-  useEffect(() => {
-    setLoading(true);
-    setVisibleCount(60);
-    const fetchRecords = async () => {
-      const data = await fetchAllRecords(
+  const { data: records = [], isLoading: loading } = useQuery({
+    queryKey: ["catalogue-records", filter],
+    queryFn: () =>
+      fetchAllRecords(
         { categoryEq: filter },
         [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
-      );
-      setRecords(data);
-      setLoading(false);
-    };
-    fetchRecords();
+      ),
+    staleTime: 5 * 60 * 1000, // 5 min: skip refetch on tab switch / back navigation
+    gcTime: 30 * 60 * 1000, // keep cache 30 min
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
 
+  // Reset pagination when category changes
+  useEffect(() => {
+    setVisibleCount(60);
+  }, [filter]);
+
+  // Realtime: invalidate cache on any change so the catalogue stays fresh
+  useEffect(() => {
     const channel = supabase
       .channel(`catalogue-realtime-${filter}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "records" }, () => {
-        fetchRecords();
+        queryClient.invalidateQueries({ queryKey: ["catalogue-records"] });
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [filter]);
+  }, [filter, queryClient]);
 
   // Reset visible count when search changes
   useEffect(() => {
