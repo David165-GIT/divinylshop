@@ -58,9 +58,11 @@ const Catalogue = () => {
   }, [cols, expandedId]);
 
   useEffect(() => {
+    setLoading(true);
+    setVisibleCount(60);
     const fetchRecords = async () => {
       const data = await fetchAllRecords(
-        { categoryNeq: "editions_originales" },
+        { categoryEq: filter },
         [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
       );
       setRecords(data);
@@ -69,17 +71,21 @@ const Catalogue = () => {
     fetchRecords();
 
     const channel = supabase
-      .channel("catalogue-realtime")
+      .channel(`catalogue-realtime-${filter}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "records" }, () => {
         fetchRecords();
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [filter]);
+
+  // Reset visible count when search changes
+  useEffect(() => {
+    setVisibleCount(60);
+  }, [searchQuery]);
 
   const filtered = records.filter((r) => {
-    if (r.category !== filter) return false;
     if ((r.quantity ?? 1) === 0) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -89,6 +95,26 @@ const Catalogue = () => {
       (r.genre && r.genre.toLowerCase().includes(q))
     );
   });
+
+  const visible = filtered.slice(0, visibleCount);
+
+  // Infinite scroll: load more when sentinel is in view
+  useEffect(() => {
+    if (loading) return;
+    if (visibleCount >= filtered.length) return;
+    const node = sentinelRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((c) => Math.min(c + 60, filtered.length));
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [loading, visibleCount, filtered.length]);
 
   return (
     <div className="min-h-screen bg-background">
