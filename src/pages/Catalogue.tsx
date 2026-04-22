@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,8 +13,7 @@ type Record = Database["public"]["Tables"]["records"]["Row"];
 const Catalogue = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [records, setRecords] = useState<Record[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(60);
