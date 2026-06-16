@@ -190,6 +190,13 @@ const Catalogue = () => {
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
+            <img
+              src={travauxAsset.url}
+              alt="Section en construction"
+              className="mx-auto w-48 h-auto mb-6"
+              width={192}
+              height={192}
+            />
             <p className="text-destructive font-display text-xl font-bold mb-4">Section en construction</p>
             <a
               href="https://www.facebook.com/divinyl.shop/"
