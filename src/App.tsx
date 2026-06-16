@@ -9,12 +9,28 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
 
-const Catalogue = lazy(() => import("./pages/Catalogue.tsx"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin.tsx"));
-const AdminPanel = lazy(() => import("./pages/AdminPanel.tsx"));
-const EditionsOriginales = lazy(() => import("./pages/EditionsOriginales.tsx"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
-const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+// Reload once on stale chunk errors after a new deploy
+const lazyWithRetry = <T,>(factory: () => Promise<{ default: React.ComponentType<T> }>) =>
+  lazy(async () => {
+    try {
+      return await factory();
+    } catch (err) {
+      const key = "divinyl_chunk_reloaded";
+      if (typeof window !== "undefined" && !sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, "1");
+        window.location.reload();
+        return new Promise<never>(() => {});
+      }
+      throw err;
+    }
+  });
+
+const Catalogue = lazyWithRetry(() => import("./pages/Catalogue.tsx"));
+const AdminLogin = lazyWithRetry(() => import("./pages/AdminLogin.tsx"));
+const AdminPanel = lazyWithRetry(() => import("./pages/AdminPanel.tsx"));
+const EditionsOriginales = lazyWithRetry(() => import("./pages/EditionsOriginales.tsx"));
+const ResetPassword = lazyWithRetry(() => import("./pages/ResetPassword.tsx"));
+const NotFound = lazyWithRetry(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
