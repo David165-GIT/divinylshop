@@ -7,7 +7,7 @@ import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
-import travauxAsset from "@/assets/travaux-en-cours.png.asset.json";
+
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
@@ -191,7 +191,7 @@ const Catalogue = () => {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <img
-              src={travauxAsset.url}
+              src="/travaux-en-cours.png"
               alt="Section en construction"
               className="mx-auto w-48 h-auto mb-6"
               width={192}
