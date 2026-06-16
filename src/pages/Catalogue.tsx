@@ -7,6 +7,7 @@ import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
+import travauxAsset from "@/assets/travaux-en-cours.png.asset.json";
 
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
