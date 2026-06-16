@@ -189,7 +189,7 @@ const Catalogue = () => {
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-muted-foreground font-body text-lg font-display mb-4">Section en construction</p>
+            <p className="text-destructive font-display text-xl font-bold mb-4">Section en construction</p>
             <a
               href="https://www.facebook.com/divinyl.shop/"
               target="_blank"
