@@ -249,6 +249,7 @@ const AdminPanel = () => {
       setPendingForm(formData);
       setSuggestionLoading(true);
       setSuggestion(null);
+      setDescriptionRequested(needsDescription);
       setShowForm(false);
       try {
         const { data, error } = await supabase.functions.invoke("suggest-record-info", {
