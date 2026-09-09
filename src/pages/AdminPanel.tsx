@@ -938,6 +938,7 @@ const AdminPanel = () => {
                         onClick={async () => {
                           setSuggestionLoading(true);
                           setSuggestion(null);
+                          setDescriptionRequested(false);
                           setPendingForm(form);
                           setShowForm(false);
                           try {
