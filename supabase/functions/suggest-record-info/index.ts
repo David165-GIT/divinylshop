@@ -178,7 +178,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
         if (aiResp.ok) {
           const aiData = await aiResp.json();
           let raw = aiData.choices?.[0]?.message?.content?.trim() || "";
-          console.log("AI raw:", JSON.stringify(raw).slice(0, 400), "finish:", aiData.choices?.[0]?.finish_reason);
+          
           // Strip markdown code fences if present
           raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
           try {
