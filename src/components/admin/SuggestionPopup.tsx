@@ -117,6 +117,14 @@ const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description,
           </div>
         )}
 
+        {descriptionRequested && !description && (
+          <div className="mb-6">
+            <p className="text-xs text-muted-foreground font-body italic bg-muted/60 p-3 rounded-sm border border-border">
+              Description indisponible pour le moment
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-3 justify-center">
           <button
             onClick={onReject}
