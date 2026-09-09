@@ -8,11 +8,12 @@ interface SuggestionPopupProps {
   imageUrls?: string[];
   description: string | null;
   loading: boolean;
+  descriptionRequested?: boolean;
   onAccept: (imageUrl: string | null, description: string | null) => void;
   onReject: () => void;
 }
 
-const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, onAccept, onReject }: SuggestionPopupProps) => {
+const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, descriptionRequested = false, onAccept, onReject }: SuggestionPopupProps) => {
   const allImages = imageUrls.length > 0 ? imageUrls : (imageUrl ? [imageUrl] : []);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [acceptImage, setAcceptImage] = useState(true);
