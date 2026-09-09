@@ -50,6 +50,7 @@ const AdminPanel = () => {
   const [suggestion, setSuggestion] = useState<{ imageUrl: string | null; imageUrls?: string[]; description: string | null; genre: string | null } | null>(null);
   const [pendingForm, setPendingForm] = useState<RecordInsert | null>(null);
   const [skipSuggestions, setSkipSuggestions] = useState(false);
+  const [descriptionRequested, setDescriptionRequested] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [showScanMenu, setShowScanMenu] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
@@ -248,6 +249,7 @@ const AdminPanel = () => {
       setPendingForm(formData);
       setSuggestionLoading(true);
       setSuggestion(null);
+      setDescriptionRequested(needsDescription);
       setShowForm(false);
       try {
         const { data, error } = await supabase.functions.invoke("suggest-record-info", {
@@ -471,6 +473,7 @@ const AdminPanel = () => {
           try {
             setSuggestionLoading(true);
             setSuggestion(null);
+            setDescriptionRequested(true);
             const recognizedForm: RecordInsert = {
               title: recognizedTitle,
               artist: recognizedArtist,
@@ -935,6 +938,7 @@ const AdminPanel = () => {
                         onClick={async () => {
                           setSuggestionLoading(true);
                           setSuggestion(null);
+                          setDescriptionRequested(false);
                           setPendingForm(form);
                           setShowForm(false);
                           try {
@@ -1057,6 +1061,7 @@ const AdminPanel = () => {
             imageUrls={suggestion?.imageUrls || []}
             description={suggestion?.description || null}
             loading={suggestionLoading}
+            descriptionRequested={descriptionRequested}
             onAccept={handleSuggestionAccept}
             onReject={handleSuggestionReject}
           />

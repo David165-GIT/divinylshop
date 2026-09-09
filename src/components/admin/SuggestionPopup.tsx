@@ -8,11 +8,12 @@ interface SuggestionPopupProps {
   imageUrls?: string[];
   description: string | null;
   loading: boolean;
+  descriptionRequested?: boolean;
   onAccept: (imageUrl: string | null, description: string | null) => void;
   onReject: () => void;
 }
 
-const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, onAccept, onReject }: SuggestionPopupProps) => {
+const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, descriptionRequested = false, onAccept, onReject }: SuggestionPopupProps) => {
   const allImages = imageUrls.length > 0 ? imageUrls : (imageUrl ? [imageUrl] : []);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [acceptImage, setAcceptImage] = useState(true);
@@ -112,6 +113,14 @@ const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description,
             </label>
             <p className={`text-sm text-muted-foreground font-body bg-muted p-3 rounded-sm ${!acceptDescription ? "opacity-30" : ""}`}>
               {description}
+            </p>
+          </div>
+        )}
+
+        {descriptionRequested && !description && (
+          <div className="mb-6">
+            <p className="text-xs text-muted-foreground font-body italic bg-muted/60 p-3 rounded-sm border border-border">
+              Description indisponible pour le moment
             </p>
           </div>
         )}
