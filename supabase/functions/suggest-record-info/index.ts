@@ -194,7 +194,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
             };
           }
         }
-        if (aiResp.status === 429) console.warn("AI rate limited");
+        console.error("AI desc/genre failed:", aiResp.status, (await aiResp.text()).slice(0, 300));
         return { description: null, genre: null };
       } catch (e) {
         console.error("AI error:", e);
