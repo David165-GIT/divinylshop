@@ -178,6 +178,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
         if (aiResp.ok) {
           const aiData = await aiResp.json();
           let raw = aiData.choices?.[0]?.message?.content?.trim() || "";
+          
           // Strip markdown code fences if present
           raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
           try {
@@ -194,7 +195,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
             };
           }
         }
-        if (aiResp.status === 429) console.warn("AI rate limited");
+        console.error("AI desc/genre failed:", aiResp.status, (await aiResp.text()).slice(0, 300));
         return { description: null, genre: null };
       } catch (e) {
         console.error("AI error:", e);
