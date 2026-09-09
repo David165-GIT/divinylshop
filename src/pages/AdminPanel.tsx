@@ -473,6 +473,7 @@ const AdminPanel = () => {
           try {
             setSuggestionLoading(true);
             setSuggestion(null);
+            setDescriptionRequested(true);
             const recognizedForm: RecordInsert = {
               title: recognizedTitle,
               artist: recognizedArtist,
