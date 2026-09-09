@@ -1061,6 +1061,7 @@ const AdminPanel = () => {
             imageUrls={suggestion?.imageUrls || []}
             description={suggestion?.description || null}
             loading={suggestionLoading}
+            descriptionRequested={descriptionRequested}
             onAccept={handleSuggestionAccept}
             onReject={handleSuggestionReject}
           />
