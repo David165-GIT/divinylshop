@@ -41,23 +41,32 @@ Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correct
             ],
           }),
         });
+        const upper = (s: string) => s.toLocaleUpperCase("fr-FR");
         if (aiResp.ok) {
           const aiData = await aiResp.json();
           let raw = aiData.choices?.[0]?.message?.content?.trim() || "";
           raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
           try {
             const parsed = JSON.parse(raw);
+            // Le nom d'artiste est TOUJOURS forcé en majuscules
+            const artistCandidate = upper((parsed.correctedArtist || artist).trim());
             return {
-              correctedArtist: parsed.correctedArtist && parsed.correctedArtist !== artist ? parsed.correctedArtist : null,
+              correctedArtist: artistCandidate !== artist ? artistCandidate : null,
               correctedTitle: parsed.correctedTitle && parsed.correctedTitle !== title ? parsed.correctedTitle : null,
             };
-          } catch { return { correctedArtist: null, correctedTitle: null }; }
+          } catch {
+            const artistCandidate = upper(artist.trim());
+            return { correctedArtist: artistCandidate !== artist ? artistCandidate : null, correctedTitle: null };
+          }
         }
-        return { correctedArtist: null, correctedTitle: null };
+        const artistCandidate = upper(artist.trim());
+        return { correctedArtist: artistCandidate !== artist ? artistCandidate : null, correctedTitle: null };
       } catch (e) {
         console.error("Spelling check error:", e);
-        return { correctedArtist: null, correctedTitle: null };
+        const fallback = artist.toLocaleUpperCase("fr-FR").trim();
+        return { correctedArtist: fallback !== artist ? fallback : null, correctedTitle: null };
       }
+
     })();
 
     // Run image search, description generation, and genre detection in parallel
