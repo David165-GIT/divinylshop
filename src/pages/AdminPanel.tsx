@@ -175,12 +175,21 @@ const AdminPanel = () => {
           const { data: spellData } = await supabase.functions.invoke("suggest-record-info", {
             body: { title: normalizedForm.title, artist: normalizedForm.artist, category: normalizedForm.category, needsImage: false, needsDescription: false, needsGenre: false, checkSpelling: true },
           });
-          if (spellData && (spellData.correctedArtist || spellData.correctedTitle)) {
-            setSpellingCorrection({ correctedArtist: spellData.correctedArtist, correctedTitle: spellData.correctedTitle });
-            setPendingSpellingForm(normalizedForm);
-            setSpellingChecking(false);
-            setShowSpellingCorrection(true);
-            return;
+          if (spellData) {
+            let correctedArtist: string | null = spellData.correctedArtist;
+            const correctedTitle: string | null = spellData.correctedTitle;
+            // Si la seule différence est la casse, appliquer les majuscules silencieusement (pas de suggestion)
+            if (correctedArtist && correctedArtist.toLocaleLowerCase("fr-FR") === normalizedForm.artist.toLocaleLowerCase("fr-FR")) {
+              normalizedForm.artist = correctedArtist;
+              correctedArtist = null;
+            }
+            if (correctedArtist || correctedTitle) {
+              setSpellingCorrection({ correctedArtist, correctedTitle });
+              setPendingSpellingForm(normalizedForm);
+              setSpellingChecking(false);
+              setShowSpellingCorrection(true);
+              return;
+            }
           }
         } catch (e) {
           console.error("Spelling check error:", e);
