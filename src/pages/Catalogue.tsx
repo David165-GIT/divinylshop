@@ -65,10 +65,11 @@ const Catalogue = () => {
         { categoryEq: filter },
         [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
       ),
-    staleTime: 5 * 60 * 1000, // 5 min: skip refetch on tab switch / back navigation
-    gcTime: 30 * 60 * 1000, // keep cache 30 min
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    staleTime: 30 * 1000, // données considérées fraîches 30s
+    gcTime: 24 * 60 * 60 * 1000, // conserver le cache pour l'affichage instantané
+    refetchOnMount: "always", // affiche le cache puis rafraîchit en arrière-plan
+    refetchOnWindowFocus: true,
+
   });
 
   // Reset pagination when category changes
