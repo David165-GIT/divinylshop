@@ -54,7 +54,7 @@ const App = () => (
     persistOptions={{
       persister: persister!,
       maxAge: 1000 * 60 * 60 * 24, // discard cache older than 24h
-      buster: "v1",
+      buster: "v2",
       dehydrateOptions: {
         // Only persist queries we explicitly want cached across reloads
         shouldDehydrateQuery: (query) => {
