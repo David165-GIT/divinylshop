@@ -184,11 +184,15 @@ const AdminPanel = () => {
           });
           if (spellData) {
             let correctedArtist: string | null = spellData.correctedArtist;
-            const correctedTitle: string | null = spellData.correctedTitle;
+            let correctedTitle: string | null = spellData.correctedTitle;
             // Si la seule différence est la casse, appliquer les majuscules silencieusement (pas de suggestion)
             if (correctedArtist && correctedArtist.toLocaleLowerCase("fr-FR") === normalizedForm.artist.toLocaleLowerCase("fr-FR")) {
               normalizedForm.artist = correctedArtist;
               correctedArtist = null;
+            }
+            if (correctedTitle && correctedTitle.toLocaleLowerCase("fr-FR") === normalizedForm.title.toLocaleLowerCase("fr-FR")) {
+              normalizedForm.title = toTitleCase(correctedTitle);
+              correctedTitle = null;
             }
             if (correctedArtist || correctedTitle) {
               setSpellingCorrection({ correctedArtist, correctedTitle });
@@ -226,7 +230,7 @@ const AdminPanel = () => {
     if (!pendingSpellingForm) return;
     const corrected = { ...pendingSpellingForm };
     if (spellingCorrection.correctedArtist) corrected.artist = spellingCorrection.correctedArtist;
-    if (spellingCorrection.correctedTitle) corrected.title = spellingCorrection.correctedTitle;
+    if (spellingCorrection.correctedTitle) corrected.title = toTitleCase(spellingCorrection.correctedTitle);
     setForm(corrected);
     setShowSpellingCorrection(false);
     setPendingSpellingForm(null);
