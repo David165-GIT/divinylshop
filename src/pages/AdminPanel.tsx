@@ -215,7 +215,7 @@ const AdminPanel = () => {
     }
   };
 
-  const handleSpellingAccept = () => {
+  const handleSpellingAccept = async () => {
     if (!pendingSpellingForm) return;
     const corrected = { ...pendingSpellingForm };
     if (spellingCorrection.correctedArtist) corrected.artist = spellingCorrection.correctedArtist;
@@ -224,7 +224,24 @@ const AdminPanel = () => {
     setShowSpellingCorrection(false);
     setPendingSpellingForm(null);
     setSpellingCorrection({ correctedArtist: null, correctedTitle: null });
-    toast({ title: "Correction appliquée", description: "Vérifiez le formulaire puis cliquez sur Ajouter." });
+    toast({ title: "Correction appliquée" });
+
+    // Continue directement avec la valeur validée afin de ne pas relancer
+    // la vérification IA et reproposer indéfiniment la même correction.
+    const { data: existing } = await supabase
+      .from("records")
+      .select("id, category, quantity")
+      .ilike("title", corrected.title)
+      .ilike("artist", corrected.artist);
+    if (existing && existing.length > 0) {
+      const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+      const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+      setDuplicateCategories(cats);
+      setDuplicateRecords(existing as Record[]);
+      setShowDuplicateConfirm(true);
+    } else {
+      await proceedWithInsert(corrected);
+    }
   };
 
   const handleSpellingReject = async () => {
