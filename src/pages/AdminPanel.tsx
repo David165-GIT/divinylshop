@@ -212,6 +212,7 @@ const AdminPanel = () => {
       const { data: existing } = await supabase
         .from("records")
         .select("id, category, quantity")
+        .eq("category", normalizedForm.category)
         .ilike("title", normalizedForm.title)
         .ilike("artist", normalizedForm.artist);
       if (existing && existing.length > 0) {
@@ -242,6 +243,7 @@ const AdminPanel = () => {
     const { data: existing } = await supabase
       .from("records")
       .select("id, category, quantity")
+      .eq("category", corrected.category || activeTab)
       .ilike("title", corrected.title)
       .ilike("artist", corrected.artist);
     if (existing && existing.length > 0) {
@@ -265,6 +267,7 @@ const AdminPanel = () => {
     const { data: existing } = await supabase
       .from("records")
       .select("id, category, quantity")
+      .eq("category", formToUse.category || activeTab)
       .ilike("title", formToUse.title)
       .ilike("artist", formToUse.artist);
     if (existing && existing.length > 0) {
