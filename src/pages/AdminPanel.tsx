@@ -153,9 +153,16 @@ const AdminPanel = () => {
     setUploading(false);
   };
 
+  // Met en majuscule la première lettre de chaque mot d'un titre (ex. "Photos de voyages" -> "Photos De Voyages")
+  const toTitleCase = (value: string) =>
+    value
+      .split(/(\s+)/)
+      .map((part) => (/^\s+$/.test(part) ? part : part.charAt(0).toLocaleUpperCase("fr-FR") + part.slice(1)))
+      .join("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const normalizedForm = { ...form, category: form.category || activeTab };
+    const normalizedForm = { ...form, title: toTitleCase(form.title || ""), category: form.category || activeTab };
 
     if (editingRecord) {
       const { error } = await supabase.from("records").update(normalizedForm).eq("id", editingRecord.id);
