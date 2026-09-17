@@ -30,12 +30,12 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash-lite",
+            model: "google/gemini-2.5-flash",
             messages: [
-              { role: "system", content: `Tu es un expert en musique. On te donne un nom d'artiste et un titre d'album/single. Vérifie trois choses :
+              { role: "system", content: `Tu es un expert en musique et en discographie. On te donne un nom d'artiste et un titre d'album/single. Vérifie trois choses :
 1. Les fautes d'orthographe dans le nom d'artiste et le titre.
 2. Le FORMAT du nom d'artiste est OBLIGATOIRE : toujours en MAJUSCULES, au format "PRENOM NOM" pour une personne (ex: "JOHNNY HALLYDAY", "SERGE GAINSBOURG") ou le nom du groupe en majuscules (ex: "THE BEATLES", "PINK FLOYD"). Corrige aussi l'ordre prénom/nom si nécessaire (ex: "Hallyday Johnny" -> "JOHNNY HALLYDAY"). Si le nom saisi n'est pas exactement sous ce format majuscules, propose la correction même si l'orthographe est bonne.
-3. La capitalisation du titre d'album : compare avec le titre officiel connu. En général les titres d'albums ont une majuscule au début de chaque mot significatif (ex: "Des Roses et des Orties", "Back In Black", "Abbey Road"). Si le titre saisi n'a pas les bonnes majuscules par rapport au titre officiel, propose la correction.
+3. Le TITRE de l'album/single : retrouve le titre OFFICIEL exact de cette sortie dans la discographie de l'artiste, puis compare mot à mot avec le titre saisi. Corrige tout écart : orthographe, singulier/pluriel (ex: "Photos de Voyage" -> "Photos de voyages" pour FRANCIS CABREL), accents, apostrophes, mots manquants ou en trop, et majuscules. Respecte la graphie officielle réelle de l'album (ne force pas une majuscule à chaque mot si le titre officiel n'en a pas). Si tu n'es pas sûr du titre officiel, retourne null pour le titre.
 Réponds UNIQUEMENT en JSON valide sans markdown ni backticks. Format: {"correctedArtist": "nom corrigé ou null si déjà au bon format et correct", "correctedTitle": "titre corrigé ou null si correct"}. Si les deux sont corrects, retourne {"correctedArtist": null, "correctedTitle": null}.` },
               { role: "user", content: `Artiste: "${artist}"\nTitre: "${title}"` },
             ],
