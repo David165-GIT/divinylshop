@@ -147,7 +147,14 @@ const EditionsOriginales = () => {
           <p className="text-center text-muted-foreground font-body py-16">Chargement…</p>
         ) : filteredRecords.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-muted-foreground font-body mb-4">Aucune édition originale disponible pour le moment.</p>
+            <img
+              src="/travaux-en-cours.png"
+              alt="Approvisionnement en cours"
+              className="mx-auto w-64 h-auto mb-6 rounded-lg"
+              width={256}
+              height={256}
+            />
+            <p className="text-accent font-display text-xl font-bold mb-4">Approvisionnement en cours</p>
             <a
               href="https://www.facebook.com/divinyl.shop/"
               target="_blank"
