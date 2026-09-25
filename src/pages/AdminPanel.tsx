@@ -1,3 +1,4 @@
+import { retryImage } from "@/lib/retryImage";
 import { useEffect, useState, useRef, useMemo, useDeferredValue } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -1270,7 +1271,7 @@ const AdminPanel = () => {
                     </span>
                   )}
                   {record.image_url && (
-                    <img src={record.image_url} alt={record.title} width={600} height={600} decoding="async" className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
+                    <img src={record.image_url} alt={record.title} width={600} height={600} decoding="async" onError={retryImage} className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
                   )}
                   {isCompact ? (
                     <div className="p-2">
