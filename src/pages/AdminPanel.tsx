@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useDeferredValue } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -766,7 +766,37 @@ const AdminPanel = () => {
     }
   };
 
+  const deferredSearch = useDeferredValue(adminSearchQuery);
+  const filteredRecords = useMemo(() => {
+    const q = deferredSearch.trim().toLowerCase();
+    return records.filter((r) => {
+      if (r.category !== activeTab) return false;
+      if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
+      if (!q) return true;
+      return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
+    });
+  }, [records, activeTab, showOutOfStock, showMultiple, deferredSearch]);
 
+  const [visibleCount, setVisibleCount] = useState(60);
+  useEffect(() => { setVisibleCount(60); }, [activeTab, showOutOfStock, showMultiple, deferredSearch]);
+  // Ensure an expanded/scroll-target record is rendered
+  useEffect(() => {
+    const id = expandedId || scrollToIdRef.current;
+    if (!id) return;
+    const idx = filteredRecords.findIndex((r) => r.id === id);
+    if (idx >= visibleCount) setVisibleCount(idx + 20);
+  }, [expandedId, filteredRecords, visibleCount]);
+  const visibleRecords = useMemo(() => filteredRecords.slice(0, visibleCount), [filteredRecords, visibleCount]);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) setVisibleCount((c) => c + 60);
+    }, { rootMargin: "800px" });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [visibleRecords.length, filteredRecords.length]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -1207,13 +1237,7 @@ const AdminPanel = () => {
         </div>
 
         {/* Records list */}
-        {records.filter((r) => {
-          if (r.category !== activeTab) return false;
-          if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
-          if (!adminSearchQuery.trim()) return true;
-          const q = adminSearchQuery.toLowerCase();
-          return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
-        }).length === 0 ? (
+        {filteredRecords.length === 0 ? (
           <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : "Aucun article dans cette catégorie."}</p>
         ) : (
           <div
@@ -1223,13 +1247,7 @@ const AdminPanel = () => {
             } ${!isTouchDevice ? (desktopCols === 5 ? "md:grid-cols-5" : desktopCols === 4 ? "md:grid-cols-4" : "md:grid-cols-3") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
-            {records.filter((r) => {
-              if (r.category !== activeTab) return false;
-              if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
-              if (!adminSearchQuery.trim()) return true;
-              const q = adminSearchQuery.toLowerCase();
-              return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
-            }).map((record) => {
+            {visibleRecords.map((record) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
@@ -1252,7 +1270,7 @@ const AdminPanel = () => {
                     </span>
                   )}
                   {record.image_url && (
-                    <img src={record.image_url} alt={record.title} className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
+                    <img src={record.image_url} alt={record.title} width={600} height={600} decoding="async" className={`w-full aspect-square object-cover ${isCompact ? "" : "rounded-sm mb-3"}`} loading="lazy" />
                   )}
                   {isCompact ? (
                     <div className="p-2">
@@ -1288,6 +1306,11 @@ const AdminPanel = () => {
                 </div>
               );
             })}
+          </div>
+        )}
+        {visibleRecords.length < filteredRecords.length && (
+          <div ref={loadMoreRef} className="h-16 flex items-center justify-center text-muted-foreground font-body text-xs">
+            Chargement…
           </div>
         )}
             </>)}

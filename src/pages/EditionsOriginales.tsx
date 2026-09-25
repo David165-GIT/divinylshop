@@ -148,7 +148,7 @@ const EditionsOriginales = () => {
         ) : filteredRecords.length === 0 ? (
           <div className="text-center py-16">
             <img
-              src="/travaux-en-cours.png"
+              src="/approvisionnement.webp"
               alt="Approvisionnement en cours"
               className="mx-auto w-64 h-auto mb-6 rounded-lg"
               width={256}
