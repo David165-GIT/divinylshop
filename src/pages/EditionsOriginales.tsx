@@ -1,3 +1,4 @@
+import { retryImage } from "@/lib/retryImage";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -198,6 +199,7 @@ const EditionsOriginales = () => {
                         height={600}
                         loading="lazy"
                         decoding="async"
+                        onError={retryImage}
                       />
                     </div>
                   ) : (

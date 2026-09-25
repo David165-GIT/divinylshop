@@ -1,3 +1,4 @@
+import { retryImage } from "@/lib/retryImage";
 import { useEffect, useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
@@ -242,6 +243,7 @@ const Catalogue = () => {
                         height={600}
                         loading="lazy"
                         decoding="async"
+                        onError={retryImage}
                       />
                     </div>
                   ) : (
