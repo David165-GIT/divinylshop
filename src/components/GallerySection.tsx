@@ -43,7 +43,13 @@ const GalleryCard = ({ item, onVideoClick }: { item: GalleryItem; onVideoClick?:
 
   if (item.link) {
     return (
-      <Link to={item.link} onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))} className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+      <Link
+        to={item.link}
+        onMouseEnter={() => { item.link.startsWith("/editions") ? import("@/pages/EditionsOriginales.tsx") : import("@/pages/Catalogue.tsx"); }}
+        onTouchStart={() => { item.link.startsWith("/editions") ? import("@/pages/EditionsOriginales.tsx") : import("@/pages/Catalogue.tsx"); }}
+        onClick={() => sessionStorage.setItem("divinyl-home-scroll", String(window.scrollY))}
+        className="group relative overflow-hidden rounded-md block shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+      >
         {content}
       </Link>
     );
