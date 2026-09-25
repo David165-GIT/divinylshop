@@ -198,7 +198,6 @@ const Catalogue = () => {
               width={256}
               height={256}
             />
-            <p className="text-accent font-display text-xl font-bold mb-4">Approvisionnement en cours</p>
             <a
               href="https://www.facebook.com/divinyl.shop/"
               target="_blank"
