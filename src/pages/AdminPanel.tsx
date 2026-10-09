@@ -428,14 +428,26 @@ const AdminPanel = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Supprimer cet article ?")) return;
-    await supabase.from("records").delete().eq("id", id);
-    fetchRecords();
+    const previous = records;
+    setRecords((rs) => rs.filter((r) => r.id !== id));
+    const { error } = await supabase.from("records").delete().eq("id", id);
+    if (error) {
+      setRecords(previous);
+      toast({ title: "Suppression impossible, réessayez.", variant: "destructive" });
+    }
   };
 
   const handleQuantityChange = async (record: Record, delta: number) => {
-    const newQty = Math.max(0, (record.quantity ?? 1) + delta);
-    await supabase.from("records").update({ quantity: newQty, is_sold: newQty === 0 }).eq("id", record.id);
-    fetchRecords();
+    const current = records.find((r) => r.id === record.id) ?? record;
+    const oldQty = current.quantity ?? 1;
+    const newQty = Math.max(0, oldQty + delta);
+    if (newQty === oldQty) return;
+    setRecords((rs) => rs.map((r) => r.id === record.id ? { ...r, quantity: newQty, is_sold: newQty === 0 } : r));
+    const { error } = await supabase.from("records").update({ quantity: newQty, is_sold: newQty === 0 }).eq("id", record.id);
+    if (error) {
+      setRecords((rs) => rs.map((r) => r.id === record.id ? { ...r, quantity: oldQty, is_sold: oldQty === 0 } : r));
+      toast({ title: "Mise à jour impossible, réessayez.", variant: "destructive" });
+    }
   };
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
