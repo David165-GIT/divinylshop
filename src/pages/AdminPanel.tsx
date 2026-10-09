@@ -438,6 +438,283 @@ const AdminPanel = () => {
   };
 
   const handleQuantityChange = async (record: Record, delta: number) => {
+    const current = records.find((r) => r.id === record.id) ?? record;
+    const oldQty = current.quantity ?? 1;
+    const newQty = Math.max(0, oldQty + delta);
+    if (newQty === oldQty) return;
+    setRecords((rs) => rs.map((r) => r.id === record.id ? { ...r, quantity: newQty, is_sold: newQty === 0 } : r));
+    const { error } = await supabase.from("records").update(normalizedForm).eq("id", editingRecord.id);
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+        return;
+      }
+      setShowForm(false);
+      setEditingRecord(null);
+      setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
+      fetchRecords();
+    } else {
+      // Spelling check first
+      if (!skipSuggestions && !spellingChecking) {
+        setSpellingChecking(true);
+        try {
+          const { data: spellData } = await supabase.functions.invoke("suggest-record-info", {
+            body: { title: normalizedForm.title, artist: normalizedForm.artist, category: normalizedForm.category, needsImage: false, needsDescription: false, needsGenre: false, checkSpelling: true },
+          });
+          if (spellData) {
+            let correctedArtist: string | null = spellData.correctedArtist;
+            let correctedTitle: string | null = spellData.correctedTitle;
+            // Si la seule différence est la casse, appliquer les majuscules silencieusement (pas de suggestion)
+            if (correctedArtist && correctedArtist.toLocaleLowerCase("fr-FR") === normalizedForm.artist.toLocaleLowerCase("fr-FR")) {
+              normalizedForm.artist = correctedArtist;
+              correctedArtist = null;
+            }
+            if (correctedTitle && correctedTitle.toLocaleLowerCase("fr-FR") === normalizedForm.title.toLocaleLowerCase("fr-FR")) {
+              normalizedForm.title = toTitleCase(correctedTitle);
+              correctedTitle = null;
+            }
+            if (correctedArtist || correctedTitle) {
+              setSpellingCorrection({ correctedArtist, correctedTitle });
+              setPendingSpellingForm(normalizedForm);
+              setSpellingChecking(false);
+              setShowSpellingCorrection(true);
+              return;
+            }
+          }
+        } catch (e) {
+          console.error("Spelling check error:", e);
+        }
+        setSpellingChecking(false);
+      }
+
+      // Duplicate check
+      const { data: existing } = await supabase
+        .from("records")
+        .select("id, category, quantity")
+        .eq("category", normalizedForm.category)
+        .ilike("title", normalizedForm.title)
+        .ilike("artist", normalizedForm.artist);
+      if (existing && existing.length > 0) {
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+        setDuplicateCategories(cats);
+        setDuplicateRecords(existing as Record[]);
+        setShowDuplicateConfirm(true);
+      } else {
+        await proceedWithInsert(normalizedForm);
+      }
+    }
+  };
+
+  const handleSpellingAccept = async () => {
+    if (!pendingSpellingForm) return;
+    const corrected = { ...pendingSpellingForm };
+    if (spellingCorrection.correctedArtist) corrected.artist = spellingCorrection.correctedArtist;
+    if (spellingCorrection.correctedTitle) corrected.title = toTitleCase(spellingCorrection.correctedTitle);
+    setForm(corrected);
+    setShowSpellingCorrection(false);
+    setPendingSpellingForm(null);
+    setSpellingCorrection({ correctedArtist: null, correctedTitle: null });
+    toast({ title: "Correction appliquée" });
+
+    // Continue directement avec la valeur validée afin de ne pas relancer
+    // la vérification IA et reproposer indéfiniment la même correction.
+    const { data: existing } = await supabase
+      .from("records")
+      .select("id, category, quantity")
+      .eq("category", corrected.category || activeTab)
+      .ilike("title", corrected.title)
+      .ilike("artist", corrected.artist);
+    if (existing && existing.length > 0) {
+      const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+      const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+      setDuplicateCategories(cats);
+      setDuplicateRecords(existing as Record[]);
+      setShowDuplicateConfirm(true);
+    } else {
+      await proceedWithInsert(corrected);
+    }
+  };
+
+  const handleSpellingReject = async () => {
+    if (!pendingSpellingForm) return;
+    setShowSpellingCorrection(false);
+    const formToUse = { ...pendingSpellingForm };
+    setPendingSpellingForm(null);
+    setSpellingCorrection({ correctedArtist: null, correctedTitle: null });
+    // Continue with duplicate check
+    const { data: existing } = await supabase
+      .from("records")
+      .select("id, category, quantity")
+      .eq("category", formToUse.category || activeTab)
+      .ilike("title", formToUse.title)
+      .ilike("artist", formToUse.artist);
+    if (existing && existing.length > 0) {
+      const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+      const cats = [...new Set(existing.map((r: any) => catMap[r.category] || r.category))];
+      setDuplicateCategories(cats);
+      setDuplicateRecords(existing as Record[]);
+      setShowDuplicateConfirm(true);
+    } else {
+      await proceedWithInsert(formToUse);
+    }
+  };
+
+  const proceedWithInsert = async (formData: RecordInsert) => {
+    const needsImage = !formData.image_url;
+    const needsDescription = !formData.description;
+    const needsGenre = !formData.genre;
+    if ((needsImage || needsDescription || needsGenre) && !skipSuggestions) {
+      setPendingForm(formData);
+      setSuggestionLoading(true);
+      setSuggestion(null);
+      setDescriptionRequested(needsDescription);
+      setShowForm(false);
+      try {
+        const { data, error } = await supabase.functions.invoke("suggest-record-info", {
+          body: { title: formData.title, artist: formData.artist, category: formData.category, needsImage, needsDescription, needsGenre },
+        });
+        if (!error && data) {
+          const hasVisualSuggestion = (needsImage && data.imageUrl) || (needsDescription && data.description);
+          if (hasVisualSuggestion) {
+            setSuggestion({
+              imageUrl: needsImage ? data.imageUrl : null,
+              imageUrls: needsImage ? (data.imageUrls || []) : [],
+              description: needsDescription ? data.description : null,
+              genre: needsGenre ? data.genre : null,
+            });
+            setSuggestionLoading(false);
+            return;
+          }
+          // Only genre found, apply silently
+          if (needsGenre && data.genre) {
+            formData = { ...formData, genre: data.genre };
+          }
+        }
+      } catch (e) {
+        console.error("Suggestion error:", e);
+      }
+      setSuggestionLoading(false);
+      setSuggestion(null);
+      setPendingForm(null);
+      await insertRecord(formData);
+    } else {
+      await insertRecord(formData);
+    }
+  };
+
+  const handleSuggestionAccept = async (imageUrl: string | null, description: string | null) => {
+    if (!pendingForm) return;
+    const updatedForm = { ...pendingForm };
+
+    if (suggestion?.genre && !updatedForm.genre) {
+      updatedForm.genre = suggestion.genre;
+    }
+
+    if (imageUrl) {
+      try {
+        const resp = await fetch(imageUrl);
+        const blob = await resp.blob();
+        const webpBlob = await convertToWebp(blob);
+        const path = `${crypto.randomUUID()}.webp`;
+        const { error } = await supabase.storage
+          .from("record-images")
+          .upload(path, webpBlob, { contentType: "image/webp" });
+        if (!error) {
+          const { data: urlData } = supabase.storage.from("record-images").getPublicUrl(path);
+          updatedForm.image_url = urlData.publicUrl;
+        }
+      } catch (e) {
+        console.error("Image upload error:", e);
+      }
+    }
+    if (description) updatedForm.description = description;
+
+    setSuggestion(null);
+    setSuggestionLoading(false);
+    setPendingForm(null);
+    setForm(updatedForm);
+    setSkipSuggestions(true);
+    setShowForm(true);
+  };
+
+  const handleSuggestionReject = () => {
+    if (!pendingForm) return;
+    const updatedForm = { ...pendingForm };
+    if (suggestion?.genre && !updatedForm.genre) {
+      updatedForm.genre = suggestion.genre;
+    }
+    setSuggestion(null);
+    setSuggestionLoading(false);
+    setPendingForm(null);
+    setForm(updatedForm);
+    setSkipSuggestions(true);
+    setShowForm(true);
+  };
+
+  const insertRecord = async (formData: RecordInsert) => {
+    const payload = { ...formData, category: formData.category || activeTab };
+    const { error } = await supabase.from("records").insert(payload);
+    if (error) {
+      console.error("Insert error:", error);
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    setShowForm(false);
+    setShowDuplicateConfirm(false);
+    setEditingRecord(null);
+    setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
+    setSkipSuggestions(false);
+    fetchRecords();
+  };
+
+  const insertAndReset = async () => {
+    setShowDuplicateConfirm(false);
+    await proceedWithInsert({ ...form, category: form.category || activeTab });
+  };
+
+  const incrementDuplicate = async () => {
+    setShowDuplicateConfirm(false);
+    if (duplicateRecords.length > 0) {
+      const dup = duplicateRecords[0];
+      const { error } = await supabase
+        .from("records")
+        .update({ quantity: dup.quantity + 1 })
+        .eq("id", dup.id);
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      } else {
+        const catMap: { [key: string]: string } = { vinyl: "Vinyles", editions_originales: "Éd. Originales", cd: "CD Audio", hifi: "Hi-Fi" };
+        toast({ title: "Quantité mise à jour", description: `+1 exemplaire ajouté à « ${dup.title} » (${catMap[dup.category] || dup.category})` });
+        setShowForm(false);
+        setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null });
+        fetchRecords();
+      }
+    }
+  };
+
+  const handleEdit = (record: Record) => {
+    setEditingRecord(record);
+    setConditionIsCustom(false);
+    setForm({
+      title: record.title, artist: record.artist, genre: record.genre,
+      price: record.price, condition: record.condition, description: record.description,
+      category: record.category, image_url: record.image_url,
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Supprimer cet article ?")) return;
+    const previous = records;
+    setRecords((rs) => rs.filter((r) => r.id !== id));
+    const { error } = await supabase.from("records").delete().eq("id", id);
+    if (error) {
+      setRecords(previous);
+      toast.error("Suppression impossible, réessayez.");
+    }
+  };
+
+  const handleQuantityChange = async (record: Record, delta: number) => {
     let oldQty = record.quantity ?? 1;
     let newQty = oldQty;
     setRecords((rs) => rs.map((r) => {
