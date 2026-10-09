@@ -172,7 +172,7 @@ const EditionsOriginales = () => {
             } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
-            {filteredRecords.map((record) => {
+            {filteredRecords.map((record, index) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
@@ -190,15 +190,17 @@ const EditionsOriginales = () => {
                   }}
                 >
                   {record.image_url ? (
-                    <div className="overflow-hidden">
+                    <div className="overflow-hidden bg-muted">
                       <img
                         src={record.image_url}
                         alt={`${record.artist} — ${record.title}`}
-                        className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full aspect-square object-cover opacity-0 group-hover:scale-105 transition-[opacity,transform] duration-500"
                         width={600}
                         height={600}
-                        loading="lazy"
+                        loading={index < 12 ? "eager" : "lazy"}
+                        fetchPriority={index < 8 ? "high" : "auto"}
                         decoding="async"
+                        onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
                         onError={retryImage}
                       />
                     </div>
