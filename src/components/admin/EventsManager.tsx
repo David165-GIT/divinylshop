@@ -216,7 +216,7 @@ const EventsManager = () => {
                 </span>
               )}
               {ev.image_url && (
-                <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full aspect-square object-cover" />
+                <img src={ev.image_url} alt={ev.title} loading="lazy" decoding="async" className="w-full aspect-square object-contain" />
               )}
               <div className="p-4 flex-1 flex flex-col">
                 {dateLabel && (
@@ -322,7 +322,7 @@ const EventsManager = () => {
               <div>
                 <label className="block text-sm font-body text-muted-foreground mb-2">Image</label>
                 {form.image_url && (
-                  <img src={form.image_url} alt="Aperçu" className="w-24 h-24 object-cover rounded-sm mb-2" />
+                  <img src={form.image_url} alt="Aperçu" className="w-24 h-24 object-contain rounded-sm mb-2" />
                 )}
                 <label className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm font-body text-muted-foreground hover:border-accent cursor-pointer transition-colors">
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
