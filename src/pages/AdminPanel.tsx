@@ -433,7 +433,7 @@ const AdminPanel = () => {
     const { error } = await supabase.from("records").delete().eq("id", id);
     if (error) {
       setRecords(previous);
-      toast.error("Suppression impossible, réessayez.");
+      toast({ title: "Suppression impossible, réessayez.", variant: "destructive" });
     }
   };
 
@@ -710,7 +710,7 @@ const AdminPanel = () => {
     const { error } = await supabase.from("records").delete().eq("id", id);
     if (error) {
       setRecords(previous);
-      toast.error("Suppression impossible, réessayez.");
+      toast({ title: "Suppression impossible, réessayez.", variant: "destructive" });
     }
   };
 
@@ -727,7 +727,7 @@ const AdminPanel = () => {
     const { error } = await supabase.from("records").update({ quantity: newQty, is_sold: newQty === 0 }).eq("id", record.id);
     if (error) {
       setRecords((rs) => rs.map((r) => r.id === record.id ? { ...r, quantity: oldQty, is_sold: oldQty === 0 } : r));
-      toast.error("Mise à jour impossible, réessayez.");
+      toast({ title: "Mise à jour impossible, réessayez.", variant: "destructive" });
     }
   };
 
