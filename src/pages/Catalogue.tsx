@@ -18,7 +18,7 @@ const Catalogue = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = useState(60);
+  const [visibleCount, setVisibleCount] = useState(24);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
@@ -75,7 +75,7 @@ const Catalogue = () => {
 
   // Reset pagination when category changes
   useEffect(() => {
-    setVisibleCount(60);
+    setVisibleCount(24);
   }, [filter]);
 
   // Realtime: invalidate cache on any change so the catalogue stays fresh
@@ -92,7 +92,7 @@ const Catalogue = () => {
 
   // Reset visible count when search changes
   useEffect(() => {
-    setVisibleCount(60);
+    setVisibleCount(24);
   }, [searchQuery]);
 
   const filtered = records.filter((r) => {
@@ -117,7 +117,7 @@ const Catalogue = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((c) => Math.min(c + 60, filtered.length));
+          setVisibleCount((c) => Math.min(c + 48, filtered.length));
         }
       },
       { rootMargin: "600px 0px" }
@@ -216,7 +216,7 @@ const Catalogue = () => {
             } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
             style={{ touchAction: "manipulation" }}
           >
-            {visible.map((record) => {
+            {visible.map((record, index) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
@@ -234,15 +234,17 @@ const Catalogue = () => {
                   }}
                 >
                   {record.image_url ? (
-                    <div className="overflow-hidden">
+                    <div className="overflow-hidden bg-muted">
                       <img
                         src={record.image_url}
                         alt={`${record.artist} — ${record.title}`}
-                        className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full aspect-square object-cover opacity-0 group-hover:scale-105 transition-[opacity,transform] duration-500"
                         width={600}
                         height={600}
-                        loading="lazy"
+                        loading={index < 12 ? "eager" : "lazy"}
+                        fetchPriority={index < 8 ? "high" : "auto"}
                         decoding="async"
+                        onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
                         onError={retryImage}
                       />
                     </div>
