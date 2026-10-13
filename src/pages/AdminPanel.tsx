@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo, useDeferredValue } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, FileUp, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu, Sparkles } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu, Sparkles } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import EventsManager from "@/components/admin/EventsManager";
 import SpecialActions from "@/components/admin/SpecialActions";
