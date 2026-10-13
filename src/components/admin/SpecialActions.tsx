@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ClipboardList, Download, FileUp, Image as ImageIcon, Loader2 } from "lucide-react";
+import { ClipboardList, Download, FileDown, FileUp, Image as ImageIcon, Loader2 } from "lucide-react";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
 import { toast } from "@/hooks/use-toast";
 
@@ -9,6 +9,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   cd: "CD Audio",
   hifi: "Hi-Fi",
 };
+
+const TEMPLATE_HEADER = ["ID", "Type", "Artiste / Marque", "Titre", "Genre", "État", "Prix (€)", "Quantité", "Description"];
 
 const esc = (v: unknown) => {
   const s = v === null || v === undefined ? "" : String(v);
@@ -25,6 +27,17 @@ interface SpecialActionsProps {
 
 const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrating, webpProgress }: SpecialActionsProps) => {
   const [loading, setLoading] = useState(false);
+
+  const downloadTemplate = () => {
+    const csv = "\uFEFF" + [TEMPLATE_HEADER].map((row) => row.map(esc).join(";")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "format-attendu-divinyl.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const exportInventory = async () => {
     setLoading(true);
@@ -94,14 +107,26 @@ const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrati
         <p className="text-sm text-muted-foreground font-body mb-4">
           Ajoutez des articles ou réimportez un fichier d'inventaire modifié : les articles existants sont mis à jour (quantité, prix, état…) sans doublon.
         </p>
-        <button
-          onClick={onImportCsv}
-          disabled={importLoading}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
-        >
-          {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
-          {importLoading ? "Import…" : "Importer CSV"}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={onImportCsv}
+            disabled={importLoading}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
+          >
+            {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
+            {importLoading ? "Import…" : "Importer CSV"}
+          </button>
+          <button
+            onClick={downloadTemplate}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-border text-foreground text-sm font-body font-medium hover:bg-muted transition-colors"
+          >
+            <FileDown className="w-4 h-4" />
+            Format attendu
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground font-body mt-3">
+          Type accepté : Vinyles, Éditions Originales, CD Audio ou Hi-Fi. Laissez la colonne ID vide pour créer un nouvel article.
+        </p>
       </div>
 
       <div className="bg-card border border-border rounded-md p-4 max-w-xl">
