@@ -1199,25 +1199,6 @@ const AdminPanel = () => {
             <div className="flex items-center gap-2 ml-auto">
               <input ref={importFileRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
               <button
-                onClick={() => importFileRef.current?.click()}
-                disabled={importLoading}
-                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
-              >
-                {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
-                {importLoading ? "Import…" : "Importer CSV"}
-              </button>
-              <button
-                onClick={handleMigrateToWebp}
-                disabled={webpMigrating}
-                title="Convertir toutes les images existantes en WebP"
-                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
-              >
-                {webpMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
-                {webpMigrating
-                  ? `WebP… ${webpProgress?.processed ?? 0}${webpProgress?.remaining ? ` / reste ${webpProgress.remaining}` : ""}`
-                  : "Convertir WebP"}
-              </button>
-              <button
                 onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
                 className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all"
               >
