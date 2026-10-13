@@ -3,9 +3,10 @@ import { useEffect, useState, useRef, useMemo, useDeferredValue } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, FileUp, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, FileUp, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu, Sparkles } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import EventsManager from "@/components/admin/EventsManager";
+import SpecialActions from "@/components/admin/SpecialActions";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { useIsMobile, useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
@@ -62,7 +63,7 @@ const AdminPanel = () => {
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [desktopCols, setDesktopCols] = useState(3);
   const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
-  const [activeSection, setActiveSection] = useState<"library" | "video" | "events">("library");
+  const [activeSection, setActiveSection] = useState<"library" | "video" | "events" | "special">("library");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const maxPinchCols = isTablet ? 5 : 3;
@@ -858,6 +859,7 @@ const AdminPanel = () => {
               { key: "library" as const, label: "Mettre à jour ma bibliothèque", icon: Library },
               { key: "video" as const, label: "Vidéo de ma galerie", icon: Video },
               { key: "events" as const, label: "Créer un évènement", icon: CalendarIcon },
+              { key: "special" as const, label: "Actions Spéciales", icon: Sparkles },
             ].map((item) => {
               const Icon = item.icon;
               const active = activeSection === item.key;
@@ -883,6 +885,7 @@ const AdminPanel = () => {
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 py-8">
             {activeSection === "events" && <EventsManager />}
+            {activeSection === "special" && <SpecialActions />}
             {activeSection === "video" && (
         <div className="bg-card border border-border rounded-md p-4 mb-8">
           <div className="flex items-center gap-2 mb-3">
