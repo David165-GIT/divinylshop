@@ -94,14 +94,26 @@ const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrati
         <p className="text-sm text-muted-foreground font-body mb-4">
           Ajoutez des articles ou réimportez un fichier d'inventaire modifié : les articles existants sont mis à jour (quantité, prix, état…) sans doublon.
         </p>
-        <button
-          onClick={onImportCsv}
-          disabled={importLoading}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
-        >
-          {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
-          {importLoading ? "Import…" : "Importer CSV"}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={onImportCsv}
+            disabled={importLoading}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
+          >
+            {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
+            {importLoading ? "Import…" : "Importer CSV"}
+          </button>
+          <button
+            onClick={downloadTemplate}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-border text-foreground text-sm font-body font-medium hover:bg-muted transition-colors"
+          >
+            <FileDown className="w-4 h-4" />
+            Format attendu
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground font-body mt-3">
+          Type accepté : Vinyles, Éditions Originales, CD Audio ou Hi-Fi. Laissez la colonne ID vide pour créer un nouvel article.
+        </p>
       </div>
 
       <div className="bg-card border border-border rounded-md p-4 max-w-xl">
