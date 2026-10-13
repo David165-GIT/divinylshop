@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ClipboardList, Download, Loader2 } from "lucide-react";
+import { ClipboardList, Download, FileUp, Image as ImageIcon, Loader2 } from "lucide-react";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
 import { toast } from "@/hooks/use-toast";
 
@@ -15,7 +15,15 @@ const esc = (v: unknown) => {
   return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
 
-const SpecialActions = () => {
+interface SpecialActionsProps {
+  onImportCsv: () => void;
+  importLoading: boolean;
+  onMigrateWebp: () => void;
+  webpMigrating: boolean;
+  webpProgress: { processed: number; remaining: number; errors: number } | null;
+}
+
+const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrating, webpProgress }: SpecialActionsProps) => {
   const [loading, setLoading] = useState(false);
 
   const exportInventory = async () => {
@@ -58,6 +66,7 @@ const SpecialActions = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-display font-bold text-foreground">Actions spéciales</h2>
+
       <div className="bg-card border border-border rounded-md p-4 max-w-xl">
         <div className="flex items-center gap-2 mb-2">
           <ClipboardList className="w-4 h-4 text-accent" />
@@ -73,6 +82,44 @@ const SpecialActions = () => {
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
           {loading ? "Préparation…" : "Extraire l'inventaire"}
+        </button>
+      </div>
+
+      <div className="bg-card border border-border rounded-md p-4 max-w-xl">
+        <div className="flex items-center gap-2 mb-2">
+          <FileUp className="w-4 h-4 text-accent" />
+          <h3 className="font-display font-bold text-foreground text-sm">Importer CSV</h3>
+        </div>
+        <p className="text-sm text-muted-foreground font-body mb-4">
+          Ajoutez plusieurs articles d'un coup à partir d'un fichier CSV.
+        </p>
+        <button
+          onClick={onImportCsv}
+          disabled={importLoading}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
+        >
+          {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
+          {importLoading ? "Import…" : "Importer CSV"}
+        </button>
+      </div>
+
+      <div className="bg-card border border-border rounded-md p-4 max-w-xl">
+        <div className="flex items-center gap-2 mb-2">
+          <ImageIcon className="w-4 h-4 text-accent" />
+          <h3 className="font-display font-bold text-foreground text-sm">Convertir en WebP</h3>
+        </div>
+        <p className="text-sm text-muted-foreground font-body mb-4">
+          Convertit toutes les images existantes du site au format WebP, plus léger et plus rapide à charger.
+        </p>
+        <button
+          onClick={onMigrateWebp}
+          disabled={webpMigrating}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
+        >
+          {webpMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
+          {webpMigrating
+            ? `WebP… ${webpProgress?.processed ?? 0}${webpProgress?.remaining ? ` / reste ${webpProgress.remaining}` : ""}`
+            : "Convertir WebP"}
         </button>
       </div>
     </div>

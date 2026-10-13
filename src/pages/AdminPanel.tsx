@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo, useDeferredValue } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, FileUp, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu, Sparkles } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Upload, X, Video, Camera, Loader2, ImageIcon, Search, LayoutGrid, Library, Calendar as CalendarIcon, Menu, Sparkles } from "lucide-react";
 import SuggestionPopup from "@/components/admin/SuggestionPopup";
 import EventsManager from "@/components/admin/EventsManager";
 import SpecialActions from "@/components/admin/SpecialActions";
@@ -885,7 +885,15 @@ const AdminPanel = () => {
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 py-8">
             {activeSection === "events" && <EventsManager />}
-            {activeSection === "special" && <SpecialActions />}
+            {activeSection === "special" && (
+              <SpecialActions
+                onImportCsv={() => importFileRef.current?.click()}
+                importLoading={importLoading}
+                onMigrateWebp={handleMigrateToWebp}
+                webpMigrating={webpMigrating}
+                webpProgress={webpProgress}
+              />
+            )}
             {activeSection === "video" && (
         <div className="bg-card border border-border rounded-md p-4 mb-8">
           <div className="flex items-center gap-2 mb-3">
@@ -1198,25 +1206,6 @@ const AdminPanel = () => {
             </button>
             <div className="flex items-center gap-2 ml-auto">
               <input ref={importFileRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
-              <button
-                onClick={() => importFileRef.current?.click()}
-                disabled={importLoading}
-                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
-              >
-                {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
-                {importLoading ? "Import…" : "Importer CSV"}
-              </button>
-              <button
-                onClick={handleMigrateToWebp}
-                disabled={webpMigrating}
-                title="Convertir toutes les images existantes en WebP"
-                className="inline-flex items-center gap-2 px-3 py-2 border border-border text-muted-foreground font-body font-medium rounded-sm text-xs sm:text-sm hover:text-foreground hover:border-foreground transition-all disabled:opacity-50"
-              >
-                {webpMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
-                {webpMigrating
-                  ? `WebP… ${webpProgress?.processed ?? 0}${webpProgress?.remaining ? ` / reste ${webpProgress.remaining}` : ""}`
-                  : "Convertir WebP"}
-              </button>
               <button
                 onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
                 className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all"
