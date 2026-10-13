@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ClipboardList, Download, FileUp, Image as ImageIcon, Loader2 } from "lucide-react";
+import { ClipboardList, Download, FileDown, FileUp, Image as ImageIcon, Loader2 } from "lucide-react";
 import { fetchAllRecords } from "@/lib/fetchAllRecords";
 import { toast } from "@/hooks/use-toast";
 
