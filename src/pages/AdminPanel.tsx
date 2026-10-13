@@ -617,12 +617,28 @@ const AdminPanel = () => {
         result.push(current.trim());
         return result;
       };
-      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, ""));
+      const norm = (h: string) => h.replace(/^\uFEFF/, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/['"]/g, "").trim();
+      const HEADER_MAP: { [k: string]: string } = {
+        id: "id", type: "categorie", categorie: "categorie", category: "categorie",
+        "artiste / marque": "artiste", artiste: "artiste", artist: "artiste", marque: "artiste",
+        titre: "titre", title: "titre", genre: "genre", etat: "etat", condition: "etat",
+        "prix (€)": "prix", prix: "prix", price: "prix", quantite: "quantite", quantity: "quantite",
+        description: "description",
+      };
+      const CAT_MAP: { [k: string]: string } = {
+        vinyles: "vinyl", vinyle: "vinyl", vinyl: "vinyl",
+        "editions originales": "editions_originales", "ed. originales": "editions_originales", editions_originales: "editions_originales",
+        "cd audio": "cd", cd: "cd", "hi-fi": "hifi", hifi: "hifi",
+      };
+      const headers = parseCSVLine(lines[0]).map(h => HEADER_MAP[norm(h)] ?? norm(h));
       const records = [];
       for (let i = 1; i < lines.length; i++) {
         const values = parseCSVLine(lines[i]);
         const record: any = {};
         headers.forEach((h, idx) => { record[h] = values[idx] || ""; });
+        if (values.some(v => norm(v) === "total") || (!record.titre && !record.artiste)) continue;
+        if (record.categorie) record.categorie = CAT_MAP[norm(record.categorie)] ?? record.categorie;
+        if (record.prix) record.prix = String(record.prix).replace(/[€\s]/g, "").replace(",", ".");
         records.push(record);
       }
       

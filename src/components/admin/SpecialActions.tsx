@@ -34,8 +34,9 @@ const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrati
         { column: "artist", ascending: true },
         { column: "title", ascending: true },
       ]);
-      const header = ["Type", "Artiste / Marque", "Titre", "Genre", "État", "Prix (€)", "Quantité"];
+      const header = ["ID", "Type", "Artiste / Marque", "Titre", "Genre", "État", "Prix (€)", "Quantité"];
       const rows = records.map((r) => [
+        r.id,
         CATEGORY_LABELS[r.category] ?? r.category,
         r.artist,
         r.title,
@@ -45,7 +46,7 @@ const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrati
         r.quantity,
       ]);
       const total = records.reduce((s, r) => s + (r.quantity || 0), 0);
-      rows.push([], ["TOTAL", "", "", "", "", "", total] as never);
+      rows.push([], ["", "TOTAL", "", "", "", "", "", total] as never);
       const csv = "\uFEFF" + [header, ...rows].map((row) => row.map(esc).join(";")).join("\r\n");
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
@@ -91,7 +92,7 @@ const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrati
           <h3 className="font-display font-bold text-foreground text-sm">Importer CSV</h3>
         </div>
         <p className="text-sm text-muted-foreground font-body mb-4">
-          Ajoutez plusieurs articles d'un coup à partir d'un fichier CSV.
+          Ajoutez des articles ou réimportez un fichier d'inventaire modifié : les articles existants sont mis à jour (quantité, prix, état…) sans doublon.
         </p>
         <button
           onClick={onImportCsv}
