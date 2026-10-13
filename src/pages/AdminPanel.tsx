@@ -885,7 +885,15 @@ const AdminPanel = () => {
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 py-8">
             {activeSection === "events" && <EventsManager />}
-            {activeSection === "special" && <SpecialActions />}
+            {activeSection === "special" && (
+              <SpecialActions
+                onImportCsv={() => importFileRef.current?.click()}
+                importLoading={importLoading}
+                onMigrateWebp={handleMigrateToWebp}
+                webpMigrating={webpMigrating}
+                webpProgress={webpProgress}
+              />
+            )}
             {activeSection === "video" && (
         <div className="bg-card border border-border rounded-md p-4 mb-8">
           <div className="flex items-center gap-2 mb-3">
