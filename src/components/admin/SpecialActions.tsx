@@ -10,6 +10,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   hifi: "Hi-Fi",
 };
 
+const TEMPLATE_HEADER = ["ID", "Type", "Artiste / Marque", "Titre", "Genre", "État", "Prix (€)", "Quantité", "Description"];
+
 const esc = (v: unknown) => {
   const s = v === null || v === undefined ? "" : String(v);
   return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
