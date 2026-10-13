@@ -61,10 +61,36 @@ serve(async (req) => {
         if (!validCategories.includes(category)) category = "vinyl";
 
         let genre = (r.genre || "").trim() || null;
-        const price = r.prix || r.price ? parseFloat(String(r.prix || r.price)) : null;
+        const price = r.prix || r.price ? parseFloat(String(r.prix || r.price).replace(",", ".")) : null;
         const condition = (r.etat || r.condition || "").trim() || null;
         let description = (r.description || "").trim() || null;
-        const quantity = r.quantite || r.quantity ? parseInt(String(r.quantite || r.quantity), 10) : 1;
+        const qRaw = String(r.quantite ?? r.quantity ?? "").trim();
+        const quantity = qRaw !== "" && !isNaN(parseInt(qRaw, 10)) ? parseInt(qRaw, 10) : 1;
+
+        // Update existing record (by ID, else same title+artist+category)
+        let existingId: string | null = null;
+        const rid = String(r.id || "").trim();
+        if (/^[0-9a-f-]{36}$/i.test(rid)) {
+          const { data } = await supabase.from("records").select("id").eq("id", rid).maybeSingle();
+          if (data) existingId = data.id;
+        }
+        if (!existingId) {
+          const { data } = await supabase.from("records").select("id")
+            .ilike("title", title).ilike("artist", artist).eq("category", category).limit(1);
+          if (data && data.length) existingId = data[0].id;
+        }
+        if (existingId) {
+          const upd: Record<string, unknown> = { title, artist, category, quantity, is_sold: quantity === 0 };
+          if (price !== null && !isNaN(price)) upd.price = price;
+          if (condition) upd.condition = condition;
+          if (genre) upd.genre = genre;
+          if (description) upd.description = description;
+          const { error: updErr } = await supabase.from("records").update(upd).eq("id", existingId);
+          results.push(updErr
+            ? { index: i, title, artist, status: "error", error: updErr.message }
+            : { index: i, title, artist, status: "ok" });
+          continue;
+        }
 
         // Auto-generate genre if empty
         if (!genre && LOVABLE_API_KEY && category !== "hifi") {
