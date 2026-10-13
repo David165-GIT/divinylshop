@@ -618,14 +618,14 @@ const AdminPanel = () => {
         return result;
       };
       const norm = (h: string) => h.replace(/^\uFEFF/, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/['"]/g, "").trim();
-      const HEADER_MAP: Record<string, string> = {
+      const HEADER_MAP: { [k: string]: string } = {
         id: "id", type: "categorie", categorie: "categorie", category: "categorie",
         "artiste / marque": "artiste", artiste: "artiste", artist: "artiste", marque: "artiste",
         titre: "titre", title: "titre", genre: "genre", etat: "etat", condition: "etat",
         "prix (€)": "prix", prix: "prix", price: "prix", quantite: "quantite", quantity: "quantite",
         description: "description",
       };
-      const CAT_MAP: Record<string, string> = {
+      const CAT_MAP: { [k: string]: string } = {
         vinyles: "vinyl", vinyle: "vinyl", vinyl: "vinyl",
         "editions originales": "editions_originales", "ed. originales": "editions_originales", editions_originales: "editions_originales",
         "cd audio": "cd", cd: "cd", "hi-fi": "hifi", hifi: "hifi",
