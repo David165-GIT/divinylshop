@@ -901,6 +901,7 @@ const AdminPanel = () => {
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 py-8">
             {activeSection === "events" && <EventsManager />}
+            <input ref={importFileRef} type="file" accept=".csv,text/csv" onChange={handleCsvImport} className="hidden" />
             {activeSection === "special" && (
               <SpecialActions
                 onImportCsv={() => importFileRef.current?.click()}
@@ -1221,7 +1222,6 @@ const AdminPanel = () => {
               Plusieurs ex.
             </button>
             <div className="flex items-center gap-2 ml-auto">
-              <input ref={importFileRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
               <button
                 onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
                 className="inline-flex items-center gap-2 px-3 py-2 bg-foreground text-background font-body font-medium rounded-sm text-xs sm:text-sm hover:opacity-85 transition-all"
