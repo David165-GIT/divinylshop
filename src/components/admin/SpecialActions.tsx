@@ -28,6 +28,17 @@ interface SpecialActionsProps {
 const SpecialActions = ({ onImportCsv, importLoading, onMigrateWebp, webpMigrating, webpProgress }: SpecialActionsProps) => {
   const [loading, setLoading] = useState(false);
 
+  const downloadTemplate = () => {
+    const csv = "\uFEFF" + [TEMPLATE_HEADER, [], ["", "Vinyles", "EXEMPLE ARTISTE", "Titre De L'Album", "Rock", "Très bon état", "12,50", "1", "Description de l'article"]].map((row) => row.map(esc).join(";")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "format-attendu-divinyl.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const exportInventory = async () => {
     setLoading(true);
     try {
