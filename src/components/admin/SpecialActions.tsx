@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { ClipboardList, Download, Loader2 } from "lucide-react";
+import { fetchAllRecords } from "@/lib/fetchAllRecords";
+import { toast } from "@/hooks/use-toast";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  vinyl: "Vinyles",
+  editions_originales: "Éditions Originales",
+  cd: "CD Audio",
+  hifi: "Hi-Fi",
+};
+
+const esc = (v: unknown) => {
+  const s = v === null || v === undefined ? "" : String(v);
+  return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+const SpecialActions = () => {
+  const [loading, setLoading] = useState(false);
+
+  const exportInventory = async () => {
+    setLoading(true);
+    try {
+      const records = await fetchAllRecords(undefined, [
+        { column: "category", ascending: true },
+        { column: "artist", ascending: true },
+        { column: "title", ascending: true },
+      ]);
+      const header = ["Type", "Artiste / Marque", "Titre", "Genre", "État", "Prix (€)", "Quantité"];
+      const rows = records.map((r) => [
+        CATEGORY_LABELS[r.category] ?? r.category,
+        r.artist,
+        r.title,
+        r.genre,
+        r.condition,
+        r.price !== null ? String(r.price).replace(".", ",") : "",
+        r.quantity,
+      ]);
+      const total = records.reduce((s, r) => s + (r.quantity || 0), 0);
+      rows.push([], ["TOTAL", "", "", "", "", "", total] as never);
+      const csv = "\uFEFF" + [header, ...rows].map((row) => row.map(esc).join(";")).join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `inventaire-divinyl-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "Inventaire téléchargé", description: `${records.length} articles, ${total} pièces en stock.` });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Erreur", description: "Impossible de générer l'inventaire.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-display font-bold text-foreground">Actions spéciales</h2>
+      <div className="bg-card border border-border rounded-md p-4 max-w-xl">
+        <div className="flex items-center gap-2 mb-2">
+          <ClipboardList className="w-4 h-4 text-accent" />
+          <h3 className="font-display font-bold text-foreground text-sm">Inventaire</h3>
+        </div>
+        <p className="text-sm text-muted-foreground font-body mb-4">
+          Télécharge la liste de tous les articles (type, artiste, titre, genre, état, prix, quantité) dans un fichier qui s'ouvre avec Excel.
+        </p>
+        <button
+          onClick={exportInventory}
+          disabled={loading}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-foreground text-background text-sm font-body font-medium disabled:opacity-60"
+        >
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+          {loading ? "Préparation…" : "Extraire l'inventaire"}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default SpecialActions;
