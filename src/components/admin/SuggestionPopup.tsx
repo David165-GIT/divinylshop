@@ -9,11 +9,12 @@ interface SuggestionPopupProps {
   description: string | null;
   loading: boolean;
   descriptionRequested?: boolean;
+  hasExistingDescription?: boolean;
   onAccept: (imageUrl: string | null, description: string | null) => void;
   onReject: () => void;
 }
 
-const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, descriptionRequested = false, onAccept, onReject }: SuggestionPopupProps) => {
+const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description, loading, descriptionRequested = false, hasExistingDescription = false, onAccept, onReject }: SuggestionPopupProps) => {
   const allImages = imageUrls.length > 0 ? imageUrls : (imageUrl ? [imageUrl] : []);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [acceptImage, setAcceptImage] = useState(true);
@@ -111,6 +112,11 @@ const SuggestionPopup = ({ title, artist, imageUrl, imageUrls = [], description,
               />
               <span className="text-sm font-body font-medium text-foreground">Description proposée</span>
             </label>
+            {hasExistingDescription && (
+              <p className="text-[11px] text-muted-foreground font-body italic mb-1">
+                Cette description remplacera celle déjà enregistrée.
+              </p>
+            )}
             <p className={`text-sm text-muted-foreground font-body bg-muted p-3 rounded-sm ${!acceptDescription ? "opacity-30" : ""}`}>
               {description}
             </p>

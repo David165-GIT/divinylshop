@@ -1084,7 +1084,7 @@ const AdminPanel = () => {
                         Rechercher pochette
                       </button>
                     )}
-                    {form.title && form.artist && !form.description?.trim() && (
+                    {form.title && form.artist && (
                       <button
                         type="button"
                         onClick={async () => {
@@ -1207,6 +1207,7 @@ const AdminPanel = () => {
             description={suggestion?.description || null}
             loading={suggestionLoading}
             descriptionRequested={descriptionRequested}
+            hasExistingDescription={Boolean(pendingForm.description?.trim())}
             onAccept={handleSuggestionAccept}
             onReject={handleSuggestionReject}
           />
