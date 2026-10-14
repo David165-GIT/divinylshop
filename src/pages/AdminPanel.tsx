@@ -1084,6 +1084,40 @@ const AdminPanel = () => {
                         Rechercher pochette
                       </button>
                     )}
+                    {form.title && form.artist && !form.description?.trim() && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setSuggestionLoading(true);
+                          setSuggestion(null);
+                          setDescriptionRequested(true);
+                          setPendingForm(form);
+                          setShowForm(false);
+                          try {
+                            const { data, error } = await supabase.functions.invoke("suggest-record-info", {
+                              body: { title: form.title, artist: form.artist, category: form.category, needsImage: false, needsDescription: true, needsGenre: false },
+                            });
+                            if (!error && data?.description) {
+                              setSuggestion({ imageUrl: null, imageUrls: [], description: data.description, genre: null });
+                            } else {
+                              setPendingForm(null);
+                              setShowForm(true);
+                              toast({ title: "Description indisponible", description: "Aucune description n'a pu être trouvée pour le moment." });
+                            }
+                          } catch (e) {
+                            console.error("Description suggestion error:", e);
+                            setPendingForm(null);
+                            setShowForm(true);
+                            toast({ title: "Erreur", description: "Impossible de rechercher une description.", variant: "destructive" });
+                          }
+                          setSuggestionLoading(false);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm font-body text-muted-foreground hover:border-accent transition-colors"
+                      >
+                        <Search className="w-4 h-4" />
+                        Rechercher description
+                      </button>
+                    )}
                   </div>
                 </div>
 
