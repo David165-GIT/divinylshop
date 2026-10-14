@@ -1084,7 +1084,7 @@ const AdminPanel = () => {
                         Rechercher pochette
                       </button>
                     )}
-                    {form.title && form.artist && !form.description?.trim() && (
+                    {form.title && form.artist && (
                       <button
                         type="button"
                         onClick={async () => {
