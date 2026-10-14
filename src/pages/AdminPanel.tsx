@@ -1207,6 +1207,7 @@ const AdminPanel = () => {
             description={suggestion?.description || null}
             loading={suggestionLoading}
             descriptionRequested={descriptionRequested}
+            hasExistingDescription={Boolean(pendingForm.description?.trim())}
             onAccept={handleSuggestionAccept}
             onReject={handleSuggestionReject}
           />
