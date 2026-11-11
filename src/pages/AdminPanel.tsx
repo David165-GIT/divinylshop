@@ -1294,6 +1294,14 @@ const AdminPanel = () => {
             >
               Plusieurs ex.
             </button>
+            {(showInStock || showOutOfStock || showMultiple || adminSearchQuery) && (
+              <button
+                onClick={() => { setShowInStock(false); setShowOutOfStock(false); setShowMultiple(false); setAdminSearchQuery(""); }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all bg-muted text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-3.5 h-3.5" /> Supprimer les filtres
+              </button>
+            )}
             <div className="flex items-center gap-2 ml-auto">
               <button
                 onClick={() => { setEditingRecord(null); setForm({ title: "", artist: "", genre: "", price: null, condition: "", description: "", category: activeTab, image_url: null }); setSkipSuggestions(false); setShowForm(true); }}
