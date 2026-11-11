@@ -61,6 +61,7 @@ const AdminPanel = () => {
   const [webpProgress, setWebpProgress] = useState<{ processed: number; remaining: number; errors: number } | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
+  const [showInStock, setShowInStock] = useState(false);
   const [desktopCols, setDesktopCols] = useState(3);
   const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
   const [activeSection, setActiveSection] = useState<"library" | "video" | "events" | "special">("library");
@@ -801,14 +802,37 @@ const AdminPanel = () => {
     const q = deferredSearch.trim().toLowerCase();
     return records.filter((r) => {
       if (r.category !== activeTab) return false;
-      if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : false) return false;
+      if (showOutOfStock ? (r.quantity ?? 1) !== 0 : showMultiple ? (r.quantity ?? 1) <= 1 : showInStock ? (r.quantity ?? 1) <= 0 : false) return false;
       if (!q) return true;
       return r.title.toLowerCase().includes(q) || r.artist.toLowerCase().includes(q) || (r.genre && r.genre.toLowerCase().includes(q));
     });
-  }, [records, activeTab, showOutOfStock, showMultiple, deferredSearch]);
+  }, [records, activeTab, showOutOfStock, showMultiple, showInStock, deferredSearch]);
+
+  const stockSummary = useMemo(() => {
+    const cats = [
+      { key: "vinyl", label: "Vinyles" },
+      { key: "editions_originales", label: "Éd. Orig." },
+      { key: "cd", label: "CD Audio" },
+      { key: "hifi", label: "Hi-Fi" },
+    ].map((c) => {
+      const catRecords = records.filter((r) => r.category === c.key);
+      const inStock = catRecords.filter((r) => (r.quantity ?? 1) > 0);
+      return {
+        ...c,
+        articles: inStock.length,
+        copies: inStock.reduce((sum, r) => sum + (r.quantity ?? 1), 0),
+        outOfStock: catRecords.length - inStock.length,
+      };
+    });
+    return {
+      cats,
+      totalArticles: cats.reduce((s, c) => s + c.articles, 0),
+      totalCopies: cats.reduce((s, c) => s + c.copies, 0),
+    };
+  }, [records]);
 
   const [visibleCount, setVisibleCount] = useState(60);
-  useEffect(() => { setVisibleCount(60); }, [activeTab, showOutOfStock, showMultiple, deferredSearch]);
+  useEffect(() => { setVisibleCount(60); }, [activeTab, showOutOfStock, showMultiple, showInStock, deferredSearch]);
   // Ensure an expanded/scroll-target record is rendered
   useEffect(() => {
     const id = expandedId || scrollToIdRef.current;
@@ -1214,6 +1238,27 @@ const AdminPanel = () => {
         )}
 
         <div className="flex flex-col gap-4 mb-6">
+          {/* Bandeau récapitulatif du stock */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {stockSummary.cats.map((c) => (
+              <div key={c.key} className="rounded-md border border-border bg-muted/40 px-3 py-2 text-center">
+                <p className="text-[10px] sm:text-xs font-body text-muted-foreground truncate">{c.label}</p>
+                <p className="text-sm sm:text-base font-body font-semibold text-foreground leading-tight">
+                  {c.copies} <span className="font-normal text-muted-foreground text-[10px] sm:text-xs">ex.</span>
+                </p>
+                <p className="text-[10px] sm:text-xs font-body text-muted-foreground leading-tight">
+                  {c.articles} réf.{c.outOfStock > 0 && <span className="text-destructive"> · {c.outOfStock} épuisé{c.outOfStock > 1 ? "s" : ""}</span>}
+                </p>
+              </div>
+            ))}
+            <div className="rounded-md border border-border bg-muted px-3 py-2 text-center col-span-2 sm:col-span-1">
+              <p className="text-[10px] sm:text-xs font-body text-muted-foreground">Total</p>
+              <p className="text-sm sm:text-base font-body font-semibold text-foreground leading-tight">
+                {stockSummary.totalCopies} <span className="font-normal text-muted-foreground text-[10px] sm:text-xs">ex.</span>
+              </p>
+              <p className="text-[10px] sm:text-xs font-body text-muted-foreground leading-tight">{stockSummary.totalArticles} réf.</p>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-2">
             {[
               { key: "vinyl", label: "Vinyles" },
@@ -1245,13 +1290,19 @@ const AdminPanel = () => {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => { setShowOutOfStock(!showOutOfStock); if (!showOutOfStock) setShowMultiple(false); }}
+              onClick={() => { setShowInStock(!showInStock); if (!showInStock) { setShowOutOfStock(false); setShowMultiple(false); } }}
+              className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all ${showInStock ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+            >
+              En stock
+            </button>
+            <button
+              onClick={() => { setShowOutOfStock(!showOutOfStock); if (!showOutOfStock) { setShowMultiple(false); setShowInStock(false); } }}
               className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all ${showOutOfStock ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
               Plus en stock
             </button>
             <button
-              onClick={() => { setShowMultiple(!showMultiple); if (!showMultiple) setShowOutOfStock(false); }}
+              onClick={() => { setShowMultiple(!showMultiple); if (!showMultiple) { setShowOutOfStock(false); setShowInStock(false); } }}
               className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all ${showMultiple ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
               Plusieurs ex.
@@ -1294,7 +1345,7 @@ const AdminPanel = () => {
 
         {/* Records list */}
         {filteredRecords.length === 0 ? (
-          <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : "Aucun article dans cette catégorie."}</p>
+          <p className="text-center text-muted-foreground font-body py-16">{showOutOfStock ? "Aucun article en rupture de stock." : showMultiple ? "Aucun article avec plusieurs exemplaires." : showInStock ? "Aucun article en stock." : "Aucun article dans cette catégorie."}</p>
         ) : (
           <div
             ref={gridRef}
