@@ -1,8 +1,9 @@
 import { retryImage } from "@/lib/retryImage";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Facebook, Search, LayoutGrid } from "lucide-react";
+import { ArrowLeft, Facebook, Search, LayoutGrid, X, Phone } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { useIsTablet, useIsTouchDevice } from "@/hooks/use-mobile";
 import { usePinchGrid } from "@/hooks/use-pinch-grid";
@@ -11,10 +12,10 @@ import { fetchAllRecords } from "@/lib/fetchAllRecords";
 type Record = Database["public"]["Tables"]["records"]["Row"];
 
 const EditionsOriginales = () => {
-  const [records, setRecords] = useState<Record[]>([]);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
+  const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const scrollToIdRef = useRef<string | null>(null);
   const prevColsRef = useRef<number | null>(null);
@@ -51,29 +52,46 @@ const EditionsOriginales = () => {
     }
   }, [cols, expandedId]);
 
-  useEffect(() => {
-    const fetchRecords = async () => {
-      const data = await fetchAllRecords(
+  const { data: records = [], isLoading: loading } = useQuery({
+    queryKey: ["catalogue-records", "editions_originales"],
+    queryFn: () =>
+      fetchAllRecords(
         { categoryEq: "editions_originales" },
         [{ column: "artist", ascending: true }, { column: "title", ascending: true }]
-      );
-      setRecords(data);
-      setLoading(false);
-    };
-    fetchRecords();
+      ),
+    staleTime: 30 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+  });
 
+  useEffect(() => {
     const channel = supabase
       .channel("editions-realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "records" }, () => {
-        fetchRecords();
+        queryClient.invalidateQueries({ queryKey: ["catalogue-records"] });
       })
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [queryClient]);
+
+  const topGenres = (() => {
+    const counts = new Map<string, number>();
+    for (const r of records) {
+      if ((r.quantity ?? 1) === 0 || !r.genre) continue;
+      for (const g of r.genre.split(/[,/]/)) {
+        const k = g.trim();
+        if (!k) continue;
+        const key = k.charAt(0).toUpperCase() + k.slice(1).toLowerCase();
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([g]) => g);
+  })();
 
   const filteredRecords = records.filter((r) => {
     if ((r.quantity ?? 1) === 0) return false;
+    if (genreFilter && !(r.genre ?? "").toLowerCase().includes(genreFilter.toLowerCase())) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
@@ -127,8 +145,18 @@ const EditionsOriginales = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher"
-                className="w-full pl-9 pr-3 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full pl-9 pr-9 py-2 rounded-md border border-border bg-background text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Effacer la recherche"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
             {!isTouchDevice && (
               <button
@@ -140,6 +168,23 @@ const EditionsOriginales = () => {
               </button>
             )}
           </div>
+          {topGenres.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pt-2 pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {[null, ...topGenres].map((g) => {
+                const active = genreFilter === g;
+                return (
+                  <button
+                    key={g ?? "all"}
+                    type="button"
+                    onClick={() => setGenreFilter(g)}
+                    className={`shrink-0 px-3 py-1 rounded-full border text-xs font-body transition-colors ${active ? "bg-foreground text-background border-foreground" : "bg-background text-muted-foreground border-border hover:text-foreground"}`}
+                  >
+                    {g ?? "Tous"}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -221,6 +266,16 @@ const EditionsOriginales = () => {
                     <p className={`text-muted-foreground font-body ${isCompact ? "text-[10px] line-clamp-1" : "text-sm"}`}>{record.artist}</p>
                     {record.description && !isCompact && (
                       <p className={`text-xs text-muted-foreground font-body mt-2 transition-all duration-300 ${expandedId === record.id ? "" : "line-clamp-2"}`}>{record.description}</p>
+                    )}
+                    {!isCompact && expandedId === record.id && (
+                      <a
+                        href="tel:+33175158617"
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-body font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+                        aria-label={`Se renseigner sur ${record.artist} — ${record.title}`}
+                      >
+                        <Phone className="w-4 h-4" /> Se renseigner sur cet article
+                      </a>
                     )}
                   </div>
                 </div>
