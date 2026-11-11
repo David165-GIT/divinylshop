@@ -103,7 +103,7 @@ const EditionsOriginales = () => {
       r.artist.toLowerCase().includes(q) ||
       (r.genre && r.genre.toLowerCase().includes(q))
     );
-  }, [records, genreFilter, searchQuery]);
+  }), [records, genreFilter, searchQuery]);
 
   useEffect(() => { setVisibleCount(24); }, [searchQuery, genreFilter]);
   useEffect(() => {

@@ -123,7 +123,7 @@ const Catalogue = () => {
       r.artist.toLowerCase().includes(q) ||
       (r.genre && r.genre.toLowerCase().includes(q))
     );
-  }, [records, genreFilter, searchQuery]);
+  }), [records, genreFilter, searchQuery]);
 
   const visible = filtered.slice(0, visibleCount);
 
