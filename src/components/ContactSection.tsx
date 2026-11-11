@@ -1,5 +1,10 @@
-import { MapPin, Clock, Phone, Facebook, ExternalLink } from "lucide-react";
+import { MapPin, Clock, Phone, Facebook, ExternalLink, Navigation, Car } from "lucide-react";
 import shopFacadePhoto from "@/assets/shop-facade-photo.webp";
+
+const DEST_LAT = "48.265996";
+const DEST_LNG = "2.696041";
+const MAPSDirections = `https://www.google.com/maps/dir/?api=1&destination=${DEST_LAT},${DEST_LNG}&travelmode=driving`;
+const WAZE_DIRECTIONS = `https://waze.com/ul?ll=${DEST_LAT},${DEST_LNG}&navigate=yes`;
 
 const ContactSection = () => {
   return (
@@ -30,6 +35,26 @@ const ContactSection = () => {
                 >
                   Voir sur Google Maps <ExternalLink className="w-3 h-3" />
                 </a>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href={MAPSDirections}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-background px-3 py-2 text-xs font-body font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    Itinéraire Google Maps
+                  </a>
+                  <a
+                    href={WAZE_DIRECTIONS}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-background px-3 py-2 text-xs font-body font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Car className="w-3.5 h-3.5" />
+                    Itinéraire Waze
+                  </a>
+                </div>
               </div>
             </div>
 

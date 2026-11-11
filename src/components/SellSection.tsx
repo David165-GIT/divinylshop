@@ -1,4 +1,4 @@
-import { Facebook, Package } from "lucide-react";
+import { Package, Phone } from "lucide-react";
 
 const SellSection = () => {
   return (
@@ -21,6 +21,14 @@ const SellSection = () => {
               Vous avez du matériel Hi-Fi ou des vinyles <span className="text-foreground font-medium">(uniquement par lot)</span> à
               vendre ? Contactez-moi par Téléphone ou Facebook pour me proposer vos pièces.
             </p>
+
+            <a
+              href="tel:+33175158617"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-body font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+            >
+              <Phone className="w-4 h-4" />
+              Appeler le magasin (01 75 15 86 17)
+            </a>
           </div>
         </div>
       </div>
