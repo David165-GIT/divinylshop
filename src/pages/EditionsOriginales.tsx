@@ -1,3 +1,5 @@
+import CoverActions from "@/components/CoverActions";
+import FavoritesSheet from "@/components/FavoritesSheet";
 import { retryImage } from "@/lib/retryImage";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -112,6 +114,8 @@ const EditionsOriginales = () => {
             </button>
             <h1 className="text-xl font-display font-bold text-gradient-dark">Éditions Originales</h1>
           </div>
+          <div className="flex items-center gap-5">
+          <FavoritesSheet />
           <a
             href="https://www.facebook.com/divinyl.shop/"
             target="_blank"
@@ -120,6 +124,7 @@ const EditionsOriginales = () => {
           >
             <Facebook className="w-5 h-5" />
           </a>
+          </div>
         </div>
       </div>
 
@@ -235,7 +240,8 @@ const EditionsOriginales = () => {
                   }}
                 >
                   {record.image_url ? (
-                    <div className="overflow-hidden bg-muted">
+                    <div className="relative overflow-hidden bg-muted">
+                      <CoverActions record={record} compact={!!isCompact} />
                       <img
                         src={record.image_url}
                         alt={`${record.artist} — ${record.title}`}
@@ -250,7 +256,8 @@ const EditionsOriginales = () => {
                       />
                     </div>
                   ) : (
-                    <div className="w-full aspect-square bg-muted flex items-center justify-center">
+                    <div className="relative w-full aspect-square bg-muted flex items-center justify-center">
+                      <CoverActions record={record} compact={!!isCompact} />
                       <span className={`${isCompact ? "text-2xl" : "text-4xl"} text-muted-foreground/30`}>♫</span>
                     </div>
                   )}
