@@ -1265,28 +1265,15 @@ const AdminPanel = () => {
               { key: "editions_originales", label: "Éd. Orig." },
               { key: "cd", label: "CD Audio" },
               { key: "hifi", label: "Hi-Fi" },
-            ].map((tab) => {
-              const filtered = records.filter((r) => r.category === tab.key);
-              const articleCount = filtered.length;
-              const totalCopies = filtered.reduce((sum, r) => sum + (r.quantity ?? 1), 0);
-              return (
+            ].map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all flex flex-col items-center gap-0.5 flex-1 min-w-0 ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`px-3 py-2 text-xs sm:text-sm font-body font-medium rounded-sm transition-all flex-1 min-w-0 truncate ${activeTab === tab.key ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
                 >
-                  <span className="inline-flex items-center gap-1 sm:gap-1.5">
-                    <span className="truncate">{tab.label}</span>
-                    <span className={`text-[10px] sm:text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${activeTab === tab.key ? "bg-background/20" : "bg-border"}`}>
-                      {totalCopies}
-                    </span>
-                  </span>
-                  <span className={`text-[9px] sm:text-[10px] font-body leading-none ${activeTab === tab.key ? "text-background/50" : "text-muted-foreground/50"}`}>
-                      {articleCount} réf.
-                    </span>
+                  {tab.label}
                 </button>
-              );
-            })}
+            ))}
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
