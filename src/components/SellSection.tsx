@@ -27,7 +27,7 @@ const SellSection = () => {
               className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-body font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
             >
               <Phone className="w-4 h-4" />
-              Appeler le magasin (01 75 15 86 17)
+              Appeler le magasin
             </a>
           </div>
         </div>
