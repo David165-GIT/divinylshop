@@ -11,7 +11,7 @@ const CoverActions = ({ record, compact }: Props) => {
   const isFav = favorites.some((f) => f.id === record.id);
   const size = compact ? "w-7 h-7" : "w-9 h-9";
   const icon = compact ? "w-3.5 h-3.5" : "w-4 h-4";
-  const btn = `${size} flex items-center justify-center rounded-full bg-background/85 backdrop-blur-sm border border-border shadow-sm transition-colors`;
+  const btn = `${size} flex items-center justify-center rounded-full bg-background/95 border border-border shadow-sm transition-colors`;
 
   return (
     <>

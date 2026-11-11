@@ -64,6 +64,7 @@ export function usePinchGrid(defaultCols = 1, maxCols = 3) {
 
     gridElement.addEventListener("touchstart", onTouchStart, { passive: false });
     gridElement.addEventListener("touchmove", onTouchMove, { passive: false });
+    // touchmove only calls preventDefault when 2 fingers are down
     gridElement.addEventListener("touchend", onTouchEnd, { passive: true });
     gridElement.addEventListener("touchcancel", onTouchEnd, { passive: true });
 

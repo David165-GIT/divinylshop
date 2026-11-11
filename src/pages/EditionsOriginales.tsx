@@ -1,7 +1,7 @@
 import CoverActions from "@/components/CoverActions";
 import FavoritesSheet from "@/components/FavoritesSheet";
 import { retryImage } from "@/lib/retryImage";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +28,8 @@ const EditionsOriginales = () => {
   const defaultPinchCols = isTablet ? 3 : 2;
   const { cols, gridRef, setCols } = usePinchGrid(defaultPinchCols, maxPinchCols);
   const [desktopCols, setDesktopCols] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(24);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const cycleDesktopCols = () => setDesktopCols((prev) => (prev >= 5 ? 3 : prev + 1));
 
   useEffect(() => {
@@ -77,7 +79,7 @@ const EditionsOriginales = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  const topGenres = (() => {
+  const topGenres = useMemo(() => {
     const counts = new Map<string, number>();
     for (const r of records) {
       if ((r.quantity ?? 1) === 0 || !r.genre) continue;
@@ -89,9 +91,9 @@ const EditionsOriginales = () => {
       }
     }
     return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([g]) => g);
-  })();
+  }, [records]);
 
-  const filteredRecords = records.filter((r) => {
+  const filteredRecords = useMemo(() => records.filter((r) => {
     if ((r.quantity ?? 1) === 0) return false;
     if (genreFilter && !(r.genre ?? "").toLowerCase().includes(genreFilter.toLowerCase())) return false;
     if (!searchQuery.trim()) return true;
@@ -101,7 +103,24 @@ const EditionsOriginales = () => {
       r.artist.toLowerCase().includes(q) ||
       (r.genre && r.genre.toLowerCase().includes(q))
     );
-  });
+  }, [records, genreFilter, searchQuery]);
+
+  useEffect(() => { setVisibleCount(24); }, [searchQuery, genreFilter]);
+  useEffect(() => {
+    if (loading || visibleCount >= filteredRecords.length) return;
+    const node = sentinelRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver((e) => {
+      if (e[0].isIntersecting) setVisibleCount((c) => Math.min(c + 48, filteredRecords.length));
+    }, { rootMargin: "600px 0px" });
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [loading, visibleCount, filteredRecords.length]);
+  useEffect(() => {
+    if (!expandedId) return;
+    const i = filteredRecords.findIndex((r) => r.id === expandedId);
+    if (i >= visibleCount) setVisibleCount(i + 1);
+  }, [expandedId, filteredRecords, visibleCount]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -220,15 +239,15 @@ const EditionsOriginales = () => {
             className={`grid ${
               cols === 5 ? "grid-cols-5 gap-1" : cols === 4 ? "grid-cols-4 gap-2" : cols === 3 ? "grid-cols-3 gap-2" : cols === 2 ? "grid-cols-2 gap-3" : "grid-cols-1 gap-6"
             } ${!isTouchDevice ? (desktopCols === 3 ? "sm:grid-cols-3 sm:gap-4" : desktopCols === 5 ? "sm:grid-cols-5 sm:gap-3" : "sm:grid-cols-4 sm:gap-4") : ""}`}
-            style={{ touchAction: "manipulation" }}
+            style={{ touchAction: "pan-y" }}
           >
-            {filteredRecords.map((record, index) => {
+            {filteredRecords.slice(0, visibleCount).map((record, index) => {
               const isCompact = cols && cols >= 2;
               return (
                 <div
                   key={record.id}
                   data-record-id={record.id}
-                  className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
+                  className="group bg-card border border-border rounded-md overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer [content-visibility:auto] [contain-intrinsic-size:auto_320px]"
                   onClick={() => {
                     if (cols && cols >= 2) {
                       scrollToIdRef.current = record.id;
@@ -289,6 +308,10 @@ const EditionsOriginales = () => {
               );
             })}
           </div>
+        )}
+
+        {!loading && visibleCount < filteredRecords.length && (
+          <div ref={sentinelRef} className="h-10" aria-hidden="true" />
         )}
 
         {/* CTA */}
