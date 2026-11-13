@@ -20,6 +20,11 @@ const Catalogue = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
+  const genreMountedRef = useRef(false);
+  useEffect(() => {
+    if (!genreMountedRef.current) { genreMountedRef.current = true; return; }
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [genreFilter]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(24);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
